@@ -1,4 +1,15 @@
 # -*- Makefile -*-
+PERL = perl
+
+SML = sml
+CM = .cm
+
+MOSMLC = mosmlc
+MOSMLFLAGS =
+MOSMAKE = compat/moscow/mosmake
+MOSMAKEDIRS = src compat/moscow tests
+
+MLTON = mlton
 
 MAJOR=0
 MINOR=8
@@ -7,3 +18,6 @@ VERSION=$(MAJOR).$(MINOR)
 src/qcheck-ver.sml: Makefile.version
 	echo 'structure QCheckVersion = struct'       >$@
 	echo 'val version = ($(MAJOR),$(MINOR)) end' >>$@
+
+doc/qcheck-ver.texi: Makefile.version
+	echo '@set VERSION $(VERSION)' >$@

@@ -1,7 +1,5 @@
 # -*- Makefile -*-
-MLTON = mlton
 EXE = tests/tests
-
 default: 
 all: $(EXE)
 test: all

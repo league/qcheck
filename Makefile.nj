@@ -1,7 +1,4 @@
 # -*- Makefile -*-
-SML = sml
-CM = .cm
-
 default: src/qcheck-ver.sml
 	echo 'CM.stabilize true "qcheck.cm";' | $(SML)
 all: default

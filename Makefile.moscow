@@ -1,14 +1,8 @@
 #  -*- Makefile -*-
-MOSMLC = mosmlc
-PERL = perl
-MOSMLFLAGS =
-MOSMAKE = compat/moscow/mosmake
-MOSMAKEDIRS = src compat/moscow tests
-
 default: src/qcheck.uo src/cm-style.uo
 all: default
 test: all
 	./compose
 
-include $(MOSMAKE)/Makefile.inc
 include Makefile.version
+include $(MOSMAKE)/Makefile.inc

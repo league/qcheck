@@ -1,0 +1,175 @@
+\input texinfo                                          @c -*- texinfo -*-
+@c %**start of header
+@setfilename qcheck.info
+@settitle QCheck/SML
+@c %**end of header
+
+Copyright @copyright{} 2004 Christopher League.
+
+@titlepage
+@title QCheck/SML
+@author Christopher League
+@vskip 0pt plus1filll
+@end titlepage
+@contents
+
+@ifnottex
+@node Top, Intro, (dir), (dir)
+
+@menu
+* Intro::                       
+* FileSys::                     
+* Generating::                  
+* Statistical::                 
+* Pluggable::                   
+* Tests::                       
+
+
+@end menu
+@end ifnottex
+
+@c force auto-loads
+@transcript omit
+Int.toString;
+List.getItem;
+@end transcript
+
+@c ----------------------------------------------------------------------------
+@node Intro, FileSys, Top, Top
+@chapter Introduction
+
+I will demonstrate the use of QCheck with a simple example.  Let's
+write a few tiny functions on integers: successor, even, and odd.
+
+@transcript
+fun succ x = x+1
+fun even x = x mod 2 = 0
+fun odd x = x mod 2 = 1
+@end transcript
+
+Now suppose we wish to test that some property holds for this
+implementation.  For example, we know that the successor of an even
+number should be odd.  We can specify ``the successor is odd'' as the
+integer predicate @code{odd o succ}.  But since we expect this to be
+true only for even numbers, it is a conditional property.  Using the
+QCheck library, we specify it like this:
+
+@transcript quiet
+open QCheck
+infix ==>
+@end transcript
+
+@transcript
+val succ_even_odd = even ==> odd o succ
+@end transcript
+
+This value has type @code{int prop}.  To test it, we need to specify a
+source of integer test cases.  We could type a bunch of them into a
+file and use that, but why not just generate them randomly?
+@code{Gen.Int.int} (of type @code{int Gen.gen}) generates random
+integers.  The following pair is useful for checking any integer
+property:
+
+@transcript
+val i = (Gen.Int.int, SOME Int.toString);
+checkGen i ("even+1=odd", succ_even_odd);
+@end transcript
+
+The @code{toString} function is provided so that the checker can print out
+a counter-example if necessary.  Next, we simply called @code{checkGen}
+with a string tag and the property.  The type of @code{checkGen} is
+
+@transcript
+checkGen;
+@end transcript
+
+@code{checkGen} is a specialization of a slightly more general @code{check}
+routine, specifically tailored for randomized data sources. 
+
+This indicates that 100 test cases were considered, and all passed.
+(The target number of randomly-generated test cases is configurable,
+as we'll see later.)  Now, let's try the converse property: the
+successor of an odd number is even.
+@transcript
+val succ_odd_even = odd ==> even o succ;
+checkGen i ("odd+1=even", succ_odd_even);
+@end transcript
+Simple, right?  Well, this time we run into trouble.
+
+QCheck found a counter-example: the maximum 31-bit integer.  It is
+odd, but since its successor is undefined, the property does not hold.
+(We were not extraordinarily lucky to generate @code{maxInt} this time
+around; in fact, the generator is biased so that zero, @code{minInt},
+and @code{maxInt} are chosen more frequently than other integers,
+precisely because they are often ``boundary conditions.'')
+
+At any rate, what is broken here is not really our even/odd/succ
+implementation, but rather the specification of the property.  We need
+to limit it to odd integers that are less than maxInt.
+
+@transcript
+fun odd_not_max x = odd x andalso x < valOf(Int.maxInt)
+val succ_odd_even = odd_not_max ==> even o succ;
+checkGen i ("odd+1=even", succ_odd_even);
+@end transcript
+
+Incidentally, the 100 cases to which this output refers are all
+integers that meet the @code{odd_not_max} criterion.  Generated
+integers that do not meet the criterion are not counted.  This is the
+meaning of the @code{==>} (implies) operator, and is the reason that
+we don't just combine the condition with the predicate into one
+function.
+
+Continuing with this example, suppose we want to test a property of a
+pair of integers.  For example, the sum of two odd numbers is even.
+
+@transcript
+fun both_odd(x,y) = odd x andalso odd y
+fun sum_even(x,y) = even (x+y)
+fun show_pair(x,y) = Int.toString x ^ "," ^ Int.toString y
+@end transcript
+
+To generate pairs of ints, we just zip together two integer
+generators.  The function @code{Gen.zip} takes a @code{t1} generator
+and a @code{t2} generator, and produces a @code{(t1 * t2)} generator.
+
+@transcript
+checkGen (Gen.zip(Gen.Int.int, Gen.Int.int), SOME show_pair)
+         ("sum_odds_even", both_odd ==> sum_even)
+@end transcript
+
+As you can see, QCheck found a few counter-examples (including
+negative integers) that overflow the sum computation.  I'll leave it
+as an exercise to the reader to fix this.
+
+One more example will demonstrate that test cases need not be
+generated randomly.  Here, they will be taken from a list, but they
+could just as easily be read from a file.
+
+@transcript
+check (List.getItem, SOME show_pair)
+      ("sum_odds_even[]", both_odd ==> sum_even)
+      [(1,1), (3,5), (3,4), (* that one won't count! *)
+       (~1,1), (21,21), (7,13)]
+@end transcript
+
+I provided 6 pairs in the list, but only 5 counted because (3,4) did
+not meet the precondition of the property.
+
+
+@node FileSys, Generating, Intro, Top
+@chapter Reading test cases from the file system
+
+@node Generating, Statistical, FileSys, Top
+@chapter Generating test cases randomly
+
+@node Statistical, Pluggable, Generating, Top
+@chapter Statistical distribution
+
+@node Pluggable, Tests, Statistical, Top
+@chapter Pluggable output styles
+
+@node Tests,  , Pluggable, Top
+@chapter Guide to tests directory
+
+@bye

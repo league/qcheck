@@ -29,7 +29,7 @@ src/filesys-sig.sml
 src/filesys.sml
 src/settings-sig.sml
 src/qcheck-sig.sml
-src/qcheck-ver.sml
+src/qcheck-ver.sml: make
 src/qcheck.sml
 
 #if(defined(SMLNJ_VERSION))
