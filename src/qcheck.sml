@@ -9,7 +9,7 @@
 structure QCheck : QCHECK =
 struct
 
-val version=(0,7)
+open QCheckVersion
 
 structure Gen = RandGen
 structure FileSys = FileSys

@@ -1,4 +1,3 @@
-VERSION=0.8a
 
 define each-ml
   for m in nj moscow mlton; do $(MAKE) -f Makefile.$$m $@; done
@@ -30,7 +29,9 @@ realclean: master.realclean
 	$(each-ml)
 
 master.mostlyclean:
-	$(RM) compat/*/*~ tests/data/*~ doc/*~
+	$(RM) compat/*/*~ tests/data/*~ doc/*~ *~
 master.clean: master.mostlyclean
 master.realclean: master.clean
+	$(RM) src/qcheck-ver.sml
 
+include Makefile.version

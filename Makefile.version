@@ -1,0 +1,9 @@
+# -*- Makefile -*-
+
+MAJOR=0
+MINOR=8
+VERSION=$(MAJOR).$(MINOR)
+
+src/qcheck-ver.sml: Makefile.version
+	echo 'structure QCheckVersion = struct'       >$@
+	echo 'val version = ($(MAJOR),$(MINOR)) end' >>$@

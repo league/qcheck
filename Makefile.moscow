@@ -11,3 +11,4 @@ test: all
 	./compose
 
 include $(MOSMAKE)/Makefile.inc
+include Makefile.version

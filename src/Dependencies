@@ -1,9 +1,11 @@
 qcheck: ../compat/moscow/gen filesys-sig settings-sig prop-sig + 
-        ../compat/moscow/strbag filesys settings prop perl-style
+        ../compat/moscow/strbag filesys settings prop perl-style 
+        qcheck-ver
 
 filesys-sig:
 settings-sig:
 prop-sig:
+qcheck-ver:
 
 filesys: + ../compat/moscow/basis
 prop: ../compat/moscow/strbag

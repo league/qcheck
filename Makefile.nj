@@ -2,10 +2,10 @@
 SML = sml
 CM = .cm
 
-default: 
+default: src/qcheck-ver.sml
 	echo 'CM.stabilize true "qcheck.cm";' | $(SML)
 all: default
-test: 
+test: default
 	$(SML) -m tests/tests.cm </dev/null
 
 mostlyclean:
@@ -15,3 +15,5 @@ clean: mostlyclean
 	$(RM) -r $(CM)
 
 realclean: clean
+
+include Makefile.version

@@ -7,7 +7,7 @@ all: $(EXE)
 test: all
 	$(EXE)
 
-$(EXE):
+$(EXE): src/qcheck-ver.sml
 	$(MLTON) -output $@ tests/tests.cm
 
 mostlyclean:
@@ -16,3 +16,5 @@ clean: mostlyclean
 	$(RM) $(EXE)
 
 realclean: clean
+
+include Makefile.version
