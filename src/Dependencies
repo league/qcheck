@@ -1,0 +1,21 @@
+qcheck: ../compat/moscow/gen filesys-sig settings-sig prop-sig + 
+        ../compat/moscow/strbag filesys settings prop perl-style
+
+filesys-sig:
+settings-sig:
+prop-sig:
+
+filesys: + ../compat/moscow/basis
+prop: ../compat/moscow/strbag
+settings: prop
+bag: 
+
+perl-style: prop settings ../compat/moscow/strbag
+cm-style: prop settings
+
+gen-sig:
+gen-base: gen-sig settings gen-text
+gen-text: gen-sig ../compat/moscow/basis
+gen-int:  gen-sig ../compat/moscow/basis
+gen-word: gen-sig ../compat/moscow/basis
+gen-date: gen-sig ../compat/moscow/basis gen-int

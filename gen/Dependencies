@@ -1,6 +1,0 @@
-gen-sig:
-base: gen-sig ../settings text
-text: gen-sig ../compat/moscow/basis
-int: gen-sig ../compat/moscow/basis
-word: gen-sig ../compat/moscow/basis
-date: gen-sig ../compat/moscow/basis int

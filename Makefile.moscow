@@ -2,5 +2,8 @@ MOSMLC = mosmlc
 PERL = perl
 MOSMLFLAGS =
 MOSMAKE = compat/moscow/mosmake
-MOSMAKEDIRS = . styles gen compat/moscow
+MOSMAKEDIRS = src compat/moscow
+
+default: src/qcheck.uo src/cm-style.uo
+
 include $(MOSMAKE)/Makefile.inc

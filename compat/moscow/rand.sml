@@ -1,5 +1,5 @@
 
-structure Rand' : APPLICATIVE_RNG =
+structure Rand' =
 struct
 
 type rand = real
