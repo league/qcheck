@@ -1,0 +1,32 @@
+(*Group *)
+Library
+  structure QCheck
+  functor GenInt
+
+  structure PerlStyle
+  structure CMStyle
+is
+
+qcheck.sig
+qcheck.sml
+prop.sml 
+filesys.sml
+settings.sml
+bag.sml
+
+gen/base.sml
+gen/date.sml
+gen/gen.sig
+gen/gen.sml
+gen/int.sml
+gen/random.sml
+gen/real.sml
+gen/text.sml
+gen/word.sml
+
+styles :dir
+
+$/basis.cm
+$/smlnj-lib.cm
+$/regexp-lib.cm
+$/controls-lib.cm
