@@ -6,7 +6,7 @@
  * published by the Free Software Foundation; see the file COPYING.
  *)
 
-structure TestReverse = struct
+structure TestReverse : sig end = struct
 open QCheck
 
 (* We test List.rev using integer lists (that ought to be enough,
@@ -25,8 +25,11 @@ val revApp = trivial (fn(xs,ys) => null xs orelse null ys)
 fun lc xs = 
     case length xs 
       of 0 => SOME "length 0"
-       | (1|2) => SOME "length 1-2"
-       | (3|4|5) => SOME "length 3-5"
+       | 1 => SOME "length 1-2"
+       | 2 => SOME "length 1-2"
+       | 3 => SOME "length 3-5"
+       | 4 => SOME "length 3-5"
+       | 5 => SOME "length 3-5"
        | _ => NONE
 
 val revRev = (classify' lc

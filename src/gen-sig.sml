@@ -20,14 +20,16 @@ sig type rand
 end
 
 signature GENERATOR' = 
-sig (* include APPLICATIVE_RNG*)
-    include GEN_TYPES
+sig include GEN_TYPES
     val new : unit -> rand
     val range : int * int -> rand -> int * rand
     val lift : 'a -> 'a gen
     val select : 'a vector -> 'a gen
     val choose : 'a gen vector -> 'a gen
     val choose' : (int * 'a gen) vector -> 'a gen
+    val selectL : 'a list -> 'a gen
+    val chooseL : 'a gen list -> 'a gen
+    val chooseL' : (int * 'a gen) list -> 'a gen
     val filter : ('a -> bool) -> 'a gen -> 'a gen
     val zip : ('a gen * 'b gen) -> ('a * 'b) gen
     val zip3 : ('a gen * 'b gen * 'c gen) -> ('a * 'b * 'c) gen

@@ -43,7 +43,7 @@ end
    once in a functor, and instantiate it for each type we want to
    check. *)
 
-functor TestFromToString (T : FROM_TO) = struct
+functor TestFromToString (T : FROM_TO) : sig end = struct
 open QCheck 
 
 fun rcheck tag gen show prop =
@@ -77,15 +77,14 @@ end
 (* Let's try it on a few simple types: booleans, characters, and
    strings. *)
 
-structure CVS = CharVectorSlice
 structure BFT = TestFromToString
    (open QCheck Bool 
     val name = "Bool"
     type t = bool
     val eqT = op=
     fun eqStr(s1,s2) = 
-        CVS.map Char.toLower (CVS.slice(s1,0,SOME 4)) = 
-        CVS.map Char.toLower (CVS.slice(s2,0,SOME 4))
+        String.map Char.toLower (String.substring(s1,0,4)) =
+        String.map Char.toLower (String.substring(s2,0,4))
     val valid = ["false", "true", "False", "True", "falsey", "truer",
                  "FALSE", "TRUE", "FaLsE", "tRuE"]
     val invalid = ["", "f", "t", "y", "n", "notfalse"]
@@ -122,15 +121,14 @@ structure D = TestFromToString
    (open QCheck Date
     val name = "Date"
     type t = date
-    val eqT : t*t->bool = op=
+    fun eqT(d1,d2) = Date.compare(d1,d2) = EQUAL
     val genT = Gen.DateTime.dateFromYear (Gen.range (1980, 2010))
     (* avoid day of week when comparing *)
     fun eqStr(s1,s2) = 
-        CVS.vector (CVS.slice(s1,3,NONE)) = 
-        CVS.vector (CVS.slice(s2,3,NONE))
+        String.extract(s1,3,NONE) = String.extract(s2,3,NONE)
     fun genStr r = 
-        let val(dow,r) = Gen.select #["Mon", "Thu", "Sat"] r
-            val(mon,r) = Gen.select #["Jan", "Feb", "Dec"] r
+        let val(dow,r) = Gen.selectL ["Mon", "Thu", "Sat"] r
+            val(mon,r) = Gen.selectL ["Jan", "Feb", "Dec"] r
             val(day,r) = Gen.range(1,28) r
             val day = StringCvt.padLeft #" " 2 (Int.toString day)
             val(h,r) = Gen.range(0,23) r
@@ -146,7 +144,7 @@ structure D = TestFromToString
 (* To test the various Integer types, we'll use the following functor
    as an adaptor. *)
 
-functor IntFromTo(I : INTEGER) =
+functor IntFromTo(I : INTEGER) : FROM_TO =
 struct
   open QCheck I
   type t = int
@@ -166,7 +164,7 @@ struct
                              Gen.charFrom "0123456789")
     (* to compare strings, we need to drop leading "0"s *)
   fun zerop #"0" = true | zerop _ = false
-  val dropZeros = Substring.dropl zerop o Substring.all
+  val dropZeros = Substring.dropl zerop o Substring.full
   fun eqStr (s1,s2) = 
       Substring.compare(dropZeros s1, dropZeros s2) = EQUAL
 
@@ -174,9 +172,6 @@ struct
   val invalid = ["", "aabc", "  a3"]
 end
 
-structure I1 = TestFromToString(IntFromTo(Int))
-structure I2 = TestFromToString(IntFromTo(Int32))
-structure I3 = TestFromToString(IntFromTo(IntInf))
 
 
 (***

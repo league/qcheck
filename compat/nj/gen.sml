@@ -6,6 +6,19 @@
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
+signature GENERATOR =
+sig include TEXT_GENERATOR
+    structure Int : INT_GENERATOR
+    structure Int32 : INT_GENERATOR
+    structure IntInf : INT_GENERATOR
+    structure Word : WORD_GENERATOR
+    structure Word8 : WORD_GENERATOR
+    structure Word32 : WORD_GENERATOR
+    structure Real : REAL_GENERATOR
+    structure DateTime : DATE_TIME_GENERATOR
+    val stream : stream
+end
+
 functor GeneratorFn(R : APPLICATIVE_RNG) : GENERATOR =
 struct
   local 
@@ -24,10 +37,11 @@ struct
     structure WideText = GenText(open Gen structure Text=WideText)
   *)
     open Gen
-    val stream = start (R.seed(Time.now()))
+    val stream = start (R.new())
   end
     type rand = R.rand
     type 'a gen = rand -> 'a * rand
     type ('a, 'b) co = 'a -> 'b gen -> 'b gen
 end
 
+structure RandGen = GeneratorFn(Rand')

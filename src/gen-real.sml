@@ -37,7 +37,7 @@ fun mk r =
         (valOf(Real.fromString x), r)
     end
 
-val pos = choose' #[(1, lift Real.posInf),
+val pos = chooseL' [(1, lift Real.posInf),
                     (1, lift Real.maxFinite),
                     (1, lift Real.minPos),
                     (1, lift Real.minNormalPos),
@@ -46,10 +46,10 @@ val pos = choose' #[(1, lift Real.posInf),
 val neg = map Real.~ pos
 
 val zero = Real.fromInt 0
-val nonneg = choose' #[(1, lift zero), (ratio, pos)]
-val nonpos = choose' #[(1, lift zero), (ratio, neg)]
+val nonneg = chooseL' [(1, lift zero), (ratio, pos)]
+val nonpos = chooseL' [(1, lift zero), (ratio, neg)]
 
-val real = choose #[nonneg, nonpos]
+val real = chooseL [nonneg, nonpos]
 
 val finite = filter Real.isFinite real
 

@@ -1,7 +1,18 @@
+signature SUBSTRING =
+sig include Substring
+    val full : string -> substring
+end
+
+structure Substring =
+struct
+    open Substring
+    val full = all
+end
+
 signature TEXT =
 sig structure Char            : Char
     structure String          : String
-    structure Substring       : Substring
+    structure Substring       : SUBSTRING
 end
 
 structure Text : TEXT =

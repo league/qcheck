@@ -25,6 +25,10 @@ in fun choose v r =
    fun select v = choose (map lift v)
 end
 
+fun chooseL l = choose (Vector.fromList l)
+fun chooseL' l = choose' (Vector.fromList l)
+fun selectL l = select (Vector.fromList l)
+
 fun zip (g1,g2) r = 
     let val (x1,r) = g1 r
         val (x2,r) = g2 r
@@ -56,8 +60,8 @@ fun filter p gen r =
      in loop(gen r)
     end
 
-val flip = select #[true, false]
-fun flip' (p,q) = choose' #[(p, lift true),
+val flip = selectL [true, false]
+fun flip' (p,q) = chooseL' [(p, lift true),
                             (q, lift false)]
 
 fun list flip g r =

@@ -21,14 +21,19 @@ end
 
 fun smallp file = OS.FileSys.fileSize file < 128
 
-fun ck(name,pat,p) = 
-    check (FileSys.match pat FileSys.nextFile, SOME(fn s => s))
+structure Regex = RegExpFn(structure P = AwkSyntax
+                           structure E = BackTrackEngine)
+val rc = Regex.compileString
+fun match r = isSome o StringCvt.scanString (Regex.find r)
+
+fun ck(name,re,p) = 
+    check (FileSys.filter (match re) FileSys.nextFile, SOME(fn s => s))
           (name, trivial smallp (pred p))
           (FileSys.openDir "tests/data")
           handle exn as OS.SysErr _ =>
                  raise Fail "tests.cm should be run from source root"
 
-val _ = ck("ML compiler accepts", "\\.acc$", compiles)
-val _ = ck("ML compiler rejects", "\\.rej$", not o compiles)
+val _ = ck("ML compiler accepts", rc "\\.acc$", compiles)
+val _ = ck("ML compiler rejects", rc "\\.err$", not o compiles)
 
 end

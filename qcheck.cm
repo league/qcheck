@@ -1,32 +1,39 @@
-(*Group *)
 Library
   structure QCheck
   functor GenInt
-
   structure PerlStyle
   structure CMStyle
 is
 
-qcheck.sig
-qcheck.sml
-prop.sml 
-filesys.sml
-settings.sml
-bag.sml
+src/gen-sig.sml
+src/gen-int.sml
+src/settings.sml
+src/bag.sml
+#if(defined(SMLNJ_VERSION))
+#else
+compat/mlton/strbag.sml
+compat/moscow/rand.sml
+#endif
+src/prop-sig.sml
+src/prop.sml
+src/perl-style.sml
+src/cm-style.sml
+src/gen-base.sml
+src/gen-text.sml
+src/gen-word.sml
+src/gen-real.sml
+src/gen-date.sml
+compat/nj/gen.sml
+compat/nj/basis.sml
+src/filesys-sig.sml
+src/filesys.sml
+src/settings-sig.sml
+src/qcheck-sig.sml
+src/qcheck.sml
 
-gen/base.sml
-gen/date.sml
-gen/gen.sig
-gen/gen.sml
-gen/int.sml
-gen/random.sml
-gen/real.sml
-gen/text.sml
-gen/word.sml
-
-styles :dir
-
-$/basis.cm
-$/smlnj-lib.cm
-$/regexp-lib.cm
-$/controls-lib.cm
+#if(defined(SMLNJ_VERSION))
+   compat/nj/strbag.sml
+   compat/nj/rand.sml
+   $/basis.cm
+   $/smlnj-lib.cm
+#endif

@@ -1,0 +1,17 @@
+# -*- Makefile -*-
+SML = sml
+CM = .cm
+
+default: 
+	echo 'CM.stabilize true "qcheck.cm";' | $(SML)
+all: default
+test: 
+	$(SML) -m tests/tests.cm </dev/null
+
+mostlyclean:
+	$(RM) -r {src,tests,compat/nj}/$(CM)
+
+clean: mostlyclean
+	$(RM) -r $(CM)
+
+realclean: clean

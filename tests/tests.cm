@@ -1,9 +1,16 @@
-Group is 
-
-.:dir
-
+Group is
 ../qcheck.cm
+reverse.sml
+compose.sml
+from-to-str.sml
 
-$/basis.cm 
-$/regexp-lib.cm
-$smlnj/compiler/compiler.cm
+#if(defined(SMLNJ_VERSION))
+  from-to-nj.sml
+  compiler.sml
+  regex.sml
+  $/basis.cm 
+  $/regexp-lib.cm
+  $smlnj/compiler/compiler.cm
+#else
+  from-to-mlton.sml
+#endif

@@ -11,8 +11,8 @@ struct
 
 open Gen Date
 
-val weekday = select #[Mon, Tue, Wed, Thu, Fri, Sat, Sun]
-val month = select #[Jan, Feb, Mar, Apr, May, Jun, 
+val weekday = selectL [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+val month = selectL [Jan, Feb, Mar, Apr, May, Jun, 
                      Jul, Aug, Sep, Oct, Nov, Dec]
 
 fun dateFromYear year r = 

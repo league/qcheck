@@ -1,10 +1,14 @@
 VERSION=0.7
-SML=sml
-default: 
-.PHONY: tests doc tar
 
-tests:
-	$(SML) -m tests/tests.cm </dev/null
+define each-ml
+  for m in nj moscow mlton; do $(MAKE) -f Makefile.$$m $@; done
+endef
+
+default: 
+all:
+	$(each-ml)
+test:
+	$(each-ml)
 
 doc: README.html
 
@@ -17,9 +21,15 @@ tar: reallyclean
 	      && cp -r qcheck qcheck-$(VERSION) \
 	      && tar cvzf qcheck-$(VERSION).tgz qcheck-$(VERSION)
 
-clean:
-	-rm -f *~ */*~ */*/*~
+mostlyclean: master.mostlyclean
+	$(each-ml)
+clean: master.clean
+	$(each-ml)
+realclean: master.realclean
+	$(each-ml)
 
-reallyclean: clean
-	-rm -rf .cm */.cm
+master.mostlyclean:
+	$(RM) compat/*/*~ doc/*~
+master.clean: master.mostlyclean
+master.realclean: master.clean
 

@@ -41,6 +41,6 @@ fun cochar c =
 fun cosubstring s =
     Substring.foldr (fn(c,v) => cochar c o v) (variant 0) s
 
-fun costring s = cosubstring (Substring.all s)
+fun costring s = cosubstring (Substring.full s)
 
 end

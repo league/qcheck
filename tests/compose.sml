@@ -6,7 +6,7 @@
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-structure TestCompose = struct
+structure TestCompose : sig end  = struct
 open QCheck 
 
 (* This is another example from the QuickCheck (Haskell) paper.  We

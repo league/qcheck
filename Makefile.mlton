@@ -1,0 +1,18 @@
+# -*- Makefile -*-
+MLTON = mlton
+EXE = tests/tests
+
+default: 
+all: $(EXE)
+test: all
+	$(EXE)
+
+$(EXE):
+	$(MLTON) -output $@ tests/tests.cm
+
+mostlyclean:
+
+clean: mostlyclean
+	$(RM) $(EXE)
+
+realclean: clean

@@ -36,7 +36,7 @@ let fun mk r =
         end
  in case extremum
      of NONE => mk
-      | SOME n => choose' #[(1, lift n), (ratio, mk)]
+      | SOME n => chooseL' [(1, lift n), (ratio, mk)]
 end
 
 val pos = pos_or_neg (fn x => x) Int.maxInt
@@ -45,9 +45,9 @@ val z = Int.fromInt 0
 val two = Int.fromInt 2
 val zero = lift z
 
-val nonneg = choose' #[(1, zero), (ratio, pos)]
-val nonpos = choose' #[(1, zero), (ratio, neg)]
-val int = choose #[nonneg, nonpos]
+val nonneg = chooseL' [(1, zero), (ratio, pos)]
+val nonpos = chooseL' [(1, zero), (ratio, neg)]
+val int = chooseL [nonneg, nonpos]
 
 fun coint n = 
     if n = z then variant 0
