@@ -20,7 +20,7 @@ end
 
 open Property 
 
-type ('a,'b) stream = 'b -> ('a * 'b) option
+type ('a,'b) reader = 'b -> ('a * 'b) option
 type 'a rep = ('a -> string) option
 
 fun check' s0 (next, show) (tag, prop) =

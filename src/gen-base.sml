@@ -11,6 +11,7 @@ struct
 
 open R
 type 'a gen = rand -> 'a * rand
+type ('a,'b) reader = 'b -> ('a * 'b) option
 
 fun lift obj r = (obj, r)
 

@@ -1,10 +1,12 @@
 # -*- Makefile -*-
 PERL = perl
+EMACS = emacs
 
 SML = sml
 CM = .cm
 
 MOSMLC = mosmlc
+MOSML = mosml
 MOSMLFLAGS =
 MOSMAKE = compat/moscow/mosmake
 MOSMAKEDIRS = src compat/moscow tests
@@ -14,10 +16,20 @@ MLTON = mlton
 MAJOR=0
 MINOR=8
 VERSION=$(MAJOR).$(MINOR)
+RELEASED=September 2004
 
 src/qcheck-ver.sml: Makefile.version
 	echo 'structure QCheckVersion = struct'       >$@
 	echo 'val version = ($(MAJOR),$(MINOR)) end' >>$@
 
 doc/qcheck-ver.texi: Makefile.version
-	echo '@set VERSION $(VERSION)' >$@
+	echo '@set VERSION $(VERSION)'    >$@
+	echo '@set RELEASED $(RELEASED)' >>$@
+
+doc/sml-ver.texi: Makefile.version
+	echo '@item'  >$@
+	$(SML) </dev/null | head -1 >>$@
+	echo '@item'  >>$@
+	$(MOSMLC) -v | grep 'compiler version' >>$@
+	echo '@item'  >>$@
+	$(MLTON) >>$@

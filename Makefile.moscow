@@ -4,5 +4,12 @@ all: default
 test: all
 	./compose
 
+MOSML_INVOKE=$(MOSML) -I src -I compat/moscow
+doc/mosml.texi: doc/mosml.texin default
+	echo '@example' >$@
+	echo '% $(MOSML_INVOKE)' >>$@
+	echo '@end example' >>$@
+	$(PERL) -- doc/transcribe.pl $(MOSML_INVOKE) <$< >>$@
+
 include Makefile.version
 include $(MOSMAKE)/Makefile.inc

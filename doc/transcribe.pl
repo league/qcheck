@@ -7,22 +7,21 @@ my $cmd = shift @ARGV;
 $Expect::Log_Stdout = 0;
 my $ml = new Expect;
 $ml->raw_pty(1);
-$ml->spawn($cmd, "qcheck.cm")
-    or die "Cannot spawn sml: $!\n";
-$ml->expect(undef, '-re', '^- ');
-
+$ml->spawn($cmd, @ARGV)
+    or die "Cannot spawn $cmd: $!\n";
+$ml->expect(undef, '-re', '- ');
 my $line = 0;
-while(<>)
+while(<STDIN>)
 {
     print "\@c THIS FILE IS AUTO-GENERATED; DO NOT EDIT!\n"
-        if $line++ == 1;
+        if $line++ == 1 or /^\@node/;
     if(/^\@transcript/) 
     {
         my $verbosity = 2;
         $verbosity = 1 if /quiet/;  # show input only, ignore output
         $verbosity = 0 if /omit/;   # omit entire block, just pipe to ML
         print "\@example\n" if $verbosity > 0;
-        while(<>)
+        while(<STDIN>)
         {
             last if /^\@end transcript/;
             print $_ if $verbosity > 0;
@@ -37,7 +36,8 @@ while(<>)
     }
     else { print; }
 }
-$ml->send("OS.Process.exit 0 : unit;\n");
+$ml->send(($cmd =~ /mosml$/)? "quit();\n" :
+          "OS.Process.exit 0 : unit;\n");
 $ml->soft_close();
 exit 0;
 
