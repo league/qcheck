@@ -58,6 +58,6 @@ let
  in {status=status, finish=finish}
 end
 
-val()= StyleRep.register {name="CM", ctor=new}
+val style = {name="CM", ctor=new}
 
 end

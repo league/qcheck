@@ -1,0 +1,2 @@
+perl: ../{prop,settings,compat/moscow/strbag}
+cm: ../{prop,settings}

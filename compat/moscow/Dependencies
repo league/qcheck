@@ -1,0 +1,4 @@
+gen: basis rand ../../gen/{gen-sig,base,text,int,word,date}
+strbag: ../../bag
+basis:
+rand: ../../gen/gen-sig

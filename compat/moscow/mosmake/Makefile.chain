@@ -1,0 +1,38 @@
+# $Id: Makefile.chain,v 1.2 2002/11/18 23:58:17 makholm Exp $
+#
+# Include this from a subdirectory makefile, having first set
+# DOWN = foo/bar/baz
+# UP   = cd ../../..
+# LOCAL = (possibly a list of files that can be made locally)
+#
+# This makefile fragment is distributed with the Mosmake system,
+# but is not itself part of the system. You should probably copy it
+# to the main project directory, such that you can adjust the suffix
+# heuristics below to fit your project.
+#
+# Written by Henning Makholm in 2002.
+# All copyright interest in this makefile is explicitly waived.
+#
+# This makefile is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  You get it
+# for free; don't bother me about it.
+
+phony_ALL: ; cd $(UP); $(MAKE)
+
+COMMA = ,
+LTGTS = phony_LOCAL $(LOCAL) $(patsubst %,%$(COMMA)smartmade,$(LOCAL))
+
+.SUFFIXES:
+$(LTGTS): %:    phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+%.uo:           phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+%.uo,smartmade: phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+%.ui:           phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+%.ui,smartmade: phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+%.o:            phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+%.o,smartmade:  phony_FORCE ; cd $(UP); $(MAKE) $(DOWN)/$@
+
+.DEFAULT:       phony_FORCE ; cd $(UP); $(MAKE) $@
+
+.PHONY: phony_FORCE phony_ALL
+phony_FORCE:

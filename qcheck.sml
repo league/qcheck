@@ -15,8 +15,7 @@ structure Gen = RandGen
 structure FileSys = FileSys
 structure Settings = struct
   open Settings
-  val style' = ctl("style", "Output style", PerlStyle.style)
-  val style = stringControl StyleRep.cvt style'
+  val style = ref PerlStyle.style
 end
 
 open Property 
@@ -26,7 +25,7 @@ type 'a rep = ('a -> string) option
 
 fun check' s0 (next, show) (tag, prop) =
 let 
-    val {status, finish} = #ctor (Settings.get Settings.style') tag
+    val {status, finish} = #ctor (Settings.get Settings.style) tag
 
     val rep = case show 
      of NONE => (fn _ => NONE)

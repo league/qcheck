@@ -1,0 +1,41 @@
+$Id: README,v 1.1 2002/11/18 23:58:17 makholm Exp $ -*- text -*-
+
+This is Mosmake, a makefile infrastructure that helps manage the
+(re)compilation of programs written in Moscow ML 2.0. It needs GNU
+make and Perl to work. See mosmake.dvi or mosmake.info for more
+information.
+
+Copyright (c) 2002 Henning Makholm
+All rights reserved.
+
+Mosmake is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+Mosmake is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+Installation instructions
+=========================
+
+The `mosmake-X.Y.tar.gz' tarball unpacks to a directory `mosmake-X.Y'
+with several files in it. Copy all the files to a suitable
+subdirectory of your own project directory, and follow the instructions
+in the manual.
+
+It only makes limited sense to install Mosmake centrally at a site,
+except as a source for copying into project directories. You _can_ use
+Mosmake as installed in a central location, but if you distribute your
+code without a copy of Mosmake, your users will not be able to build
+it. So you might as well copy it to your project.
+
+If you're concerned about space, you can remove the files
+`mosmake.dvi', `mosmake.info' and `mosmake.info-NNN'; they are
+formatted versions of this manual. A further saving could be obtained
+by also removing the _source_ of the manual, which is `mosmake.txi0',
+but doing so would be a disservice to people who want to play with
+change in your program, because the build process will be completely
+mysterious without documentation.

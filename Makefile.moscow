@@ -1,0 +1,6 @@
+MOSMLC = mosmlc
+PERL = perl
+MOSMLFLAGS =
+MOSMAKE = compat/moscow/mosmake
+MOSMAKEDIRS = . styles gen compat/moscow
+include $(MOSMAKE)/Makefile.inc

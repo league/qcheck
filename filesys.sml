@@ -19,9 +19,9 @@ fun nextFile(d,ds) =
       of NONE => NONE before OS.FileSys.closeDir ds
        | SOME file => SOME(OS.Path.joinDirFile {dir=d, file=file}, (d,ds))
 
-type filestream = TextIO.StreamIO.instream
-val openFile = TextIO.getInstream o TextIO.openIn
-val nextLine = TextIO.StreamIO.inputLine
+type filestream = TextStreamIO.instream
+val openFile = TextStreamIO.getInstream o TextIO.openIn
+val nextLine = TextStreamIO.inputLine
 
 fun map f get strm =
     case get strm of NONE => NONE
@@ -31,14 +31,6 @@ fun filter p get strm =
     case get strm of NONE => NONE
                    | SOME(x, strm) => if p x then SOME(x, strm)
                                       else filter p get strm
-
-structure Regex = RegExpFn(structure P = AwkSyntax
-                           structure E = BackTrackEngine)
-fun match pat =
-let val re = Regex.compileString pat
-    val match' = isSome o StringCvt.scanString (Regex.find re)
- in filter match'
-end
 
 fun chop' s = 
     if size s = 0 then s

@@ -1,0 +1,65 @@
+#! /bin/sh
+# $Id: dos,v 1.1 2002/11/16 21:08:13 makholm Exp $
+#
+# This is a wrapper for mosmake.wrap used by the Mosmake system.
+# It is used on DOS-based system with tight limits to how long a mosmlc
+# command line can be; there it rewrites the command line to use a
+# response file before chaining to mosmake.wrap
+# The command line arguments are the same as for mosmake.wrap, typically
+#     mosmake/dos foo/bar baz.ui mosmlc -c d1.ui d2.ui baz.sig
+# which gets rewritten to
+#     mosmake/wrap foo/bar baz.ui mosmlc -c -files rsp9999.tmp
+# while the file foo/bar/rsp9999.tmp is created
+#
+# Copyright (c) 2002 Henning Makholm
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+case "$3" in
+    *mosmlc) ;; # yes, do the rewriting
+    *) exec $MOSMAKE/wrap "$@" ;;
+esac
+dir0="$1" ; shift
+file="$1" ; shift
+justexec=exec
+state=0
+for param in "$@"
+do
+    case "x$param" in
+        x-*)  mlfile=N ;;
+        *.uo) mlfile=Y ;;
+        *)    mlfile=N ;;
+    esac
+    case "$state$mlfile" in
+        0*) set dummy "$param"
+            state=1
+    ;;  1N) set "$@" "$param"
+    ;;  1Y) respfile=rsp$$.tmp
+            # the response file should not be in /tmp/ for security reasons:
+            # a villain could sneak a trojan into the linked program otherwise.
+            set "$@" -files $respfile
+            justexec=
+            respfile="$dir0/$respfile"
+            echo "$param" > $respfile
+            state=2
+    ;;  2Y) echo "$param" >> $respfile
+    ;;  2N) set "$@" "$param"
+            state=3
+    ;;  3*) set "$@" "$param"
+    ;;
+    esac
+done
+shift # to get rid of the "dummy" inserted in the 0*) case
+$justexec $MOSMAKE/wrap "$dir0" "$file" "$@"
+exitval=$?
+rm $respfile
+exit $exitval

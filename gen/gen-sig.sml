@@ -8,7 +8,7 @@
 
 signature APPLICATIVE_RNG = 
 sig type rand
-    val seed : Time.time -> rand
+    val new : unit -> rand
     val range : int * int -> rand -> int * rand
     val split : rand -> rand * rand
 end
@@ -20,8 +20,10 @@ sig type rand
 end
 
 signature GENERATOR' = 
-sig include APPLICATIVE_RNG
+sig (* include APPLICATIVE_RNG*)
     include GEN_TYPES
+    val new : unit -> rand
+    val range : int * int -> rand -> int * rand
     val lift : 'a -> 'a gen
     val select : 'a vector -> 'a gen
     val choose : 'a gen vector -> 'a gen
@@ -74,8 +76,8 @@ end
 
 signature TEXT_GENERATOR = TEXT_GENERATOR'
   where type char = char
-  where type string = string
-  where type substring = substring
+    and type string = string
+    and type substring = substring
 
 signature INT_GENERATOR =
 sig include GEN_TYPES
@@ -114,17 +116,4 @@ sig include GEN_TYPES
     val dateFromYear : int gen -> Date.date gen
     val dateFromUTC : Date.date gen  (* broken? *)
     val time : Time.time gen
-end
-
-signature GENERATOR =
-sig include TEXT_GENERATOR
-    structure Int : INT_GENERATOR
-    structure Int32 : INT_GENERATOR
-    structure IntInf : INT_GENERATOR
-    structure Word : WORD_GENERATOR
-    structure Word8 : WORD_GENERATOR
-    structure Word32 : WORD_GENERATOR
-    structure Real : REAL_GENERATOR
-    structure DateTime : DATE_TIME_GENERATOR
-    val stream : stream
 end

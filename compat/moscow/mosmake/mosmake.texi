@@ -1,0 +1,1838 @@
+\input texinfo   @c -*- texinfo -*-
+@c $Id: mosmake.texi,v 1.3 2002/11/18 23:58:17 makholm Exp $
+@c %**start of header
+@setfilename mosmake.info
+@settitle Mosmake
+@afourpaper
+@c %**end of header
+
+Copyright @copyright{} 2002 Henning Makholm.
+
+This manual is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This manual is distributed in the hope that it will be useful,
+but @emph{without any warranty}; without even the implied warranty of
+@emph{merchantability} or @emph{fitness for a particular purpose}.  See the
+GNU General Public License for more details.
+
+@macro thismanualdescribes
+This manual describes the Mosmake system, version 0.9. If and when I
+learn that Mosmake is being used to build at least three projects that
+I'm not codeveloping, I'll bump the version number to 1.0...
+
+Mosmake is a makefile infrastructure that helps manage the
+(re)compilation of programs written in Moscow ML 2.0.
+It needs GNU make and Perl to work.
+@end macro
+
+@titlepage
+@title Mosmake
+@author Henning Makholm
+(henning@@makholm.net)
+@vskip 0pt plus1filll
+@thismanualdescribes
+@end titlepage
+@contents
+   
+@ifnottex
+@node Top, Intro, (dir), (dir)
+@thismanualdescribes
+
+@menu
+* Intro::                       What is Mosmake?
+* Manual::                      How to use Mosmake
+* Legal::                       Legal terms and small print
+* Changelog::                   History of Mosmake
+* Index::                       Index
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+What is Mosmake?
+
+* Advantages::                  Why do I want to use it?
+* Disadvantages::               Reasons not to use Mosmake
+* Alternatives::                Alternatives to Mosmake
+
+How to use Mosmake
+
+* Example::                     A crash course for the impatient
+* Separate::                    How Mosmake supports separate compilation
+* Structure::                   Choosing between structure and toplevel mode
+* Binaries::                    Building more than one program
+* Generated::                   How deal with generated source files
+* Macros::                      Ways to cope with long dependency lists
+* Makefile::                    The interface between Mosmake and @file{Makefile}
+* Options::                     Specifying extra options for @command{mosmlc}
+* Libraries::                   Linking with external libararies
+* Directories::                 Cross-directory support
+* Non-Unix::                    Mosmake on non-unix platforms
+
+Separate Compilation
+
+* Simple model::                Just the @file{@var{foo}.sml} file
+* Native model::                @file{@var{foo}.sml} @math{+} @file{@var{foo}.sig}
+* Full model::                  @file{@var{foo}.sml} @math{+} @file{@var{foo}-sig.sml} @math{+} @file{@var{foo}.sig}
+* Hybrid model::                @file{@var{foo}.sml} @math{+} @file{@var{foo}-sig.sml}
+
+* Which model?::                How Mosmake finds out which model you use
+* Smartmake::                   Intelligenly avoid spurious recompilations
+
+Generated source files
+
+* mosmllex::                    The @command{mosmllex} lexer generator
+* mosmlyac::                    The @command{mosmlyac} parser generator
+* Generic::                     Other ways of generating files
+
+How Mosmake interfaces with the @file{Makefile}
+
+* Targets::                     Makefile targets defined by Mosmake
+* Variables::                   Makefile variables used by Mosmake
+* Peers::                       Mosmake and other makefile generators
+* Implicit::                    Implicit rules you avoid colliding with
+
+@end detailmenu
+@end menu
+
+@end ifnottex
+
+@c ----------------------------------------------------------------------------
+@node Intro, Manual, Top, Top
+@chapter What is Mosmake?
+
+@cindex Mosmake
+Mosmake is what I call a @dfn{makefile infrastructure} for compiling
+programs with Moscow ML 2.0. The most productive way to think of it is
+as a makefile generator@footnote{Actually, Mosmake is more than a
+makefile generator, because it also contains some small shell scripts
+that get sandwiched between @command{make} and @command{mosmlc} during
+the compilation. It's not that you need to worry about them a lot, but
+they are there and they do cool things, apart from preventing Mosmake
+from being ``just'' a makefile generator.}: You write down the
+dependencies between your SML units in a simple, terse format, and
+Mosmake will expand them to a makefile fragment that invokes the
+@command{mosmlc} command-line compiler with the appropriate arguments to
+compile and link your program. (If you have tried to hand-write
+@file{Makefile}s that do this correctly, you'll know that this is not as
+simple as it sounds. If you haven't, just trust me).
+
+Actually,
+
+@menu
+* Advantages::                  Why do I want to use it?
+* Disadvantages::               Reasons not to use Mosmake
+* Alternatives::                Alternatives to Mosmake
+@end menu
+
+@c ----------------------------------------------------------------------------
+@node Advantages, Disadvantages, Intro, Intro
+@section Why do I want to use it?
+
+Well, basically because it's the best thing since sliced bread. But if
+you want specifics, here is a list of features:
+
+@itemize @bullet
+@item
+Mosmake is written to work with the new ``toplevel mode'' of Moscow ML
+2.0. Toplevel mode is what allows you to use the full SML modules
+language (and then a bunch, but that's not our point here) instead of
+the simplified subset that Moscow ML supported in 1.44 and earlier
+versions.
+
+@item
+Units written with the old ``structure mode'' conventions are
+supported too. @xref{Structure}.
+
+@item
+The SML sources for the project can be split across several
+subdirectories. Mosmake transparently handles the task of fitting
+together cross-directory compilations. @xref{Directories}.
+
+@item
+When used with GNU @command{make} 3.80 or newer, Mosmake will
+intelligently prune parts of the rebuild process that turn out to be
+unnecessary even tough that was not implied by the file modification
+dates. If you change an interface, you won't trigger recompilation of
+units that depend on it only indirectly. You can change comments and
+layout without any cascading recompilations at all.
+@xref{Smartmake}.
+
+@item
+Mosmake creates well-behaved makefile fragments that works together with
+your own rules for the rest of the build process. You can add your own
+rules to compile C programs, handling installation and configuration,
+running the SML programs compiled with Mosmake, build SML source files
+mechanically, or all of this at once. Mosmake can peacefully coexist
+with a master @file{Makefile} managed by
+@command{autoconf}. @xref{Peers}.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Disadvantages, Alternatives, Advantages, Intro
+@section Reasons not to use Mosmake
+
+@cindex portability
+@cindex platforms
+
+@itemize @bullet
+@item
+@cindex GNU make
+@cindex @command{make} implementations
+The only @command{make} implementation it's known to work with is GNU make.
+
+@item
+You need a way to run Bourne shell scripts. In Windows this probably
+means you need to install Cygwin or some other Un*x emulation.
+@xref{Non-Unix}.
+
+@item
+@cindex Perl
+You need Perl to run the makefile-generating part of Mosmake.
+
+@item
+@cindex read-eval-print loop
+Mosmake assumes that your SML code forms a program that runs by itself
+and does its own I/O. If, instead, your project just provides a bunch of
+functions that the end user is supposed to interact with through the SML
+read-eval-print loop, Mosmake may not be the thing for you.
+
+@item
+@cindex @code{VPATH}
+Mosmake doesn't support @code{VPATH} builds. (@code{VPATH} is a
+@command{make} feature that lets you build a project with object code,
+binaries and other generated files being placed in a work directory
+hierarchy that parallels a separate read-only source tree). Implementing
+this would be a lot of work because Moscow ML has no good support for
+putting the object-code files anywhere but right next to the source.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Alternatives,  , Disadvantages, Intro
+@section Alternatives to Mosmake
+
+Here are some alternative ways to have done what Mosmake does for you:
+
+@itemize @bullet
+@item
+@cindex @command{mosmldep} tool
+@cindex automatic dependency tracking
+Moscow ML itself ships with a tool called @command{mosmldep} that
+creates a makefile fragment based on a simple analysis of the contents
+@file{.sml} and @file{.sig} files. It has the advantage over Mosmake
+that it tracks dependencies automatically. On the other hand, it only
+works for structure-mode units (an obvious shortcoming), and it does not
+support multiple directories either. I used it once, and it must have
+had more problems than these, because I remember ending up with writing
+a Perl postprocessor that converted its output into something
+better. (This postprocessor can count as the earliest ancestor of
+Mosmake). Don't ask me for details, though.
+
+@item
+Write your @file{Makefile} by hand. If you manage to do this for a project
+larger than 5 units such that you never fail to recompile something
+that must be recompiled, yet also avoid a lot of spurious
+recompilations, you'll earn my respect.
+
+@item
+Don't use @command{make} at all. Type in @command{mosmlc} commands by
+hand, or write a script that just recompiles everything from scratch
+unconditionally.
+
+@item
+Use another ML implementation.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Manual, Legal, Intro, Top
+@chapter How to use Mosmake
+
+@menu
+* Example::                     A crash course for the impatient
+* Separate::                    How Mosmake supports separate compilation
+* Structure::                   Choosing between structure and toplevel mode
+* Binaries::                    Building more than one program
+* Generated::                   How deal with generated source files
+* Macros::                      Ways to cope with long dependency lists
+* Makefile::                    The interface between Mosmake and @file{Makefile}
+* Options::                     Specifying extra options for @command{mosmlc}
+* Libraries::                   Linking with external libararies
+* Directories::                 Cross-directory support
+* Non-Unix::                    Mosmake on non-unix platforms
+@end menu
+
+@node Example, Separate, Manual, Manual
+@section A Simple Example
+
+Let's begin with a simple example to show how Mosmake works. Imagine
+that you have a program consisting of four SML source files.
+@file{data.sml} defines your basic data structures;
+@file{read.sml} and @file{write.sml} contains the actual code and both
+reference stuff exported by @file{data.sml}, and @file{stuff.sml} is
+the main program that calls some functions from @file{read.sml} and
+@file{write.sml} but does not directly reference @file{data.sml}.
+
+@cindex Dependencies
+So you want to use Mosmake to compile this project. Put your @file{.sml}
+files in some directory, and create a file called @file{Dependencies}
+which reads
+
+@cindex comments in @file{Dependencies} file
+@example
+data:
+read: data   # This is a comment. Comments span
+write: data  # from the # sign to the end of line
+stuff: read write %PROGRAM
+@end example
+
+@noindent
+This file defines the four units and contains information about which
+units use symbols from which other units. With Mosmake you have to enter
+this information by hand; in practise we've found that this is not as
+big a chore as it sounds.
+The line for @file{stuff} contains, in addition to the dependencies on
+@file{read} and @file{write}, the special flag @code{%PROGRAM} which
+tells Mosmake that @file{stuff} is a stand-alone program and not just a
+module.
+
+@cindex @code{include} line in master makefile
+Also, create a @file{Makefile} that contains something like
+
+@example
+MOSMLC  = mosmlc
+PERL    = perl
+MOSMLFLAGS =
+MOSMAKE = mosmake
+include $(MOSMAKE)/Makefile.inc
+@end example
+
+@noindent
+where the definition of the @code{$(MOSMAKE)} variable should be the path
+to the directory where you've installed the files in the Mosmake distribution.
+It can be either an absolute path or relative to your project directory;
+in this example we've put Mosmake in a subdirectory called @file{mosmake}.
+
+Now type @samp{make} -- or if you need to use some other command, like
+@command{gmake}, to launch GNU @command{make} instead of another
+@command{make} implementation, do that. Mosmake works only with GNU
+@command{make}.
+
+A bunch of stuff happens, culminating in the production of a binary
+called @command{stuff}:
+
+@example
+$ make
+perl mosmake/cooker.pl . > mosmake.dep
+mosmake/wrap ./ 'data.ui data.uo' mosmlc  -toplevel -c data.sml 
+mosmake/wrap ./ 'read.ui read.uo' mosmlc  -toplevel -c data.ui read.sml 
+mosmake/wrap ./ 'write.ui write.uo' mosmlc  -toplevel -c data.ui write.sml 
+mosmake/wrap ./ 'stuff.ui stuff.uo' mosmlc  -toplevel -c read.ui
+        write.ui stuff.sml 
+mosmake/wrap ./ stuff mosmlc  data.uo read.uo write.uo stuff.uo \
+   -o stuff 
+make[1]: `stuff' is up to date.
+$ 
+@end example
+
+Depending on the version of @command{make} you use, the output may look
+slightly different, but the overall pattern should be similar to the
+example shown. So what happened here?
+
+@cindex @file{mosmake.dep}
+First, the Perl script @file{cooker.pl} was executed. It read your
+@file{Dependencies} file and produced a makefile fragment called
+@file{mosmake.dep}. That contains the black magic that tells
+@command{make} how to orchestrate the (re)compilation of
+@command{stuff}. Even for a small project like this, the contents of
+@file{mosmake.dep} is slightly scary; you may want to take a peek at it
+just to enjoy not having to understand it.
+
+Once @file{mosmake.dep} has been generated, @command{make} automatically
+reads its contents and uses it to build @file{stuff}. This is because
+Mosmake's @file{Makefile.inc}, which was included from your @file{Makefile},
+itself includes @file{mosmake.dep} -- and that is also what caused
+@command{make} to run @file{cooker.pl} in the first place, because
+@file{mosmake.dep} was found to be missing or out-of-date with respect
+to @file{Dependencies}. (Got that?)
+
+@cindex @file{wrap}
+Next the @command{mosmlc} command-line compiler is run to compile each
+of the SML modules in turn and then to link the final executable. You
+may notice that the actual command used each time is not
+@command{mosmlc} itself but @command{mosmake/wrap}. This is a small
+wrapper script (hence its name) that helps out with implementing
+the smartmake feature (@pxref{Smartmake}) and with compiling in
+subdirectories (@pxref{Directories}). The actual
+@command{mosmlc} command line begins witht the third argument to
+@command{mosmake/wrap}.
+
+In the final @command{mosmlc} command, note that Mosmake has computed that
+@file{data.uo} must be linked into @file{stuff} even though @file{data}
+is not mentioned in @file{stuff}'s line in @file{Dependencies}. As long
+as everything is in one directory, @command{mosmlc} does not really need
+to be told this, but @command{make} does need to be told that
+@file{stuff} must be relinked if @file{data.uo} changes. Keeping track
+of such dependencies without a tool like Mosmake would be messy ... ok,
+end of commercial break. I'll try to cut down on the preaching in the
+rest of the manual.
+
+@cindex @samp{`foo' is up to date} message
+Finally, an informational message that @file{stuff} is up to date
+appears. This message is basically just fallout from the smartmake
+logic and can be ignored. It has no real information value, except that
+you can use it to see that the smartmake logic is
+enabled. (@xref{Smartmake}, for more info).
+
+@c ----------------------------------------------------------------------------
+@node Separate, Structure, Example, Manual
+@section Separate Compilation
+
+Each of the units defined in the @file{Dependencies} file must use one
+of the four models for separate compilation supported by Mosmake.
+@ifnotinfo
+@ifnothtml
+
+@table @asis
+@item ``Simple'':
+@file{@var{foo}.sml} alone
+@item ``Native'':
+@file{@var{foo}.sml} @math{+} @file{@var{foo}.sig}
+@item ``Full'':
+@file{@var{foo}.sml} @math{+} @file{@var{foo}-sig.sml} @math{+} @file{@var{foo}.sig}
+@item ``Hybrid'':
+@file{@var{foo}.sml} @math{+} @file{@var{foo}-sig.sml}
+@end table
+
+@end ifnothtml
+@end ifnotinfo
+
+@menu
+* Simple model::                Just the @file{@var{foo}.sml} file
+* Native model::                @file{@var{foo}.sml} @math{+} @file{@var{foo}.sig}
+* Full model::                  @file{@var{foo}.sml} @math{+} @file{@var{foo}-sig.sml} @math{+} @file{@var{foo}.sig}
+* Hybrid model::                @file{@var{foo}.sml} @math{+} @file{@var{foo}-sig.sml}
+
+* Which model?::                How Mosmake finds out which model you use
+* Smartmake::                   Intelligenly avoid spurious recompilations
+@end menu
+
+@c ----------------------------------------------------------------------------
+@node Simple model, Native model, Separate, Separate
+@subsection The ``simple'' model
+
+@cindex simple model for separate compilation
+This is the most primitive model: The source code for the unit
+@var{foo} consists of a single file called @file{@var{foo}.sml}. A single
+@command{mosmlc} command translates it into @file{@var{foo}.uo} with compiled
+bytecode and @file{@var{foo}.ui} with @emph{inferred} types (or signatures)
+for the values and functions (or structures) defined by @file{@var{foo}.sml}.
+
+The main problem with this model is that the type information in
+@file{@var{foo}.ui} is inferred rather than speficied directly. If, for
+example @file{@var{foo}.sml} defines some functions that you think of as
+@code{int list -> int list}, perhaps the inferred type for one of them
+will be @code{'a list -> 'a list} instead. Then bugs in dependent units
+that lead them to use your function with a @code{bool list} instead will
+be hard to find. More seriously, a bug in @file{@var{foo}.sml} may lead to one
+of the functions actually being @code{int list -> int list list}. You
+won't get any warning about this bug until you see strange type errors
+in the units that use the function.
+
+Because of this, the ``simple'' model is not recommended for general
+use. There's a few situations where it comes in handy, though:
+
+@itemize @bullet
+@item
+If you're in a hurry and decide to worry about maintainability later.
+
+@item
+For the main unit of a stand-alone program. Such a unit does not export
+anything to other units, so its @file{.ui} file is never read at all.
+
+@item
+For a unit whose main task is to export type and/or signature
+definitions. Here, the @file{.sml} file's job is to explicitly specify
+what goes in the @file{.ui} file; the @file{.uo} file is just an
+inconsequential byproduct.
+
+@item
+For a unit that defines a structure with an opaque signature constraint,
+such that you still have explicit control over what's
+exported. However, there is still a problem in that the @file{.ui} file must
+be remade each time the @emph{implementation} is changed, which could
+lead to a lot of recompilations of dependent units unless you're sure
+that you will never do any serious development on machines where Mosmake's
+smartmake feature (@pxref{Smartmake}) doesn't work.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Native model, Full model, Simple model, Separate
+@subsection The ``native'' model
+
+@cindex native model for separate compilation
+This is Moscow ML's native model. The source code for the unit @var{foo}
+consists of the two files @file{@var{foo}.sml} and @file{@var{foo}.sig}.
+The @file{.sig} file describes the unit's exported interface and is
+compiled separately to @file{@var{foo}.ui}. Later, the @file{.sml} file
+is compiled to produce bytecode in @file{@var{foo}.uo} while checking
+that what the @file{.sml} actually exports match what the @file{.sig}
+file claims.
+
+@cindex @samp{+}
+@cindex plus sign in @file{Dependencies}
+@anchor{plus sign}
+If the unit definition in the @file{Dependencies}
+file contains a @samp{+} that is not part of a unit name (i.e., it must
+be surrounded by whitespace), the units to the left of the @samp{+} will
+only be used for compiling the @file{.sml} file but not the @file{.sig}
+file. The units to the right of the @samp{+} will be used for both
+compilations.  Example. A line
+
+@example
+foo: baz bar + quux
+@end example
+
+@noindent
+in @file{Dependencies} will lead to rules like these in @file{mosmake.dep}:
+
+@example
+foo.ui: baz.ui bar.ui foo.sig
+        mosmlc -c -toplevel baz.ui bar.ui foo.sig
+foo.uo: baz.ui bar.ui quux.ui foo.ui foo.sml
+        mosmlc -c -toplevel baz.ui bar.ui quux.ui foo.sml
+@end example
+
+@noindent
+(execpt that the rules really produced are more complex to take account
+of various bells and whistles like the smartmake feature).
+
+If there is no @samp{+} in the @file{Dependencies} line, all the
+units mentioned will be used to compile the @file{.sig} as well as the
+@file{.sml} file.
+
+For units compiled in ``structure mode'' (@pxref{Structure}) this
+model is ideal, but there is a problem with ``toplevel mode'' (which
+is the default for Mosmake). Namely, if the @file{.sml} file defines a
+@emph{name} that is not mentioned in the @file{.sig} file, you will get
+compiler warnings when compiling the @file{.sml} file. One way to avoid
+this is to wrap internal definitions in @code{local ... in ... end}
+blocks, but that can become unwieldy if the relationship between
+internals and exported functions is complex.
+
+A better way to get rid of the warning would be to use an opaque
+signature constraint (@code{:>}), but here the problem is that the
+signature specified in the @file{.sig} is not in scope during the
+compilation of the @file{.sml} file. @xref{Full model}, for the
+recommended way to solve that problem.
+
+Use the ``native'' model
+
+@itemize @bullet
+@item
+For units originally written for Moscow ML without thought of Mosmake.
+
+@item
+For units whose implementation contain few enough internal definitions
+that you find it manageable to protect them with @code{local} blocks.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Full model, Hybrid model, Native model, Separate
+@subsection The ``full'' model
+
+@cindex full model for separate compilation
+This model is the recommended full bells-and-whistles model for
+Mosmake. It works like the ``native'' model, except that there is a
+@emph{third} file called @file{@var{foo}-sig.sml}. This file is compiled
+to @file{@var{foo}-sig.ui} (and @file{@var{foo}-sig.uo}); thereafter
+@file{@var{foo}-sig.ui} is included in the compilation of
+@file{@var{foo}.sig} and @file{@var{foo}.sml}.
+
+Typically @file{@var{foo}-sig.sml} defines a signature, and
+@file{@var{foo}.sig} contains a single line declaring that
+@file{@var{foo}.sml} exports a unit with that signature. Example:
+
+@noindent
+@file{@var{foo}-sig.sml} contains:
+@example
+signature FOO = sig
+    datatype fuzzy = Yes | Maybe | No
+    val certain : fuzzy -> bool
+    (* ... *)
+end
+@end example
+
+@noindent
+@file{@var{foo}.sig} contains:
+@example
+structure Foo : FOO
+@end example
+
+@noindent
+@file{@var{foo}.sml} contains:
+@example
+structure Foo :> FOO = struct
+    datatype fuzzy = Yes | Maybe | No
+    val internal = "I'm not exported from the unit"
+    fun certain Yes = true
+      | certain _ = false
+    (* ... *)
+end
+@end example
+
+The @file{-sig.sml} file is compiled in the same environment as the
+@file{.sig} file -- that is, the units it may depend on are those before
+the plus sign on the unit's @file{Dependencies} line. @xref{plus sign}.
+
+Use the ``full'' model
+
+@itemize @bullet
+@item
+When you want the full power of Mosmake's separate-compilation management.
+
+@item
+As the default choice for new units where no other model is clearly more
+appropritate, if you value consistency.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Hybrid model, Which model?, Full model, Separate
+@subsection The ``hybrid'' model
+
+This model has a @file{@var{foo}-sig.sml} file but no
+@file{@var{foo}.sig} file.  Thus, it combines the advangages of the
+``full'' model with the disadvantages of the ``simple'' model.
+
+First, @file{@var{foo}-sig.sml} is compiled in the enviroment in which
+@file{@var{foo}.sig} file @emph{would} have been compiled if it existed;
+see @ref{plus sign}. Then @file{@var{foo}.sml} is compiled in an environment
+comprising all the units on its @file{Dependencies} line (ignoring a
+@samp{+} separator if it exists) plus the definitions in
+@file{@var{foo}-sig.sml}.
+
+Use the ``hybrid'' model
+
+@itemize @bullet
+@item
+@cindex SML/NJ
+As a quick(er) way to integrate sources that follow the SML/NJ
+convention of defining a named signature in a file called
+@file{@var{foo}.sig} and using it in a signature constraing in
+@file{@var{foo}.sml}. You will need to rename @file{@var{foo}.sig} to
+@file{@var{foo}-sig.sml}, because @command{mosmlc} assumes that all
+@file{.sig} files belong to the ``native'' model whose @file{.sig}
+syntax won't accept the SML/NJ paradigm.
+
+You also still need to write down the dependencies between the units you
+import by hand. If anyone writes a tool that automatically creates a
+@file{Dependencies} file for Mosmake using dependency information from
+SML/NJ's Compilation Manager, I'd love to hear about it.
+
+@item
+As an alternative to the ``full'' model if you're sure that you'll
+never need to do serious development work on a system where the
+smartmake feature (@pxref{Smartmake}) doesn't work. Then you don't need
+to clutter your directories with @file{.sig} files, and Smartmake makes
+sure that you can change the implementation of a unit witout necessarily
+recompiling the units that depend on it.
+@end itemize
+
+@c ----------------------------------------------------------------------------
+@node Which model?, Smartmake, Hybrid model, Separate
+@subsection How Mosmake finds out which model you use
+
+The four models can be mixed seamlessly; each unit in your project can
+have its own model (until you run out of models to choose from, that is).
+
+@cindex @file{mosmake.dep}, rebuilding
+Which model is used is determined for each unit by Mosmake's
+@file{cooker.pl} script when @file{mosmake.dep} is generated, based on
+whether the @file{.sig} and/or @file{-sig.sml} files exist at that
+time. This means that if you decide to change the mode of one of your
+units, you need to provoke a rebuilding of @file{mosmake.dep}, or the
+compilation will go wrong.
+
+@cindex @samp{make depend}
+The easiest way to trigger the rebuilding is to @command{touch}(1)
+the @file{Dependencies} file, but you can also type @samp{make depend}
+to explictly rebuild @file{mosmake.dep}.
+
+@c ----------------------------------------------------------------------------
+@node Smartmake,  , Which model?, Separate
+@subsection The ``smartmake'' feature
+
+(You may skip this section if you're not curious and you're not going to
+create complex makefiles just yet).
+
+@cindex smartmake
+The preceding sections have been referring to the ``smartmake'' feature
+a lot; what is it, actually? Smartmake is special code to take advantage
+of the fact that
+
+@quotation
+Often, when a @file{.ui} file is remade, the unit interface it describes
+does not actually change.
+@end quotation
+
+@noindent
+Possible reasons why the @file{.ui} needed to be remade include
+@itemize @minus
+@item
+Layout or comments in the corresponding @file{.sig} files were changed.
+@item
+There is no @file{.sig} file, and the @file{.sml} file was edited to
+change the implementation without changing its interface. The @file{.ui}
+got remade as a side-effect of compiling a new @file{.uo} file.
+@item
+Another @file{.ui} file that was necessary to compile this @file{.ui}
+file had a new timestamp without actually changing (or without actually
+changing anything relevant to this unit), so @command{make} considered
+the dependent @file{.ui} file out-of-date.
+@end itemize
+
+Note especially the last item. It means that the mere correction of a
+misspelled comment in a @file{.sig} file at the bottom of the dependency
+hierarchy can trigger a cascade of recompilations that means that most
+units in the program will be recompiled. This has a tendency to make
+programmers wary of fixing documentation errors in such units.
+
+``Smartmake'' is my codeword for a collection of black magic in Mosmake
+that makes @command{make} recognize when a freshly remade @file{.ui}
+file hasn't in fact changed, and thus stop the recompilation cascade at
+that point. Just because we can, the same treatment is applied to
+@file{.uo} files, such that you can fix a comment in an @file{.sml} file
+without needing to redo the entire link step.
+
+@cindex GNU make, bugs in
+Smartmake does not work with versions of GNU @command{make} earlier than
+3.80. The early versions have bugs that prevent the black magic from
+working properly. If Mosmake detects that it runs on an old version of
+@command{make}, Smartmake will be turned off by default.
+Smartmake can be also turned on or off explicitly by giving
+@samp{SMARTMAKE=yes} or @samp{SMARTMAKE=no} on the @command{make}
+command line.
+
+@cindex @command{touch} commands from Smartmake
+@cindex retouching
+When Smartmake decides that a file which @emph{would} have been
+recompiled without Smartmake does not @emph{need} to be recompiled, it
+changes its timestamp such that the next @command{make} will not
+consider it out-of-date again. Thus you'll see a sequence of
+@command{touch} line in the output of @command{make} when Smartmake has
+been in action.
+
+@anchor{smartmade}
+@cindex @code{,smartmade} pseudo-filenames
+So that it can do this retouching, Smartmake must be able to sandwich
+some code in between the toplevel target you give on the @command{make}
+command line, and the actual compilation commands. That means that if
+you just type @samp{make @var{filename}}, the file will be built
+@emph{without} Smartmake, even if Smartmake is otherwise turned on.
+Instead you must type type @samp{make @var{filename},smartmade}.
+(That is, the filename with the suffix @samp{,smartmade} appended).
+If Smartmake is turned off, the @samp{,smartmade} part does nothing.
+
+When you just do a @samp{make all}, this happens for you behind the
+scenes. Mosmake will automatically declare that the default target
+@file{all} depends on @file{@var{binary},smartmade} instead of just
+@var{binary}. But there are other situations where you must be
+aware of this, lest you lose the benefits of Smartmake:
+
+@itemize @bullet
+@item
+If you just want to build a single binary among several possible ones,
+you may want to say @samp{make @var{binary},smartmade} instead of just
+@samp{make @var{binary}}.
+
+@item
+Likewise, if you just want to test-build, say, a @file{.uo} file in
+order to test for type errors in its source, you @emph{may} want to do
+@samp{make @var{foo}.uo,smartmade} instead of @samp{make @var{foo}.uo}.
+Mosmake contains a pattern rule that will make this pattern work for all
+filenames as long as they are given on the @command{make} command
+line. Of course, you may also save the extra typing if you think that
+the savings form Smartmake in this particular build will not be
+worthwhile.
+
+@item
+@cindex conditional inclusion of programs in @file{all} target
+If you want to let other metatargets than @file{all} depend on
+Mosmake-built programs -- say, if you have an @file{install-@var{foo}}
+target that makes sure that @var{foo} is up-to-date and then installs it
+somewhere -- you'll want to have the metatarget depend on
+@file{@var{foo},smartmade} instead of just @var{foo}. Similary if you
+want (perhaps conditionally, based on configuration-time choices) to add a
+program declared @code{%OPTIONAL} to the @file{all} target.
+
+@item
+If you want @command{make} to @emph{run} a Mosmake-built program to
+produce some output that is itself a target file, things begin to get
+difficult. You can't let the command that runs your program depend on
+@file{@var{binary},smartmade}, because in general no file with that name
+will ever exist, so the output from your program will be considered
+``always out of date'' and regenerated @emph{each} time @command{make}
+considers it. So the output file must depend on the @var{binary} itself,
+and if you want Smartmake to control the recompilation of the binary,
+you have to add the @samp{,smartmade} step to the eventual target of the
+computations with its output.
+@end itemize
+
+Perhaps the last case ought to be explained through an example. Imagine
+that what you really want to do is to have something like this in the
+@file{Makefile}:
+
+@example
+...
+include $(MOSMAKE)/Makefile.inc
+rawdata: myprog
+      ./myprog > rawdata
+cooked: rawdata
+      sort -u < rawdata > cooked
+all: cooked
+install: cooked
+      cp cooked /usr/local/share/smurfs/cooked
+.PHONY: all install
+@end example
+
+@noindent
+where Mosmake builds a single @code{%OPTIONAL} program called
+@file{myprog}.
+
+Here, Smartmake will @emph{not} be used to recompute @file{myprog} when
+you type @samp{make all} or @samp{make install}. Of course you can type
+@samp{make install,smartmade} to enable the Smartmake each time, but
+you'll quickly tire of that. A better solution is to do
+
+@example
+all: cooked,smartmade
+install: cooked,smartmade
+        cp cooked /usr/local/share/smurfs/cooked
+@end example
+
+@noindent
+or, even nicer yet in general,
+
+@example
+all: cooked,smartmade
+install: all
+        cp cooked /usr/local/share/smurfs/cooked
+@end example
+
+@cindex phony targets not @samp{,smartmade}
+Whatever you do, @strong{do not} declare any @samp{,smartmade} targets
+``phony'' (@pxref{Phony targets,,,make,The GNU make manual}). Even
+though this in general sounds like the Right Thing to do, it will
+prevent @command{make} from finding the pattern rule that Mosmake uses
+internally to implement the @samp{,smartmade} mechanism.
+
+@c ----------------------------------------------------------------------------
+@node Structure, Binaries, Separate, Manual
+@section Structure mode
+
+@cindex toplevel mode
+By default, Mosmake assumes that the units defined in the
+@file{Dependencies} file are to be compiled in Moscow ML's
+``toplevel'' mode. That allows you to use the full SML modules
+language, and decouples structure names from file names (which is a Good
+Thing even though it will be easier to navigate your code if you
+maintain some kind of informal relation between structure and file
+names).
+
+@cindex structure mode
+The main advantage of the older ``structure'' mode is that
+@command{mosmlc} can find the unit implementing a given structure from
+the file name; thus once you mention an unknown structure in SML source,
+@command{mosmlc} will automatically look for a structure-mode unit that
+implements it. By contrast, when you use toplevel-mode units, they must
+be enumerated explicitly on the @command{mosmlc} command line. But
+Mosmake takes care of that for you, so there's little reason why you'd want
+to @emph{create} a structure-mode unit for a Mosmake-managed project.
+
+However, you may want to @emph{reuse} an existing unit that is written to
+be compiled in structure mode. The syntax and semantics of source files
+differ subtly between the two modes, so unles the existing unit comes
+without a @file{.sig} file and includes its own structure heading, it
+cannot be compiled in toplevel mode.
+
+@cindex @code{%STRUCTURE} flag
+Mosmake allows you to override the default mode of toplevel on a
+unit-by-unit basis, by adding the flag @code{%STRUCTURE} among the
+depended-on units on the @file{Dependencies} line that declares the
+unit.
+
+@c ----------------------------------------------------------------------------
+@node Binaries, Generated, Structure, Manual
+@section Building more than one program
+
+@cindex @code{%PROGRAM} flag
+Often, the same set of source files are used to build several related
+programs. Mosmake handles such a situation seamlessly: just add a
+@code{%PROGRAM} flag to the @file{Dependencies} line for each unit that
+is the main unit of a program.
+
+@cindex binary, name of
+The name of the binary for a program will be the same as the name of its
+main unit. This cannot be overridden, sorry. But noone says that the
+unit Mosmake thinks is the main unit must be the one doing the work. You
+can have
+
+@example
+binary: realmain %PROGRAM
+@end example
+
+@noindent
+in @file{Dependencies} and have an @emph{empty} @file{binary.sml}
+file. Then @file{realmain.sml} will @emph{effectively} become the main
+program.
+
+@cindex @code{%OPTIONAL} flag
+@anchor{Optional}
+By default, @samp{make all} will build all the programs known to
+Mosmake. If you want to exclude some program from the build (say,
+because its source is under development and doesn't always compile
+without errors), add the flag @code{%OPTIONAL} to the
+@file{Dependencies} line together with @code{%PROGRAM}. Then @samp{make
+all} will not build the program, but you can still build it explicitly
+by @samp{make @var{programname}} (or better: @samp{make
+@var{programname},smartmade}; @pxref{smartmade}, for an explanation).
+
+@c ----------------------------------------------------------------------------
+@node Generated, Macros, Binaries, Manual
+@section Generated source files
+
+Mosmake works well with SML source files that must be generated from
+other sources. There is special support for the @command{mosmllex} and
+@command{mosmlyac} tools (because they are the ones we use in the
+project that prompted the development of Mosmake); other ways of
+generating source files can be added at will.
+
+@menu
+* mosmllex::                    The @command{mosmllex} lexer generator
+* mosmlyac::                    The @command{mosmlyac} parser generator
+* Generic::                     Other ways of generating files
+@end menu
+
+@c ----------------------------------------------------------------------------
+@node mosmllex, mosmlyac, Generated, Generated
+@subsection The @command{mosmllex} lexer generator
+
+@cindex @command{mosmllex} lexer generator
+@cindex @code{%MOSMLLEX} flag
+To have @file{@var{foo}.sml} generated automatically from
+@file{@var{foo}.lex} using the lexer generator @command{mosmllex}, add
+the flag @code{%MOSMLLEX} to the @file{Dependencies} line for @var{foo}.
+
+@cindex @code{$(MOSMLLEX)} variable
+You must also make sure that the @code{$(MOSMLLEX)} variable is defined
+somewhere in the @file{Makefile} to unfold to the command used to run
+@command{mosmllex}.
+
+@var{foo} will be compiled in structure mode (because that's what
+@command{mosmllex} generates; @pxref{Structure}) and according to either
+the ``simple'' or ``native'' model (@xref{Simple model}, and @ref{Native
+model}) depending on whether @file{@var{foo}.sig} exists.
+
+Note that @file{@var{foo}.sig} is not autogenerated, but it will be
+recognised if you write one by hand.
+
+@c ----------------------------------------------------------------------------
+@node mosmlyac, Generic, mosmllex, Generated
+@subsection The @command{mosmlyac} parser generator
+
+@cindex @command{mosmlyac} parser generator
+@cindex @code{%MOSMLYAC} flag
+To have @file{@var{foo}.sml} and @file{@var{foo}.sig} generated
+automatically from @file{@var{foo}.grm} using the parser generator
+@command{mosmlyac}, add the flag @code{%MOSMLYAC} to the
+@file{Dependencies} line for @var{foo}.
+
+@cindex @code{$(MOSMLYAC)} variable
+You must also make sure that the @code{$(MOSMLYAC)} variable is defined
+somewhere in the @file{Makefile} to unfold to the command used to run
+@command{mosmlyac}.
+
+@var{foo} will be compiled in structure mode (because that's what
+@command{mosmlyac} generates; @pxref{Structure}) and according to
+the ``native'' model (@pxref{Native model}).
+
+@file{@var{foo}-sig.sml} will be ignored even if it exists.
+
+@c ----------------------------------------------------------------------------
+@node Generic,  , mosmlyac, Generated
+@subsection Generic support for generated files
+
+If you need to generate source files in a way not directly supported by
+Mosmake, go right ahead and add rules that describe how, to your
+@file{Makefile}. Then @command{make} will combine them the Mosmake's
+rules about how to @emph{use} the files.
+
+@cindex @code{%DOTSIG} flag
+@cindex @code{%DASHSIG} flag
+If you autogenerate @file{.sig} or @file{-sig.sml} files, there is a
+risk that the autogenerated files will not be present when Mosmake looks
+for them to decide which separate-compilation model the unit uses
+(@pxref{Which model?}). You can instruct Mosmake to expect the
+autogenerated files nevertheless, by adding a @code{%DOTSIG} and/or
+@code{%DASHSIG} flag to the unit's @file{Dependencies} line.
+
+@cindex @code{%NODOTSIG} flag
+@cindex @code{%NODASHSIG} flag
+There are also complementary @code{%NODOTSIG} and @code{%NODASHSIG}
+flags. @code{%NODASHSIG} can be useful if you want do treat
+@file{@var{foo}-sig} as a separate unit with its own @file{Dependencies}
+line. @code{%NODOTSIG} is less useful -- even if you convince Mosmake
+that @file{@var{foo}.sig} does not exist, @command{mosmlc} is going to
+look for it and complain if it finds it and it has not been compiled.
+
+@c ----------------------------------------------------------------------------
+@node Macros, Makefile, Generated, Manual
+@section How to cope with long dependency lists
+
+As your project grows, eventually some units will likely have so many
+dependencies that they cannot be specified on a single
+@file{Dependencies} line that will fit in your editor window.
+This section describes ways to cope with that.
+
+@subsection Extension lines
+
+@cindex extension line
+@cindex continuation line
+The most straightforward solution is to continue the dependency list
+onto the next line. The next line must start with a space or tab
+character, which will signal to Mosmake's parser that the line counts as
+an extension of the unit definition already started.
+
+Another way of saying this is that a newline followed by whitespace
+counts as no newline at all, except that it does end a @samp{#}
+comment.
+
+Thus, instead of
+
+@example
+myprog: foobar foobaz foofum blarp gargle %PROGRAM
+# NB! blarp is for the infix declaration of -*-
+@end example
+
+@noindent
+you can write
+
+@example
+myprog: foobar foobaz foofum
+   blarp # for infix decl of -*-
+   gargle %PROGRAM
+@end example
+
+Note that Mosmake does @emph{not} support the @samp{\@var{newline}}
+continuation feature of @command{make} or the Unix shell.
+
+@subsection Brace expansion
+
+@cindex brace expansion
+Mosmake supports ``brace expansion'' similar to what not too ancient
+Unix shells implement: Instead of
+
+@example
+myprog: foobar foobaz foofum blarp gargle %PROGRAM
+@end example
+
+@noindent
+you can write
+
+@example
+myprog: foo@{bar,baz,fum@} blarp gargle %PROGRAM
+@end example
+
+This does not look impressive, but it can be used with good effect to
+improve legibility of @file{Dependencies} files in a multi-directory
+setting. @xref{Directories}.
+
+Brace expansion also nests:
+
+@example
+myprog: foo@{ba@{r,z@},fum@} blarp gargle %PROGRAM
+@end example
+
+@noindent
+though it is hard to imagine a case where it would not lead to
+``write-onlyness'' of the @file{Dependencies} file rather than
+simplifying it.
+
+@subsection Macros
+
+@cindex macros
+Macros are canned sequences of unit names that can be used on the
+right-hand side of a unit definition. A macro is defined with an equals
+sign in the @file{Dependencies} file:
+
+@example
+FOO = foobar foobaz foofum
+myprog: FOO blarp gargle %PROGRAM
+@end example
+
+This is convenient if you have sets of units that are used together by
+many other units. Mosmake makes no distinction between the name of a
+macro and the name of a unit, but I suggest using upper case for macro
+names.
+
+The use of a macro can come either before or after its definition; the
+entire @file{Dependencies} file is read by Mosmake before macros are
+processed. Macros can reference other macros, but recursion between
+macros is not allowed (nor meaningful):
+
+@example
+FOO = foobar foobaz foofum
+myprog: FOOBLARP gargle %PROGRAM
+FOOBLARP = FOO blarp
+@end example
+
+A macro may not contain any @samp{%@var{keyword}} flags, and the @samp{+}
+that separates interface dependencies from implementation dependencies
+(@pxref{plus sign}) may not come from a macro, either. A macro
+@emph{can}, however, contain bracket-delimited compilation options
+(@pxref{Options}).
+
+If the same unit appears more than once in the dependency list after all
+macros have been expanded (often because several different macros that
+were used overlap), all but the first instance of each unit name is
+silently deleted.
+
+@example
+FOO = foobar foobaz foofum
+BELCH = blarp foobar gargle
+myprog: FOOBAR BELCH %PROGRAM
+@end example
+
+@c ----------------------------------------------------------------------------
+@node Makefile, Options, Macros, Manual
+@section How Mosmake interfaces with the @file{Makefile}
+
+As described in @ref{Example}, you connect Mosmake and @command{make} by
+including @file{$(MOSMAKE)/Makefile.inc} in your @file{Makefile}. You can
+(and often will) have other definitions of your own in the
+makefile; this section describes the interaction between your own
+definitions and Mosmake.
+
+@menu
+* Targets::                     Makefile targets defined by Mosmake
+* Variables::                   Makefile variables used by Mosmake
+* Peers::                       Mosmake and other makefile generators
+* Implicit::                    Implicit rules you avoid colliding with
+@end menu
+
+@c ----------------------------------------------------------------------------
+@node Targets, Variables, Makefile, Makefile
+@subsection Makefile targets defined by Mosmake
+
+These are the targets defined by Mosmake, in addition to actual files
+that can be built. All of these are declared @code{.PHONY}
+(@pxref{Phony targets,,,make,The GNU make manual}).
+
+@table @file
+@item all
+@cindex @file{all} target
+@cindex @samp{make all}
+Mosmake contains rules to let @file{all} depend on all the binaries
+defined by @file{Dependencies} (except those marked @code{%OPTIONAL},
+@pxref{Optional}). Thus, @samp{make all} will build all the programs.
+
+Mosmake does not add any @emph{commands} for @file{all}, so you can add
+your own commands if you can think of a reason to do so. Of course, you
+can also add your own prerequisites for @file{all}.
+
+If @file{mosmake.dep} is included in @file{Makefile} before any explicit
+rule, @file{all} will be the default target (i.e., @samp{make} alone
+will be equivalent to @samp{make all}).
+
+@item ajour
+@cindex @file{ajour} target
+@cindex @samp{make ajour}
+The target @file{ajour} is set up to explicitly depend on
+@file{mosmake.dep}. Thus @samp{make ajour} will make sure that
+@file{mosmake.dep} is up-to-date with respect to @file{Dependencies}.
+Normally GNU @command{make} will do this spontaneously because
+@file{mosmake.dep} is @code{include}d; the @file{ajour} target is
+provided as a fall-back in case the automatic mechanism somehow
+fails. Also, @samp{make ajour} is a convenient way to stop
+@command{make} from starting compilations when all you want to do is
+make sure that the makefile complex is up to date.
+
+Mosmake does not add any commands for @file{ajour} itself. You're free
+to add prerequisites and/or commands of your own. In my own projects
+I let @file{ajour} depend on all files that are somehow generated during
+the (@command{autoconf}-supported) configurations phase.
+
+@item clean
+@cindex @file{clean} target
+@cindex @samp{make clean}
+@cindex backup file
+Mosmake adds an internal dependency to the @file{clean} target that will
+make @samp{make clean} delete all intermediate @file{.ui} and @file{.uo}
+files, all programs built by Mosmake, all @file{.sml} and
+@file{.sig} files created by @command{mosmllex} and @command{mosmlyac},
+and all files whose name ends with @samp{~} (those are usually Emacs
+backup files).
+
+Mosmake does not add any commands for @file{clean} itself. You're free
+to define your own commands (or prerequisites) for @file{clean}; those
+will be run in addition to those provided by Mosmake.
+
+@item mostlyclean
+@cindex @file{mostlyclean} target
+@cindex @samp{make mostlyclean}
+As @file{clean}, except that executable programs built by Mosmake will
+@emph{not} be deleted.
+
+@item realclean
+@cindex @file{realclean} target
+@cindex @samp{make realclean}
+As @file{clean}, except that @file{mosmake.dep} will @emph{also} be
+deleted.
+
+@item depend
+@cindex @file{depend} target
+@c @cindex @samp{make depend}
+@samp{make depend} will force @file{mosmake.dep} to be rebuilt, even if
+it is newer than @file{Dependencies}. Use this when you add or remove
+@file{.sig} or @file{-sig.sml} files; see @ref{Which model?}.
+@end table
+
+@c ----------------------------------------------------------------------------
+@node Variables, Peers, Targets, Makefile
+@subsection Makefile variables used by Mosmake
+
+These are the makefile variables that influence Mosmake's
+operation. Some, but not all, of the variables will work even if they
+are set below the @samp{include $(MOSMAKE)/Makefile.inc} line in
+@file{Makefile}, but this manual does not document which are which. The
+best practise is to set all relevant variables at the top of
+@file{Makefile}.
+
+@table @code
+@item $(EXEEXT)
+@cindex @code{$(EXEEXT)} variable
+Set this to @samp{.exe} if stand-alone binaries built by
+@command{mosmlc} have that extension (i.e. on Microsoft OS'es), blank
+otherwise. Usually you'll do this with an @command{autoconf}-produced
+@command{configure} script; see @ref{Peers}.
+
+@cindex buffer overflow in @command{mosmlc}
+@cindex response file
+Setting @code{$(EXEEXT)} to @samp{.exe} will also make Mosmake try to
+use a ``response file'' via the @option{-files} option of
+@command{mosmlc} when linking programs. This works around a buffer
+overrun in the Win32 version of @command{mosmlc} in Moscow ML version
+2.0. (A similar buffer overflow occurs when @emph{compiling} a unit that
+uses many other units; that has no workaround at present).
+
+@item $(MOSMAKE)
+@cindex @code{$(MOSMAKE)} variable
+Set this to the path to the directory where you've unpacked Mosmake. The
+path can be either absolute or relative to your project directory. Mosmake
+uses this to locate its own components.
+
+@item $(MOSMAKE.@var{xxx})
+Names consisting of @samp{MOSMAKE} followed by a dot and other
+characters are reserved for use internally by Mosmake. Do not define.
+
+@item $(MOSMAKEDEPS)
+If set, used instead of @file{Dependencies} as the name of the file from
+which unit-definitions are read. @xref{Peers}.
+
+@item $(MOSMAKEDIRS)
+@cindex @code{$(MOSMAKEDIRS)} variable
+If set, lists the @emph{directories} where @file{Dependencies} files are
+found. @xref{Directories}.
+
+When @code{$(MOSMAKEDIRS)} is not set, a single @file{Dependencies} file
+in the same directory as the master @file{Makefile} will be expected.
+
+@item $(MOSMLC)
+@cindex @code{$(MOSMLC)} variable
+Set this to the command that starts Moscow ML's command-line
+compiler. Usually this will just be @samp{mosmlc}, but you may need to
+add a path if @command{mosmlc} is not in your search path
+
+@item $(MOSMLC.@var{xxx})
+Names consisting of @samp{MOSMLC} followed by a dot and other letters
+are reserved for use internally by Mosmake. Do not define
+
+@item $(MOSMLFLAGS)
+@cindex @code{$(MOSMLFLAGS)} variable
+Set this if you want certain flags passed to @emph{all} invocations of
+@command{mosmlc} by Mosmake. I use it to add @option{-liberal} to all
+compilations.
+
+@item $(MOSMLLEX)
+Set this to the command to start @command{mosmllex}, usually just
+@samp{mosmllex}. @xref{mosmllex}.
+
+@item $(MOSMLYAC)
+Set this to the command to start @command{mosmlyac}, usually just
+@samp{mosmlyac}. @xref{mosmlyac}.
+
+@item $(PERL)
+@cindex @code{$(PERL)} variable
+Set this to the command to start the Perl interpreter, usually just
+@samp{perl}.
+
+@item $(RM)
+@cindex @code{$(RM)} variable
+The command used by the @file{clean} family of targets to delete
+unwanted files. GNU @command{make} sets this to @samp{rm -f} by default;
+usually there is no reason to change this, but many people prefer to
+give this value explicitly at the beginning of @file{Makefile} for
+documentation purposes.
+
+@item $(SMARTMAKE)
+@cindex @code{$(SMARTMAKE)} variable
+Set this to @samp{yes} or @samp{no} to override the default choice of
+whether or not to turn on the Smartmake logic. The default is to turn it
+on when the version of GNU @command{make} that is used is at
+least 3.80. @xref{Smartmake}.
+@end table
+
+@c ----------------------------------------------------------------------------
+@node Peers, Implicit, Variables, Makefile
+@subsection Mosmake and other makefile generators
+
+Mosmake is designed to be friendly towards other systems that generate
+makefile fragments. If you have trouble combining Mosmake with
+other such generators, I hope it isn't Mosmake's fault. If you think it
+nevertheless is, please write and tell me about it.
+
+@cindex @code{$(MOSMAKEDEPS)} variable
+As a general concession to peaceful coexistence. Mosmake can use another
+file name than @file{Dependencies} for the file that contains unit
+definitions. Just set the makefile variable @code{$(MOSMAKEDEPS)}
+to the alternative filename before including Mosmake's @file{Makefile.inc}.
+
+@subsubsection GNU @command{autoconf}
+@cindex @command{autoconf}
+Mosmake works well together with a master @file{Makefile} that is
+managed by GNU @command{autoconf}. Just let your
+@file{Makefile.in} contain the @samp{include $(MOSMAKE)/Makefile.inc}
+line and it will pass through to @file{Makefile} unchanged.
+
+It is advantageous to let @command{autoconf} handle the values of many
+of the makefile variables Mosmake depends on (@pxref{Variables});
+especially the @code{$(EXEEXT)} variable.
+
+@xref{Smartmake}, for a discussion of points to observe if you want a
+program to be built conditionally depending on configuration choices.
+
+@subsubsection GNU @command{automake}
+@cindex @command{automake}
+I have not tried to inferface Mosmake with GNU @command{automake}, and I
+wouldn't recommend @command{automake} to my worst enemy. The tricky
+thing would be to somehow get Mosmake's @file{Makefile.inc} included in
+the final @file{Makefile} or @file{Makefile.in} without being
+interpreted by @command{automake}. (That's why @command{automake} is
+Evil -- it usurps your control of the top-level @file{Makefile}).
+
+@c ----------------------------------------------------------------------------
+@node Implicit,  , Peers, Makefile
+@subsection Implicit rules to avoid
+
+@cindex implicit rules
+@cindex pattern rules
+@cindex suffix rules
+Mosmake defines a number of implicit rules (@pxref{Implicit,,,make,The
+GNU make manual}) for its internal purposes. Due to the structure of
+@command{make}'s rule database, you cannot define your own rules for
+target-dependency relations that match the internal rules. It is OK to
+write @emph{explicit} rules for files that would otherwise match one of
+Mosmake's implicit rules, but remember to give the rules some commands,
+if only an empty sequence of commands (wich is different from no command
+sequence).
+
+@table @asis
+@item @file{@var{%}.sml} to @file{@var{%}.ui} and/or @file{@var{%}.uo}
+For technical reasons Mosmake has to use a pattern rule for this, but it
+depends on several internal variables, so you cannot use it for
+@file{.sml} files whose compilation is not handled by Mosmake.
+
+@item @file{@var{%}.lex} to @file{@var{%}.sml}
+Mosmake has a rule to invoke @command{mosmllex}; see @ref{mosmllex}.
+At the time of this writing it can also be used outside Mosmake-managed
+compilations, but do not count on this to stay true in future versions
+of Mosmake.
+
+@item @file{@var{%}.grm} to @file{@var{%}.sml} and/or @file{@var{%}.sig}
+Mosmake has a rule to invoke @command{mosmlyac}; see @ref{mosmlyac}.
+At the time of this writing it can also be used outside Mosmake-managed
+compilations, but do not count on this to stay true in future versions
+of Mosmake.
+
+@item @file{@var{%}} to @file{@var{%},smartmade}
+This rule serves as an enabler for the Smartmake logic; see @ref{Smartmake}.
+@end table 
+
+@c ----------------------------------------------------------------------------
+@node Options, Libraries, Makefile, Manual
+@section Extra @command{mosmlc} options
+
+You can add an option to @emph{all} @command{mosmlc} commands by
+putting it in the makefile variable @code{$(MOSMLFLAGS)}.
+
+@cindex verbatim text for command lines
+@cindex @command{mosmlc} options
+Sometimes you may wish to include options to a select few
+@command{mosmlc} invocations only. If you add @samp{<c:@var{text}>} to
+the @file{Dependencies} line for a unit (or to a macro mentioned by that
+line), the @var{text} will be added @emph{verbatim} to the
+@command{mosmlc} commands that compile that unit. (There may be up to
+three such commands, depending on which separate-compilation model you
+use; @pxref{Separate}).
+
+The @var{text} can contain spaces and other special characters (even
+@samp{#}, @samp{@{}, @samp{@}}), but may not span lines. If you want to
+have @samp{<} or @samp{>} in the @var{text}, double them (i.e.,
+@samp{<<} or @samp{>>}).
+
+Similarly, if you add @samp{<l:@var{text}>} to the definition of a unit,
+the @var{text} will be added to the @command{mosmlc} command that
+@emph{links} any program that include the unit.
+
+Either of these constructions can be repeated as many times as you
+need; the @var{text}s will appear on the command lines in the order
+they're given in the @file{Dependencies} file.
+
+If you want the same @var{text} to be used in both compilation and
+linking commands, you can abbreviate @samp{<c:@var{text}> <l:@var{text}>}
+to @samp{<cl:@var{text}>}.
+
+@c ----------------------------------------------------------------------------
+@node Libraries, Directories, Options, Manual
+@section Linking with external libararies
+
+@cindex libraries
+@cindex library
+Sometimes you need to link your code with a third-party SML library
+whose source code is not part of your own project. Perhaps you don't
+even @emph{have} the source code but only a collection of @file{.ui} and
+@file{.uo} files.
+
+You may be lucky that the library is written with Mosmake in mind. In
+that case you can just put a symbolic link to the library in your
+project directory and include its @file{Dependencies} file using the
+cross-directory support we'll discuss in @ref{Directories}. Otherwise
+you need to do more work youself. (Libraries with Mosmake support do not
+exist at the time of this writing, but I think it would be cool if they
+started to emerge @t{:-)}).
+
+First of all, you should define a makefile variable to hold the pathname
+of the directory where the library files reside. In the examples in this
+section, we'll call it @code{$(MYLIBDIR)}, but of course you can name it
+whatever you please. The value of @code{$(MYLIBDIR)} should be an
+@emph{absolute} path; Mosmake will not try to adjust it when it's used
+in different directory contexts.
+
+If you plan to distribute your application as source, you should add
+some mechanism to easily adapt the definition of @code{$(MYLIBDIR)} to
+the user's context. @command{autoconf} is a good tool for this.
+
+@cindex structure mode, for third-party library
+If the entire library is compiled in structure mode, you might get away
+with just adding @code{<cl:-I $(MYLIBDIR)>} to the @file{Dependencies}
+lines for each unit that uses the library. That will add
+@code{$(MYLIBDIR)} to the path where @command{mosmlc} searches for
+unknown structure-mode units. @xref{Options}, for details.
+
+It the library includes toplevel-mode units, you must add explicit
+dependency information to your @file{Dependencies} file, as in:
+
+@example
+aunit: $(MYLIBDIR)/libunit1 anotherunit $(MYLIBDIR)/libunit2
+@end example
+
+Mosmake recognizes the @samp{$(MYLIBDIR)} at the beginning of a unit
+name and treats it specially in two ways:
+
+@itemize @minus
+@item
+In contrast to all other units, Mosmake will @emph{not} complain if a
+unit starting with @samp{$(@r{...})} does not have a defining line in
+@file{Dependencies}.
+
+@item
+Mosmake will not try to interpret @samp{$(@r{...})} as a relative
+pathname when it is encountered in a subdirectory's @file{Dependencies}
+file (see @ref{Directories}, for more about subdirectories).
+@end itemize
+
+@cindex brace expansion, for libraries
+If you use many units from the same library, brace expansion comes in
+handy:
+
+@example
+aunit: $(MYLIBDIR)/@{libunit1,libunit2@} anotherunit
+@end example
+
+However, just declaring the direct library dependencies is often not
+enough. If, say, @file{$(MYLIBDIR)/libunit2} itself imports from
+@file{$(MYLIBDIR)/libunit0}, the final linking command must be able to
+find @file{libunit0.uo}. One way to do this would be to add
+@code{-I $(MYLIBDIR)} to the linking command; another is to tell Mosmake
+that @file{$(MYLIBDIR)/libunit0.uo} must be part of the
+linking. Personally I like the latter approach better, because I want to
+avoid gratuitously extending the search space for unqualified file names
+the way @samp{-I} does.
+
+In either case, we need a way of telling Mosmake to include the linker
+dependencies exactly in the linking commands for programs that use the
+library. (Recall that Mosmake can build more than one program in a
+single project, and not all programs may need the libarary).
+
+Adding the necessary extra text to the @file{Dependencies} line for each
+unit that @emph{uses} the library might be a lot of typing (and it may
+also be difficult to understand and maintain later, because the extra
+dependencies do not refer to any import from the units that they are
+apparently attached to). We could couple the library units directly to
+what is necessary to make them work by saying, respectively,
+
+@example
+$(MYLIBDIR)/libunit2: <l:-I $(MYLIBDIR)>
+@end example
+
+@noindent
+or
+
+@example
+$(MYLIBDIR)/libunit2: $(MYLIBDIR)/libunit0
+@end example
+
+@noindent
+which would almost work -- except that Mosmake would generate
+rules for compiling @file{$(MYLIBDIR)/libunit2.uo} (and
+@file{.ui}) from @file{$(MYLIBDIR)/libunit2.sml}. If
+you (or the user who compiles your code) do not actually have the
+@file{.sml} sources for the library, @command{make} will complain about
+them missing, and refuse to compile or link anything that depends on the
+libarary.
+
+@cindex @code{%NOCOMPILE} flag
+The solution is to add the special flag @code{%NOCOMPILE} to the
+@file{Dependencies} line for libarary units. That will suppress the
+generation of compilation rules for the unit in question, but the
+dependencies you give will still be used when constructing the final
+link command. Thus, you can say
+
+@example
+$(MYLIBDIR)/libunit1: %NOCOMPILE <l:-I $(MYLIBDIR)>
+$(MYLIBDIR)/libunit2: %NOCOMPILE <l:-I $(MYLIBDIR)>
+@end example
+
+@noindent
+or
+
+@example
+$(MYLIBDIR)/libunit0: %NOCOMPILE
+$(MYLIBDIR)/libunit1: %NOCOMPILE
+$(MYLIBDIR)/libunit2: %NOCOMPILE $(MYLIBDIR)/libunit0
+@end example
+
+@c ----------------------------------------------------------------------------
+@node Directories, Non-Unix, Libraries, Manual
+@section Multiple directories
+
+@cindex directories
+@cindex subdirectories
+If your project gets big, it becomes increasingly difficult to navigate
+a directory filled with @file{.sml}, @file{.sig}, @file{.uo}, @file{.ui}
+files for all of your units, in addition to executables and build
+infrastructure. Mosmake supports distributing the source code for the
+units that make up your program into several subdirectories according to
+logical principles. (This is not as simple as it sounds, either -- but
+I've promised not to preach, so I won't go into specifics).
+
+@cindex cross-directory support
+Mosmake's cross-directory support is based on three design principles:
+
+@itemize
+@cindex Recursive Make Considered Harmful
+@item 1.
+@emph{The entire compilation shall be controlled by a single
+@file{Makefile} in the top-level directory}. If you wonder why not
+instead a @file{Makefile} in each subdirectory, you should go and read
+Peter Miller's excellent article 
+@uref{http://www.tip.net.au/~millerp/rmch/recu-make-cons-harm.html,
+@cite{Recursive Make Considered Harmful}} and then come back afterwards.
+
+@item 2.
+@cindex location versus identity
+@emph{The location of a unit is part of its identity}. Thus you can have
+two source files both called @file{frob.sml} but in different
+directories, although the current Moscow ML bytecode linker is going to
+be confused if you try to link both of them into the same binary. This
+means that you can, to a certain extent, use the directory hierarchy for
+namespace management for unit names. On the other hand you need to give
+the location with each dependency declaration.
+
+Later versions of Mosmake may include some support for inferring
+locations from last names, if enough people pester me about it.
+
+@item 3.
+@cindex binary, location of
+@emph{Finished binaries always end up in the project's main directory},
+no matter where their @file{.sml} source is found. This is just because
+I think it is the most practical general principle.
+@end itemize
+
+The most primitive way to use the cross-directory support is to simply
+add directory parts to the unit names in the @file{Dependencies} file:
+
+@example
+foo/data:
+foo/read: foo/data
+bar/write: foo/data
+bar/stuff: foo/read bar/write %PROGRAM
+@end example
+
+@cindex Emacs
+@cindex @code{compile-mode}
+Then Mosmake will generate rules that switch to the @file{foo} and
+@file{bar} directories as appropriate for compiling each of the four
+units. The references to units in @file{foo} will get rewritten to
+@file{../foo} when compiling in @file{bar}, and directory-change
+messages will get emitted to make the output of the entire
+@command{make} process parseable by Emacs's @code{compile-mode}.
+
+@cindex brace expansion, for subdirectories
+However, adding a lot of directory prefixes to the unit names will do
+nothing to keep the @file{Dependencies} file itself readable, even
+if brace expansion can keep the explosion somewhat under control.
+Therefore Mosmake supports having one @file{Dependencies} file in each
+directory, even if they are combined to form one top-level
+@file{mosmake.dep}. With per-directory @file{Dependencies} we could
+instead have:
+
+@example
+# This is foo/Dependencies
+data:
+read: data
+@end example
+
+@example
+# This is bar/Dependencies
+write: ../foo/data
+stuff: /foo/read write %PROGRAM
+@end example
+
+Then, in order to tell Mosmake where to look for Dependencies files, put
+
+@example
+MOSMAKEDIRS = foo bar
+@end example
+
+@noindent
+@cindex @code{$(MOSMAKEDIRS)} variable
+in the @file{Makefile} in the superdirectory. @code{$(MOSMAKEDIRS)} is a
+whitespace-separated list of directories where Mosmake will expect to
+find a @file{Dependencies} file. Note that if @samp{.} is not part of
+the list, Mosmake will @emph{not} try to read a @file{Dependencies} file
+in the main directory itself.
+
+Here are the properties of subdirectory @file{Dependencies} files, some
+of which are shown in the preceding example:
+
+@itemize @minus
+@item
+Unit names in a subdirectory @file{Dependencies} file are interpreted
+relative to the subdirectory where it is found. This goes for units to
+the right of the colons as well as the defining instance to the
+@emph{left} of the colon. In principle one could have removed the
+@samp{data:} line from @file{foo/Dependencies} and instead put
+@samp{../foo/data:} in @file{bar/Dependencies}. Although there would not
+be much point in that, save for obfuscating the build system.
+
+@item
+A unit name that starts with a slash is interpreted relative to the
+project's main directory (i.e., where the @file{mosmake.dep} file is
+built) -- not what the OS may think of as the ``root directory''.
+
+@item
+However, a unit name that starts with @samp{$(} will not be relativized
+to the @file{Dependencies} file where it is found. @xref{Libraries}.
+
+@item
+@cindex macros, in subdirectories
+There's still no difference between a macro name and a unit name. That
+is: @emph{A macro name has a directory part, too}, and to use a macro
+the right directory must be either implicit or explicit in the
+reference. A macro reference that includes @samp{..} indirections will
+work as expected.
+@end itemize
+
+One disadvantage of only having one master makefile is that just typing
+@code{make @file{target}} won't work unless your current directory is
+the project root. Mosmake comes with a stub file @file{Makefile.chain}
+that you can use to make @command{make} commands work even when started
+from a subdirectory. Copy @file{Makefile.chain} to the main directory
+and then place in each subdirectory a @file{Makefile} containing
+
+@example
+DOWN = foo/bar   # where are we, relative to the root?
+UP   = ../..     # where is the root, relative to us?
+include $(UP)/Makefile.chain
+@end example
+
+@noindent
+Then @file{Makefile.chain} will take care of starting a suitable
+@command{make} command from the top level directory. When you type
+@code{make @var{FILENAME}}, @file{Makefile.chain} will even try to
+guess intelligently whether @var{FILENAME} is a local object file,
+such that the top-level command should be @code{make
+foo/bar/@var{FILENAME}}, or binary or meta-target, such that the
+top-level command should be @code{make @var{FILENAME}}. 
+
+@c ----------------------------------------------------------------------------
+@node Non-Unix,  , Directories, Manual
+@section Mosmake on non-unix platforms
+
+Mosmake is currently developed on a Linux system with relatively new
+GNU tools. It ought to work without changes on any unixish system.
+
+@cindex Cygwin
+@cindex Windows
+Some work has been done on making Mosmake work on Microsoft Windows with
+the Win32 binary distribution of Moscow ML and @command{make} running
+under the Cygwin quasi-unix-emulator. This seems to work reasonably
+well, although problems can occur with third-party libraries because
+Cygwin and the native Windows @command{mosmlc} do not understand the
+same kind of absolute pathnames. Be sure to have your @command{Makefile}
+define @code{$(EXEEXT)} to @samp{.exe}.
+
+More work here is in progress, albeit slowly.
+
+@cindex Bourne shell
+I have not tried to run Mosmake with the native W32 version of GNU
+@command{make}. Severe problems are to be foreseen, because
+@file{mosmake/wrap} is presently a Bourne shell script, which cannot be
+executed in a vanilla Windows environment. One may consider rewriting
+@file{mosmake/wrap} in Perl or even C.
+
+@cindex Macintosh
+I have not even considered running Mosmake on a Macintosh.
+
+Please let me know if you have anything to report about porting Mosmake
+to non-unix environments.
+
+@c ----------------------------------------------------------------------------
+@node Legal, Changelog, Manual, Top
+@chapter Legal terms and small print
+
+Mosmake is free software; you can redistribute it and/or modify
+under the terms of the @cite{GNU General Public License} as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Mosmake is distributed in the hope that it will be useful,
+but @emph{without any warranty}; without even the implied warranty of
+@emph{merchantability} or @emph{fitness for a particular purpose}.  See the
+GNU General Public License for more details.
+
+Since you probably have at least a dozen copies of the @sc{gpl} lying around
+already, one is not included in the author's distribution of Mosmake.
+In the unlikely case that you don't have a copy of the license, or if
+you're unsure that the copy you have is genuine, check the official
+source at @uref{http://www.gnu.org/licenses/licenses.html#GPL}.
+
+The author of Mosmake is not in any way affiliated with the Free
+Software Foundation, except that he happens to like their license.
+
+The author wishes to assert that he considers it ``mere aggregation'' if
+Mosmake is distributed unchanged together with the source code for
+another piece of software which uses Mosmake in its build process.
+
+This means that you can use Mosmake to build software that is not itself
+licenced under the @sc{gpl}: Mosmake is not viral.
+
+@section How to obtain Mosmake
+
+The canonical home of Mosmake is
+@uref{http://www.diku.dk/~makholm/mosmake/}, from where you can find
+links to tarballs of the newest Mosmake release.
+
+@section Installation instructions
+
+The @file{mosmake-@var{x}.@var{y}.tar.gz} tarball unpacks to a directory
+@file{mosmake-@var{x}.@var{y}} with several files in it. Copy all the
+files to a suitable subdirectory of your own project directory, and
+follow the instruction in @ref{Example}.
+
+It only makes limited sense to install Mosmake centrally at a site,
+except as a source for copying into project directories. You @emph{can}
+use Mosmake as installed in a central location, but if you distribute
+your code without a copy of Mosmake, your users will not be able to
+build it. So you might as well copy it to your project.
+
+If you're concerned about space, you can remove the files
+@file{mosmake.dvi}, @file{mosmake.info} and
+@file{mosmake.info-@var{nnn}}; they are formatted versions of this
+manual. A further saving could be obtained by also removing the
+@emph{source} of the manual, which is @file{mosmake.texi}, but doing so
+would be a disservice to people who want to play with change in your
+program, because the build process will be completely mysterious without
+documentation.
+
+@c ----------------------------------------------------------------------------
+@node Changelog, Index, Legal, Top
+@chapter History of Mosmake
+
+@cindex change log
+@cindex Mosmake, history of
+@cindex history of Mosmake
+Here is a change log for Mosmake, also serving as documentation of its
+history.
+
+@table @b
+@item Fall 1999
+Mosmake's grandfather: A Perl script called @command{supermosdep} that I
+used to massage @command{mosmldep} output for the prototype
+implementation of my M.Sc. thesis @cite{Region-based memory management
+for Prolog}. Used a horrible system of flag files to ensure that enough
+@file{.uo} files would be be produced before trying to link the final
+program.
+
+@item Spring 2001
+Earliest Mosmake-like system: I ported @command{supermosdep} to build
+a research protype for the region system I was developing with Henning
+Niss and Fritz Henglein. This prototype used toplevel-mode compilation,
+so @command{mosmldep} was replaced by a @file{Dependencies} file.
+
+@item Fall 2001
+First Smartmake feature. The then-current version of GNU make had bugs
+in its @option{-t} implementation, so Smartmake only worked with a
+specially patched GNU make. The patch was later accepted as a bug fix
+for GNU make 3.80.
+
+@item Fall 2002
+After steady growth in the complexity of our prototype as well as its
+build system, we felt the need to split it into several directories. So
+the cross-directory support of the build system was born. Eventually I
+decided that what I'd done was hairy enough that other people might
+benefit from reusing it rather than inventing something similar
+themselves. Thus --
+
+@item 0.9 (released Nov 19 2002)
+After a couple of weeks of separating the build system from the system
+it builds, generalizing it slightly, and .. shiver .. documenting it
+(ack! the manual is currently thrice as big as the code that actually
+does something), I proudly present Mosmake 0.9 to the world!
+@end table
+
+@c ----------------------------------------------------------------------------
+@node Index,  , Changelog, Top
+@unnumbered Index
+
+@cindex index
+This index is likely to be pathetically incomplete. Please write to me
+and tell me about entries I have missed.
+
+@printindex cp
+
+@bye
+
+@c note to self: use C-u C-c C-u m to update menu structure.

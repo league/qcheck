@@ -114,6 +114,5 @@ let
 end
 
 val style = {name="Perl", ctor=new}
-val()= StyleRep.register style
 
 end

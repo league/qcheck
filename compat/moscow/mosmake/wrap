@@ -1,0 +1,94 @@
+#! /bin/sh
+# $Id: wrap,v 1.1 2002/11/16 21:08:14 makholm Exp $
+#
+# This is a wrapper for mosmlc used by the Mosmake system.
+# It is typically invoked with something like
+#     mosmake/wrap foo/bar 'baz.ui baz.uo' mosmlc -c d1.ui d2.ui baz.sml
+# It then does the following:
+#    a) cd's to foo/bar
+#    b) prints a message that we're cd'ing to foo/bar
+#       (for the benefit of emacs's compile-mode)
+#    c) runs the specified mosmlc command
+#    d) if the contents of baz.ui or baz.uo is unchanged after the
+#       recompilation, renstates its timestamp
+#    e) print a message that we're leaving foo/bar again
+#    f) exits with the same status as the command in (c)
+# Step (d) is suppressed if baz.ui is not a regular file when
+# the command starts. This is used to disable it explicitly
+# when SMARTMAKE is off (by giving . instead of baz.ui).
+#
+# Copyright (c) 2002 Henning Makholm
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+dir0="$1" ; shift
+files="$1" ; shift
+
+case $dir0 in
+*/) ;;
+*) dir0="$dir0/" ;;
+esac
+
+tmpfile=/tmp/compiler.output.$$
+case $dir0 in
+./) dir1="" ;;
+*)  dir1="$dir0" ; cd "$dir0" ;;
+esac
+
+for f in $files ; do
+    if [ ! -f $f ]
+    then
+        files=.
+        break ;
+    fi
+done
+
+case $files in
+.)
+    2>&1 >$tmpfile "$@" ; exitwhat=$?
+    ;;
+*)  for f in $files ; do rm -f $f~ ; mv $f $f~ ; done
+    if 2>&1 >$tmpfile "$@"
+    then
+        exitwhat=0
+    else
+        exitwhat=$?
+        for f in $files ; do mv -f $f~ $f ; done
+	files=.
+        # still a chance that the previous contents will be good again
+        # after the error is fixed
+    fi
+    ;;
+esac
+if [ -s $tmpfile ]
+then
+    case $dir0 in
+      ./) cat $tmpfile ;;
+      *)  echo 'Mosmake: Entering directory `'"$dir0'"
+          cat $tmpfile
+          echo 'Mosmake: Leaving directory `'"$dir0'" ;;
+    esac
+fi
+rm -f $tmpfile
+case $files in
+ .) ;;
+ *) for f in $files ; do
+	if cmp -s $f $f~
+        then
+            mv -f $f~ $f
+            echo OK, $dir1$f is unchanged
+        else
+            rm -f $f~
+        fi
+    done ;;
+esac
+exit $exitwhat
