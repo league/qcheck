@@ -1,4 +1,4 @@
-VERSION=0.7
+VERSION=0.8a
 
 define each-ml
   for m in nj moscow mlton; do $(MAKE) -f Makefile.$$m $@; done
@@ -12,14 +12,15 @@ test:
 
 doc: README.html
 
-%.html: % makefile
+%.html: % Makefile
 	tail +2 $< | txt2html -8 +l | recode -d utf8..h3 >$@
 	tidy -asxml -q -m $@
 
-tar: reallyclean
+tar: realclean
 	cd .. && rm -rf qcheck-$(VERSION) \
 	      && cp -r qcheck qcheck-$(VERSION) \
-	      && tar cvzf qcheck-$(VERSION).tgz qcheck-$(VERSION)
+	      && tar cvzf qcheck-$(VERSION).tgz \
+	           --exclude=.svn qcheck-$(VERSION)
 
 mostlyclean: master.mostlyclean
 	$(each-ml)
@@ -29,7 +30,7 @@ realclean: master.realclean
 	$(each-ml)
 
 master.mostlyclean:
-	$(RM) compat/*/*~ doc/*~
+	$(RM) compat/*/*~ tests/data/*~ doc/*~
 master.clean: master.mostlyclean
 master.realclean: master.clean
 
