@@ -5,7 +5,7 @@
 @syncodeindex tp fn
 @c %**end of header
 @include doc/qcheck-ver.texi
-@copying
+@macro aboutthismanual
 Copyright @copyright{} 2004 Christopher League.
 
 This manual describes QCheck/SML (version @value{VERSION}), an
@@ -17,7 +17,10 @@ QCheck/SML (including this manual) is free software.  You may
 redistribute and/or modify it under the terms of the GNU Lesser
 General Public License (LGPL) as published by the Free Software
 Foundation.  @xref{License}.
-@end copying
+
+The web page for QCheck/SML is
+@url{http://contrapunctus.net/league/haques/qcheck/}.
+@end macro
 
 @titlepage
 @title QCheck/SML
@@ -26,7 +29,7 @@ Foundation.  @xref{License}.
 @author Christopher League @email{league@@contrapunctus.net}
 @page
 @vskip 0pt plus1filll
-@insertcopying
+@aboutthismanual{}
 @end titlepage
 @setchapternewpage off
 @headings double
@@ -36,7 +39,7 @@ Foundation.  @xref{License}.
 @ifnottex
 @node Top, Overview, (dir), (dir)
 @top QCheck/SML
-@insertcopying
+@aboutthismanual{}
 
 
 @menu

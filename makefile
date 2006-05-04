@@ -10,8 +10,8 @@ all: docs
 test:
 	$(each-ml)
 
-FORMATS = info pdf
-DOCS := LICENSE INSTALL $(addprefix doc/qcheck., $(FORMATS))
+DOCS := LICENSE INSTALL doc/qcheck.info doc/html/qcheck.html
+EXTRAS := doc/qcheck.pdf   # don't include this with distribution
 docs: $(DOCS)
 
 DOCGEN = qcheck qcheck-ver sml-ver mosml qcheck-sig \
@@ -37,12 +37,15 @@ INSTALL: doc/qcheck.info
 %.pdf: %.texi
 	$(TEXI2DVI) -p -o $@ $<
 
+doc/html:
+	mkdir $@
 
+doc/html/qcheck.html: doc/html
+	cd $< && $(TEXI2HTML) -I ../.. ../qcheck.texi
 
-%.html: % Makefile
-	tail +2 $< | txt2html -8 +l | recode -d utf8..h3 >$@
-	tidy -asxml -q -m $@
-
+## Reminder: to build a package, we need to
+##    make all test tar
+## in that order
 tar: clean
 	cd .. && rm -rf qcheck-$(VERSION) \
 	      && cp -r qcheck qcheck-$(VERSION) \
@@ -59,9 +62,10 @@ realclean: master.realclean
 master.mostlyclean:
 	$(RM) compat/*/*~ tests/data/*~ doc/*~ *~
 master.clean: master.mostlyclean
-	$(RM) $(DOCGENS)
+	$(RM) $(DOCGENS) $(EXTRAS)
 master.realclean: master.clean
 	$(RM) src/qcheck-ver.sml 
 	$(RM) $(DOCS) doc/qcheck.texi doc/qcheck-ver.texi
+	$(RM) -r doc/html
 
 include Makefile.version

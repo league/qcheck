@@ -1,6 +1,7 @@
 # -*- Makefile -*-
 PERL = perl
 EMACS = emacs
+TEXI2HTML = texi2html -split chapter 
 
 SML = sml
 CM = .cm
