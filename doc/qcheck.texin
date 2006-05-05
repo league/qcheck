@@ -345,7 +345,7 @@ Andrew Hunt and David Thomas
 @cite{The Pragmatic Programmer}
 @end flushright
 
-@include doc/filesys-sig.texi
+@include doc/file-sys-sig.texi
 
 @node Generating test cases, Properties, Specifying test cases, Top
 @chapter Generating test cases

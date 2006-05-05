@@ -25,8 +25,8 @@ src/gen-real.sml
 src/gen-date.sml
 compat/nj/gen.sml
 compat/nj/basis.sml
-src/filesys-sig.sml
-src/filesys.sml
+src/file-sys-sig.sml
+src/file-sys.sml
 src/settings-sig.sml
 src/qcheck-sig.sml
 src/qcheck-ver.sml: make

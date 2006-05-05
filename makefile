@@ -15,7 +15,7 @@ EXTRAS := doc/qcheck.pdf   # don't include this with distribution
 docs: $(DOCS)
 
 DOCGEN = qcheck qcheck-ver sml-ver mosml qcheck-sig \
-	 filesys-sig gen-sig prop-sig settings-sig
+	 file-sys-sig gen-sig prop-sig settings-sig
 DOCGENS := $(addprefix doc/, $(addsuffix .texi, $(DOCGEN)))
 $(DOCS): $(DOCGENS) doc/copying.texi
 
