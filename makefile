@@ -52,6 +52,9 @@ tar: clean
 	      && tar cvzf qcheck-$(VERSION).tgz \
 	           --exclude=.svn qcheck-$(VERSION)
 
+dist:
+	darcs dist -d qcheck-$(VERSION)
+
 mostlyclean: master.mostlyclean
 	$(each-ml)
 clean: master.clean
