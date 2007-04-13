@@ -15,13 +15,18 @@ MOSMAKEDIRS = src compat/moscow tests
 MLTON = mlton
 
 MAJOR=0
-MINOR=8
+MINOR=9
 VERSION=$(MAJOR).$(MINOR)
-RELEASED=September 2004
+RELEASED=April 2007
 
 src/qcheck-ver.sml: Makefile.version
-	echo 'structure QCheckVersion = struct'       >$@
-	echo 'val version = ($(MAJOR),$(MINOR)) end' >>$@
+	echo 'structure QCheckVersion = struct'      >$@
+	echo 'val version = ($(MAJOR),$(MINOR)) '   >>$@
+	echo 'val context = "\'                     >>$@
+	darcs changes --context     \
+	  | sed 's/"\|\\/\\\0/g'    \
+	  | sed 's/^.*$$/\\\0\\n\\/'                 >>$@
+	echo '\" end'                               >>$@
 
 doc/qcheck-ver.texi: Makefile.version
 	echo '@set VERSION $(VERSION)'    >$@

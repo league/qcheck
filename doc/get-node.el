@@ -1,5 +1,5 @@
 (defun get-node (infile node outfile)
   (info infile)
   (Info-goto-node node)
-  (mark-whole-buffer)
-  (write-region (region-beginning) (region-end) outfile))
+  (forward-line)
+  (write-region (point) (point-max) outfile))

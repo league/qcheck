@@ -87,5 +87,6 @@ Finally, the @code{Qcheck} structure includes a pair that can be
 useful in determining the version of QCheck you are using.
 *)
 val version : int * int (*@findex version*)
+val context : string
 (*>>*)
 end

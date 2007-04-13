@@ -43,17 +43,18 @@ doc/html:
 doc/html/qcheck.html: doc/html
 	cd $< && $(TEXI2HTML) -I ../.. ../qcheck.texi
 
-## Reminder: to build a package, we need to
-##    make all test tar
-## in that order
-tar: clean
-	cd .. && rm -rf qcheck-$(VERSION) \
-	      && cp -r qcheck qcheck-$(VERSION) \
-	      && tar cvzf qcheck-$(VERSION).tgz \
-	           --exclude=.svn qcheck-$(VERSION)
-
+## predist is 'chmod +x compat/moscow/mosmake/wrap; make docs clean'
 dist:
-	darcs dist -d qcheck-$(VERSION)
+	REPODIR=$$PWD darcs dist --dist-name qcheck-$(VERSION)
+
+DARCS_BRANCH = trunk
+DARCS_STAGE = $(HOME)/w/contrapunctus/dist/qcheck
+
+darcs-put:
+	darcs put -v --no-pristine-tree $(DARCS_STAGE)/$(DARCS_BRANCH)
+
+darcs-push:
+	darcs push $(DARCS_STAGE)/$(DARCS_BRANCH)
 
 mostlyclean: master.mostlyclean
 	$(each-ml)
