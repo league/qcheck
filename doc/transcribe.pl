@@ -24,7 +24,7 @@ while(<STDIN>)
         while(<STDIN>)
         {
             last if /^\@end transcript/;
-            print $_ if $verbosity > 0;
+            render_source($_) if $verbosity > 0;
             $ml->send($_);
             $ml->expect(undef, '-re', '^[=-] ');
             render_output($ml->before()) if $verbosity > 1;
@@ -46,6 +46,13 @@ sub render_output {
     foreach my $line (split '\n', protect_texi($chunk)) {
         print " \@print{} \@i{$line}\n";
     }
+}
+
+sub render_source {
+    my($chunk) = @_;
+    # highlight keywords
+    $chunk =~ s/^(\s*)(val|fun|type|eqtype|structure)\b/$1\@b\{$2\}/;
+    print $chunk;
 }
 
 sub protect_texi {
