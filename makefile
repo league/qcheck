@@ -47,14 +47,14 @@ doc/html/qcheck.html: doc/html
 dist:
 	REPODIR=$$PWD darcs dist --dist-name qcheck-$(VERSION)
 
-DARCS_BRANCH = trunk
-DARCS_STAGE = $(HOME)/w/contrapunctus/dist/qcheck
+DIST_BRANCH = trunk
+DIST_REPO = comsci.liu.edu:public_html/dist/qcheck
 
 darcs-put:
-	darcs put -v --no-pristine-tree $(DARCS_STAGE)/$(DARCS_BRANCH)
+	darcs put -v --no-pristine-tree $(DIST_REPO)/$(DIST_BRANCH)
 
 darcs-push:
-	darcs push $(DARCS_STAGE)/$(DARCS_BRANCH)
+	darcs push $(DIST_REPO)/$(DIST_BRANCH)
 
 mostlyclean: master.mostlyclean
 	$(each-ml)
