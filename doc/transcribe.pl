@@ -51,7 +51,7 @@ sub render_output {
 sub render_source {
     my($chunk) = @_;
     # highlight keywords
-    $chunk =~ s/^(\s*)(val|fun|type|eqtype|structure)\b/$1\@b\{$2\}/;
+    $chunk =~ s/^(\s*)(val|fun|\w*type|structure)\b/$1\@b\{$2\}/;
     print $chunk;
 }
 

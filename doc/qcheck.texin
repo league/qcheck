@@ -6,7 +6,7 @@
 @c %**end of header
 @include doc/qcheck-ver.texi
 @macro aboutthismanual
-Copyright @copyright{} 2004 Christopher League.
+Copyright @copyright{} 2007 Christopher League.
 
 This manual describes QCheck/SML (version @value{VERSION}), an
 automatic testing library for Standard ML.  It is modeled after the
@@ -45,8 +45,8 @@ The web page for QCheck/SML is
 @menu
 * Overview::                    What is QCheck?
 * Installation::                How do I build and install it?
-* Specifying test cases::       
-* Generating test cases::       
+* Specifying test cases::       QCheck can extract cases from files.
+* Generating test cases::       Test cases can be randomly generated.
 * Properties::                  Specifying properties to be tested.
 * Settings::                    Many settings are configurable.
 * History::                     A record of the evolution of QCheck.
@@ -345,11 +345,43 @@ Andrew Hunt and David Thomas
 @cite{The Pragmatic Programmer}
 @end flushright
 
+Random testing is neat, and sometimes uncovers interesting cases that
+you may not have tried.  But to be sure you are covering specific
+cases, you need to specify them somehow.  The list example at the end
+of the overview is one way, but another is reading them from a
+file.  QCheck provides a small API for using files within a directory
+or lines within a text file as test cases.
+
 @include doc/file-sys-sig.texi
 
 @node Generating test cases, Properties, Specifying test cases, Top
 @chapter Generating test cases
+
+The QuickCheck tool for Haskell uses type classes so that arbitrary
+values of various types may be generated behind the scenes.  In SML,
+we need to be more explicit, but the same holds true in Haskell if we
+don't want the default generator (positive integers only, for
+example).  The @code{Gen} module holds a wide range of tools for
+creating random values of various structured types and, yes, even
+functions!
+
 @include doc/gen-sig.texi
+
+@section Recursive types
+As pointed out in the QuickCheck paper, one needs to be careful when
+generating tree-structured data, due to the strong possibility of
+non-termination.  To avoid this problem, make the generator a function
+of a decreasing integer parameter.  When that parameter reaches zero,
+the only choice is to return a leaf.
+
+@transcript quiet
+datatype tree = Node of tree * tree | Leaf of int
+fun gentree 0 = Gen.map Leaf Gen.Int.int
+  | gentree n = 
+    Gen.choose' #[(1,Gen.map Leaf Gen.Int.int),
+                  (4,Gen.map Node (Gen.zip(gentree(n div 2),
+                                           gentree(n div 2))))]
+@end transcript
 
 @node Properties, Settings, Generating test cases, Top
 @chapter Properties
@@ -359,12 +391,32 @@ Andrew Hunt and David Thomas
 @chapter Settings
 @include doc/settings-sig.texi
 
-@menu
-* Output styles::               
-@end menu
+@section Pluggable output styles
 
-@node Output styles,  , Settings, Settings
-@section Output styles
+The default output style (@code{PerlStyle.style}) is modeled after the
+unit-testing framework for Perl.  It makes room for statistics and
+counter-examples, while leaving clear a column down the middle where
+the "ok/FAILED" results can be easily read.  The Perl style uses the
+carriage return character \r to update the current line with each test
+-- this is a useful progress indicator for tests that take a long
+time.
+
+Output styles are completely configurable just by writing a function
+of a particular type.  An alternate style is provided, which is meant
+to mesh well with the output of the SML/NJ Compilation Manager (CM),
+like this:
+
+@example
+ @print{} [testing Bool/to-from... ok]
+ @print{} [testing Bool/from-to... ok]
+ @print{} [testing Bool/valid... FAILED]
+ @print{} Bool/valid:1.0 Error: False
+ @print{} Bool/valid:2.0 Error: True
+@end example
+To select this style, just do:
+@transcript quiet
+    Settings.set(Settings.style, CMStyle.style);
+@end transcript
 
 @node History, License, Settings, Top
 @chapter History
