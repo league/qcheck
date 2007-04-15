@@ -43,7 +43,9 @@ doc/html:
 	mkdir $@
 
 doc/html/qcheck.html: doc/html
-	cd $< && $(TEXI2HTML) -I ../.. ../qcheck.texi
+	cd $< && $(TEXI2HTML) -I ../.. -o . --css-include=../style.css ../qcheck.texi
+	sed -i 's/-&gt;/\&rarr;/g' $</*.html
+	sed -i 's/\-|/\&rsaquo;/g' $</*.html
 
 ## predist is 'chmod +x compat/moscow/mosmake/wrap; make docs clean'
 dist:

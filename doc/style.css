@@ -1,0 +1,21 @@
+body {
+    font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
+    font-size: 11pt;
+    color: #111;
+}
+hr {
+    border: 2px solid #150;
+}
+a {
+    text-decoration: none;
+    border-bottom: 1px dotted #ccc;
+}
+a:link {
+    color: #007;
+}
+a:visited {
+    color: #707;
+}
+a:hover {
+    border-bottom: 1px solid #ccc;
+}
