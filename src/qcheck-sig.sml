@@ -8,8 +8,12 @@
 
 signature QCHECK = sig
 (*<<*)
-structure Gen : GENERATOR 
-structure FileSys : FILESYS 
+(*@findex QCHECK signature*)
+(*@findex Gen structure*)
+structure Gen : GENERATOR      
+(*@findex FileSys structure*)
+structure FileSys : FILESYS    
+(*@findex Settings structure*)
 structure Settings : SETTINGS
 (*@ The @code{Gen} structure contains random value generators for all
 the basis types, including aggregates like vectors and lists.  It
@@ -33,8 +37,10 @@ property over a given type @code{t} has type @code{t prop}.
 (*@ Two types are useful for discussing the parameters of the various
 @code{check} functions:
  *)
-type ('a,'b) reader = 'b -> ('a * 'b) option  (*@tindex reader*)
-type 'a rep = ('a -> string) option           (*@tindex rep*)
+(*@tindex reader*)
+type ('a,'b) reader = 'b -> ('a * 'b) option  
+(*@tindex rep*)
+type 'a rep = ('a -> string) option           
 (*@ An @code{('a,'b) reader} pulls objects of type @code{'a} from a
 stream of type @code{'b}.  In this case, the objects are test
 cases of some type.  (This is defined the same way as
@@ -45,7 +51,8 @@ there are counter-examples to be printed.
 (*@ Now, the most general function for invoking QCheck is called
 @code{check}.  It takes 3 (curried) parameters:
  *)
-val check : ('a,'b) reader * 'a rep ->   (*@findex check*)
+(*@findex check*)
+val check : ('a,'b) reader * 'a rep ->   
             string * 'a prop -> 
             'b -> unit
 (*@ @enumerate
@@ -73,20 +80,25 @@ particular circumstances.  First, @code{checkGen} is for checking
 randomly generated test cases.  The random number stream is implicit,
 and the reader is always a generator from the @code{Gen} module.
 *)
-val checkGen : 'a Gen.gen * 'a rep ->     (*@findex checkGen*)
+(*@findex checkGen*)
+val checkGen : 'a Gen.gen * 'a rep ->     
                string * 'a prop -> unit
-(*@ Second, if we just want to check one particular test case, the
+(*@ 
+Second, if we just want to check one particular test case, the
 reader is trivial (and therefore omitted), and the `stream' is just the
 test case itself: 
 *)
-val checkOne : 'a rep -> string * 'a prop -> 'a -> unit
 (*@findex checkOne*)
+val checkOne : 'a rep -> string * 'a prop -> 'a -> unit
 (*@
-
-Finally, the @code{Qcheck} structure includes a pair that can be
-useful in determining the version of QCheck you are using.
+Finally, the @code{Qcheck} structure includes a pair @code{version}
+that can be useful in determining the version of QCheck you are using.
+The @code{context} contains expanded version information that can be 
+used by darcs to reconstruct this precise configuration of QCheck.
 *)
-val version : int * int (*@findex version*)
-val context : string
+(*@findex version*)
+val version : int * int   
+(*@findex context*)
+val context : string      
 (*>>*)
 end

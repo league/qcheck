@@ -10,14 +10,14 @@ all: docs
 test:
 	$(each-ml)
 
-DOCS := LICENSE INSTALL doc/qcheck.info doc/html/qcheck.html
+DOCS := README LICENSE INSTALL doc/qcheck.info doc/html/qcheck.html
 EXTRAS := doc/qcheck.pdf   # don't include this with distribution
 docs: $(DOCS)
 
 DOCGEN = qcheck qcheck-ver sml-ver mosml qcheck-sig \
 	 file-sys-sig gen-sig prop-sig settings-sig
 DOCGENS := $(addprefix doc/, $(addsuffix .texi, $(DOCGEN)))
-$(DOCS): $(DOCGENS) doc/copying.texi
+$(DOCS): $(DOCGENS) doc/copying.texi doc/changes.texi
 
 %.texi: %.texin doc/transcribe.pl
 	$(PERL) doc/transcribe.pl $(SML) qcheck.cm <$< >$@
@@ -33,6 +33,8 @@ LICENSE: doc/qcheck.info
 	$(GETNODE) '(get-node "./$<" "License" "../$@")'
 INSTALL: doc/qcheck.info
 	$(GETNODE) '(get-node "./$<" "Installation" "../$@")'
+README: doc/qcheck.info
+	$(GETNODE) '(get-node "./$<" "Overview" "../$@")'
 
 %.pdf: %.texi
 	$(TEXI2DVI) -p -o $@ $<

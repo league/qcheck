@@ -2,7 +2,8 @@
 @c %**start of header
 @setfilename qcheck.info
 @settitle QCheck/SML
-@syncodeindex tp fn
+@syncodeindex tp cp
+@syncodeindex fn cp
 @c %**end of header
 @include doc/qcheck-ver.texi
 @macro aboutthismanual
@@ -11,15 +12,18 @@ Copyright @copyright{} 2007 Christopher League.
 This manual describes QCheck/SML (version @value{VERSION}), an
 automatic testing library for Standard ML.  It is modeled after the
 QuickCheck library for Haskell (ICFP 2000) by Koen Claessen and John
-Hughes, with many thanks.
+Hughes, with many thanks.  QCheck/SML (including this manual) is free
+software.  You may redistribute and/or modify it under the terms of
+the GNU Lesser General Public License (LGPL) as published by the Free
+Software Foundation.  @xref{License}.
 
-QCheck/SML (including this manual) is free software.  You may
-redistribute and/or modify it under the terms of the GNU Lesser
-General Public License (LGPL) as published by the Free Software
-Foundation.  @xref{License}.
-
-The web page for QCheck/SML is
-@url{http://contrapunctus.net/league/haques/qcheck/}.
+@itemize
+@item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}.  
+@item Bundled releases: @url{http://comsci.liu.edu/~league/dist/qcheck/}
+@item Fetch repository: @code{darcs get http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck}
+@item Browse repository: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary}
+@item RSS feed: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=rss}
+@end itemize
 @end macro
 
 @titlepage
@@ -49,10 +53,9 @@ The web page for QCheck/SML is
 * Generating test cases::       Test cases can be randomly generated.
 * Properties::                  Specifying properties to be tested.
 * Settings::                    Many settings are configurable.
-* History::                     A record of the evolution of QCheck.
+* Release notes::               Summary of user-visible changes.
 * License::                     GNU Lesser General Public License.
-* Concept index::               
-* Identifier index::            
+* Index::                       
 @end menu
 
 @end ifnottex
@@ -76,13 +79,6 @@ failure.  Actually, random testing testing is just one possibility;
 QCheck can pull test cases from any kind of stream (disk file, data
 structure, etc.)
 
-@menu
-* Simple properties of integers::  
-* Generating pairs of integers::  
-* The QCheck structure::        
-@end menu
-
-@node Simple properties of integers, Generating pairs of integers, Overview, Overview
 @section Simple properties of integers
 
 The best way to demonstrate the capabilities of QCheck is with a
@@ -108,6 +104,8 @@ values.
 fun even_xor_odd x = even x <> odd x
 @end transcript
 
+@cindex polymorphic
+@cindex counter-example
 @noindent
 We now call upon QCheck to test this property on a bunch of randomly
 chosen integers.  QCheck checkers are polymorphic.  To test integers,
@@ -135,6 +133,7 @@ The output indicates that QCheck tested the property on 100 random
 integers, and all of them succeeded.  (The number of cases required to
 complete the test is configurable.  @xref{Settings}.)
 
+@cindex conditional
 For the next example, we will demonstrate a @emph{conditional}
 property: the successor of any even number should be odd.
 
@@ -158,6 +157,7 @@ should be even:
 checkGen int ("odd+1=even", odd ==> even o succ);
 @end transcript
 
+@cindex boundary condition
 @noindent
 Oops!  QCheck found a counter-example: the maximum 31-bit integer.  It
 is odd, but since its successor is undefined, the property does not
@@ -176,7 +176,6 @@ fun odd_not_max x = odd x andalso x < valOf(Int.maxInt);
 checkGen int ("odd+1=even", odd_not_max ==> even o succ)
 @end transcript
 
-@node Generating pairs of integers, The QCheck structure, Simple properties of integers, Overview
 @section Generating pairs of integers
 
 Other properties involve pairs of integers.  For example, the sum of
@@ -218,7 +217,6 @@ check (List.getItem, SOME show_pair)
 I provided 6 pairs in the list, but only 5 counted because
 @code{(3,4)} did not meet the precondition of the property.
 
-@node The QCheck structure,  , Generating pairs of integers, Overview
 @section The QCheck structure
 
 The examples in the preceding sections used several top-level functions
@@ -226,6 +224,7 @@ from the @code{QCheck} structure.  Here, we will examine the signature
 of @code{QCheck}, beginning with its sub-structures.
 
 @include doc/qcheck-sig.texi
+
 @noindent
 The version information currently reported by @code{QCheck.version} is:
 @transcript
@@ -241,6 +240,7 @@ systems:
 @itemize
 @include doc/sml-ver.texi
 @end itemize
+@cindex compatibility
 @noindent
 Inquiries and recommendations on improving compatibility are welcome.
 @footnote{Since the random generator modules mirror SML Basis modules
@@ -258,7 +258,8 @@ appropriate location by hand.  All makefiles are currently
 dependent on GNU make.
 
 @section SML/NJ
-
+@cindex SML/NJ
+@cindex Compilation Manager
 For Standard ML of New Jersey, the CM library specification
 @file{qcheck.cm} should be all you need.  The default target of
 @command{make -f Makefile.nj} will ask CM to build and stabilize this
@@ -275,7 +276,7 @@ make -f Makefile.nj SML=~/nj49/bin/sml
 @end example
 
 @section Moscow ML
-
+@cindex Moscow ML
 Building for Moscow ML is a little trickier; I benefitted enormously
 from the Mosmake system by Henning Makhlom.  Typing
 
@@ -314,7 +315,7 @@ make -f Makefile.moscow MOSMLC=~/mosml/bin/mosmlc
 @end example
 
 @section MLton
-
+@cindex MLton
 MLton is a whole-program compiler, so you cannot install QCheck as a
 library in the traditional sense.  You may, however, compile its source
 code along with your own to produce test programs.  The QCheck license
@@ -368,6 +369,8 @@ functions!
 @include doc/gen-sig.texi
 
 @section Recursive types
+@cindex recursive types
+@cindex termination
 As pointed out in the QuickCheck paper, one needs to be careful when
 generating tree-structured data, due to the strong possibility of
 non-termination.  To avoid this problem, make the generator a function
@@ -387,7 +390,7 @@ fun gentree 0 = Gen.map Leaf Gen.Int.int
 @chapter Properties
 @include doc/prop-sig.texi
 
-@node Settings, History, Properties, Top
+@node Settings, Release notes, Properties, Top
 @chapter Settings
 @include doc/settings-sig.texi
 
@@ -418,19 +421,16 @@ To select this style, just do:
     Settings.set(Settings.style, CMStyle.style);
 @end transcript
 
-@node History, License, Settings, Top
-@chapter History
+@node Release notes, License, Settings, Top
+@chapter Release notes
+@include doc/changes.texi
 
-@node License, Concept index, History, Top
+@node License, Index, Release notes, Top
 @chapter GNU Lesser General Public License
 @include doc/copying.texi
 
-@node Concept index, Identifier index, License, Top
-@unnumbered Concept index
+@node Index,  , License, Top
+@unnumbered Index
 @printindex cp
-
-@node Identifier index,  , Concept index, Top
-@unnumbered Identifier index
-@printindex fn
 
 @bye

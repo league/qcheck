@@ -1,0 +1,20 @@
+@subheading version 1.0
+@itemize @bullet
+@item Released 15 April 2007
+@item Major documentation updates -- now there's a full manual, not
+just a README file.
+@item Minor build system updates.  Now available as a darcs
+repository.
+@end itemize
+
+@subheading version 0.8a
+@itemize @bullet
+@item Released 14 September 2004
+@item Added support for MLton and Moscow ML.
+@end itemize
+
+@subheading version 0.7
+@itemize @bullet
+@item Released 9 June 2004
+@item First public release, worked only for SML/NJ.
+@end itemize
