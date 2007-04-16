@@ -41,3 +41,5 @@ doc/sml-ver.texi: Makefile.version
 	$(MOSMLC) -v | grep 'compiler version' >>$@
 	echo '@item'  >>$@
 	$(MLTON) >>$@
+	echo '@item'  >>$@
+	$(POLY) -v >>$@

@@ -3,9 +3,6 @@ body {
     font-size: 11pt;
     color: #111;
 }
-hr {
-    border: 2px solid #150;
-}
 a {
     text-decoration: none;
     border-bottom: 1px dotted #ccc;

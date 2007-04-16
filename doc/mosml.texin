@@ -1,4 +1,4 @@
 @transcript
-load "qcheck";
+load "QCheck";
 QCheck.pred;
 @end transcript

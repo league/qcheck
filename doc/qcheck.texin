@@ -20,9 +20,9 @@ Software Foundation.  @xref{License}.
 @itemize
 @item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}
 @item Bundled releases: @url{http://comsci.liu.edu/~league/dist/qcheck/}
-@item Fetch repository: @code{darcs get http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck}
-@item Browse repository: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary}
 @item RSS feed: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=rss}
+@item Browse repo.: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary}
+@item Checkout: @code{darcs get http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck}
 @end itemize
 @end macro
 
@@ -75,7 +75,7 @@ You provide specifications (in the form of ML code) of the properties
 that your module's functions should satisfy, and ask QCheck to
 exercise the module with randomly-chosen test cases.  It will show how
 many cases passed the test, and print counter-examples in case of
-failure.  Actually, random testing testing is just one possibility;
+failure.  Actually, random testing is just one possibility;
 QCheck can pull test cases from any kind of stream (disk file, data
 structure, etc.)
 
@@ -147,7 +147,7 @@ checkGen int ("even+1=odd", succ_even_odd);
 
 @noindent
 In this example, the 100 test cases that passed were all ones that met
-the conditional: they were all even.  Odd numbers trivially
+the condition: they were all even.  Odd numbers trivially
 satisfy the property (by falsifying the condition) and are not counted.
 
 Now, let's try the inverse property: the successor of an odd number
@@ -223,7 +223,7 @@ The examples in the preceding sections used several top-level functions
 from the @code{QCheck} structure.  Here, we will examine the signature
 of @code{QCheck}, beginning with its sub-structures.
 
-@include doc/qcheck-sig.texi
+@include doc/QCHECK_SIG.texi
 
 @noindent
 The version information currently reported by @code{QCheck.version} is:
@@ -243,12 +243,6 @@ systems:
 @cindex compatibility
 @noindent
 Inquiries and recommendations on improving compatibility are welcome.
-@footnote{Since the random generator modules mirror SML Basis modules
-(@code{Gen.Int32}, @code{Gen.Word16}, etc.) it is necessary to touch up
-@file{compat/*/gen.sml} whenever an implementation adds or alters its
-basis library support.  It may be more robust to query this differences
-with a @file{configure} script and generate the @file{gen.sml} on
-demand.}
 The following sections provide simple installation instructions for each
 system.  A different @code{Makefile} is supplied for each system, but in
 all of them @command{make all} will produce the library and/or a test
@@ -285,8 +279,8 @@ make -f Makefile.moscow
 @end example
 @noindent
 will generate a bunch of @file{.uo} and @file{.ui} files in the
-directories @file{src/} and @file{compat/moscow/}.  To use them in an
-interactive setting, give both these paths as @command{-I} arguments to
+@file{src/} directory.  To use them in an
+interactive setting, give the path as a @command{-I} argument to
 @command{mosml}, like this:
 @include doc/mosml.texi
 @noindent
@@ -333,6 +327,22 @@ always, the @command{test} target will run the test program.  You may
 specify the path to the MLton compiler by setting the @command{MLTON}
 variable on the command line.
 
+@section Poly/ML
+@cindex Poly/ML
+QCheck will also work with Poly/ML.  In this case, there is nothing to
+compile in advance, but @code{PolyML.make} will work if run from the
+@file{src/} directory, like this:
+@example
+OS.FileSys.chDir "src";
+PolyML.make "QCheck";
+@end example
+See also the file @file{tests/polytest.sml} for an example of how to
+use QCheck from Poly/ML.  Running
+@example
+make -f Makefile.poly test
+@end example
+will execute the unit tests for Poly/ML.
+
 @node Specifying test cases, Generating test cases, Installation, Top
 @chapter Specifying test cases
 
@@ -353,7 +363,7 @@ of the overview is one way, but another is reading them from a
 file.  QCheck provides a small API for using files within a directory
 or lines within a text file as test cases.
 
-@include doc/file-sys-sig.texi
+@include doc/FILES_SIG.texi
 
 @node Generating test cases, Properties, Specifying test cases, Top
 @chapter Generating test cases
@@ -366,7 +376,14 @@ example).  The @code{Gen} module holds a wide range of tools for
 creating random values of various structured types and, yes, even
 functions!
 
-@include doc/gen-sig.texi
+@include doc/APPLICATIVE_RNG.texi
+@include doc/GEN_TYPES.texi
+@include doc/PREGEN_SIG.texi
+@include doc/PRETEXT_GENERATOR.texi
+@include doc/INT_GENERATOR.texi
+@include doc/WORD_GENERATOR.texi
+@include doc/REAL_GENERATOR.texi
+@include doc/DATE_TIME_GENERATOR.texi
 
 @section Recursive types
 @cindex recursive types
@@ -388,11 +405,11 @@ fun gentree 0 = Gen.map Leaf Gen.Int.int
 
 @node Properties, Settings, Generating test cases, Top
 @chapter Properties
-@include doc/prop-sig.texi
+@include doc/PROPERTY_SIG.texi
 
 @node Settings, Release notes, Properties, Top
 @chapter Settings
-@include doc/settings-sig.texi
+@include doc/SETTINGS_SIG.texi
 
 @section Pluggable output styles
 

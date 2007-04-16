@@ -13,12 +13,12 @@ MOSML_BASIS = Int LargeInt Word Word8
 $(MOSML_SRC):
 	$(PERL) scripts/basis-gen.pl $(MOSML_SRC) $(MOSML_BASIS)
 
-MOSML_INVOKE=$(MOSML) -I src -I compat/moscow
+MOSML_INVOKE=$(MOSML) -I src
 doc/mosml.texi: doc/mosml.texin default
 	echo '@example' >$@
 	echo '% $(MOSML_INVOKE)' >>$@
 	echo '@end example' >>$@
-	$(PERL) -- doc/transcribe.pl $(MOSML_INVOKE) <$< >>$@
+	$(PERL) -- scripts/transcribe.pl $(MOSML_INVOKE) <$< >>$@
 
 mostlyclean: moscow.mostlyclean
 clean: mosmake.clean moscow.clean

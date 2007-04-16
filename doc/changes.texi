@@ -3,6 +3,7 @@
 @item Released 15 April 2007
 @item Major documentation updates -- now there's a full manual, not
 just a README file.
+@item Support for Poly/ML, which required some major restructuring.
 @item Minor build system updates.  Now available as a darcs
 repository.
 @end itemize
