@@ -36,8 +36,8 @@ is
 #if(defined(SMLNJ_VERSION))
   $/basis.cm
   $/smlnj-lib.cm
-  src/GENERATOR_SIG-nj.sml
-  src/RandGen-nj.sml
+  src/GENERATOR_SIG-nj.sml : make (-f Makefile.nj)
+  src/RandGen-nj.sml : make (-f Makefile.nj)
 #else
   src/GENERATOR_SIG-mlton.sml
   src/RandGen-mlton.sml
