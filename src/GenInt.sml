@@ -42,7 +42,9 @@ end
 val pos = pos_or_neg (fn x => x) Int.maxInt
 val neg = pos_or_neg Int.~ Int.minInt
 val z = Int.fromInt 0
-val two = Int.fromInt 2
+val two = Int.fromInt 2 
+    handle Overflow => (print "Error: need at least 3-bit ints\n";
+                        raise Overflow)
 val zero = lift z
 
 val nonneg = chooseL' [(1, zero), (ratio, pos)]

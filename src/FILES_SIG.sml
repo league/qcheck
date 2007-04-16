@@ -1,8 +1,8 @@
-signature FILE_SYS =
+signature FILES_SIG =
 sig 
 type ('a,'b) reader = 'b -> ('a * 'b) option
 (*<<*)
-(*@findex FILE_SYS signature *)
+(*@findex FILES_SIG signature *)
 (*@ The following functions generate file and directory names as 
 test cases.  This is useful, for example, for regression tests of a 
 compiler -- just keep a directory of source files to be compiled.
@@ -19,9 +19,9 @@ val nextFile : (string, dirstream) reader
 (*@ Here is an example of how to run tests on filenames in a 
 directory:
 @example
-    check (FileSys.nextFile, pretty_printer)
+    check (Files.nextFile, pretty_printer)
           (test_name, test_predicate)
-          (FileSys.openDir directory_path)
+          (Files.openDir directory_path)
 @end example
  *)
 

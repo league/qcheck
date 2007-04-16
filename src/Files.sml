@@ -6,7 +6,7 @@
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-structure FileSys : FILE_SYS =
+structure Files : FILES_SIG =
 struct
 
 type ('a,'b) reader = 'b -> ('a * 'b) option

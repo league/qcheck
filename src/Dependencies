@@ -1,23 +1,32 @@
-qcheck: ../compat/moscow/gen file-sys-sig settings-sig prop-sig + 
-        ../compat/moscow/strbag file-sys settings prop perl-style 
-        QCheckVersion
-
-file-sys-sig:
-settings-sig:
-prop-sig:
+APPLICATIVE_RNG:
+BAG_SIG: 
+BagFromMap: BAG_SIG
+BaseGeneratorFn: APPLICATIVE_RNG PREGEN_SIG Settings
+CMStyle: Property Settings
+DATE_TIME_GENERATOR: GEN_TYPES
+Files: FILES_SIG basis-moscow
+FILES_SIG: 
+GENERATOR_SIG-moscow: DATE_TIME_GENERATOR INT_GENERATOR REAL_GENERATOR TEXT_GENERATOR WORD_GENERATOR
+GEN_TYPES: 
+GenDateTime: TEXT_GENERATOR DATE_TIME_GENERATOR GenInt basis-moscow
+GenInt: TEXT_GENERATOR basis-moscow INT_GENERATOR
+GenText: PREGEN_SIG basis-moscow PRETEXT_GENERATOR
+GenWord: TEXT_GENERATOR basis-moscow WORD_GENERATOR
+INT_GENERATOR: GEN_TYPES
+PerlStyle: Settings Property StringBag
+PREGEN_SIG: GEN_TYPES
+PRETEXT_GENERATOR: PREGEN_SIG
+PROPERTY_SIG: StringBag
+Property: PROPERTY_SIG StringBag
+QCHECK_SIG: GENERATOR_SIG-moscow FILES_SIG SETTINGS_SIG PROPERTY_SIG
+QCheck: QCHECK_SIG QCheckVersion RandGen-moscow PerlStyle Settings Property StringBag Files
 QCheckVersion:
-
-file-sys: + ../compat/moscow/basis
-prop: ../compat/moscow/strbag
-settings: prop
-bag: 
-
-perl-style: prop settings ../compat/moscow/strbag
-cm-style: prop settings
-
-gen-sig:
-gen-base: gen-sig settings gen-text
-gen-text: gen-sig ../compat/moscow/basis
-gen-int:  gen-sig ../compat/moscow/basis
-gen-word: gen-sig ../compat/moscow/basis
-gen-date: gen-sig ../compat/moscow/basis gen-int
+Rand:
+REAL_GENERATOR: GEN_TYPES
+RandGen-moscow: APPLICATIVE_RNG BaseGeneratorFn GENERATOR_SIG-moscow GenDateTime GenInt GenText GenWord Rand basis-moscow 
+SETTINGS_SIG: Property
+Settings:
+StringBag: BagFromMap
+TEXT_GENERATOR: PRETEXT_GENERATOR
+WORD_GENERATOR: GEN_TYPES
+basis-moscow:

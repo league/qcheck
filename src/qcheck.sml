@@ -12,7 +12,7 @@ struct
 open QCheckVersion
 
 structure Gen = RandGen
-structure FileSys = FileSys
+structure Files = Files
 structure Settings = struct
   open Settings
   val style = ref PerlStyle.style

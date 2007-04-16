@@ -10,7 +10,7 @@ MOSMLC = mosmlc
 MOSML = mosml
 MOSMLFLAGS =
 MOSMAKE = compat/moscow/mosmake
-MOSMAKEDIRS = src compat/moscow tests
+MOSMAKEDIRS = src tests
 
 MLTON = mlton
 

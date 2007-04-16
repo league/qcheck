@@ -1,5 +1,5 @@
 #  -*- Makefile -*-
-default: src/qcheck.uo src/cm-style.uo
+default: src/QCheck.uo src/CMStyle.uo
 all: default
 test: all
 	./compose

@@ -11,8 +11,8 @@ signature QCHECK_SIG = sig
 (*@findex QCHECK_SIG signature*)
 (*@findex Gen structure*)
 structure Gen : GENERATOR_SIG      
-(*@findex FileSys structure*)
-structure FileSys : FILE_SYS    
+(*@findex Files structure*)
+structure Files : FILES_SIG    
 (*@findex Settings structure*)
 structure Settings : SETTINGS_SIG
 (*@ The @code{Gen} structure contains random value generators for all
@@ -20,7 +20,7 @@ the basis types, including aggregates like vectors and lists.  It
 also contains a rich library of combinators such as @code{zip},
 @code{map}, and @code{filter}.  @xref{Generating test cases}.
 
-@code{FileSys} is provided to make it easy to use lines in a file
+@code{Files} is provided to make it easy to use lines in a file
 or files in a directory as test cases.  @xref{Specifying test
 cases}. @code{Settings} contains various user-customizable settings,
 including user-definable output styles.  @xref{Settings}.
