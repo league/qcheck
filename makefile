@@ -72,7 +72,7 @@ master.mostlyclean:
 master.clean: master.mostlyclean
 	$(RM) $(DOCGENS) $(EXTRAS)
 master.realclean: master.clean
-	$(RM) src/QCheckVersion.sml 
+	$(RM) $(VERSION_SRC)
 	$(RM) $(DOCS) doc/qcheck.texi doc/qcheck-ver.texi
 	$(RM) -r doc/html
 
