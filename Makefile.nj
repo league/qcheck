@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-NJ_SRC = src/GENERATOR_SIG-nj.sml src/RandGen-nj.sml
+NJ_SRC = src/GENERATOR_SIG-nj.sml src/RandGen-nj.sml tests/from-to-nj.sml
 
 default:
 	echo 'CM.stabilize true "qcheck.cm";' | $(SML)
@@ -9,10 +9,11 @@ include Makefile.version
 
 all: default
 test: default
-	$(SML) -m tests/tests.cm </dev/null
+	$(SML) -m tests.cm </dev/null
 
-$(NJ_SRC):
-	$(PERL) scripts/nj-basis.pl $(SML)
+$(NJ_SRC): scripts/basis-gen.pl scripts/nj-basis.pl
+	$(PERL) scripts/basis-gen.pl $(NJ_SRC) \
+	  `$(PERL) scripts/nj-basis.pl $(SML)`
 
 mostlyclean:
 	$(RM) -r {src,tests,compat/nj}/$(CM) testme.sml

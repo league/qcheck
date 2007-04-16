@@ -1,0 +1,16 @@
+Group is
+qcheck.cm
+tests/reverse.sml
+tests/compose.sml
+tests/from-to-str.sml
+
+#if(defined(SMLNJ_VERSION))
+  tests/from-to-nj.sml : make (-f Makefile.nj)
+  tests/compiler.sml
+  tests/regex.sml
+  $/basis.cm 
+  $/regexp-lib.cm
+  $smlnj/compiler/compiler.cm
+#else
+  tests/from-to-mlton.sml
+#endif

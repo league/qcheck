@@ -1,4 +1,4 @@
 compose: ../src/QCheck reverse from-to-moscow %PROGRAM
 reverse: ../src/QCheck
-from-to-moscow: from-to-str
-from-to-str: ../src/QCheck ../src/GenInt
+from-to-moscow: from-to-str ../src/basis-moscow
+from-to-str: ../src/QCheck ../src/GenInt ../src/basis-moscow

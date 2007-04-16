@@ -27,9 +27,9 @@ val rc = Regex.compileString
 fun match r = isSome o StringCvt.scanString (Regex.find r)
 
 fun ck(name,re,p) = 
-    check (FileSys.filter (match re) FileSys.nextFile, SOME(fn s => s))
+    check (Files.filter (match re) Files.nextFile, SOME(fn s => s))
           (name, trivial smallp (pred p))
-          (FileSys.openDir "tests/data")
+          (Files.openDir "tests/data")
           handle exn as OS.SysErr _ =>
                  raise Fail "tests.cm should be run from source root"
 

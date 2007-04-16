@@ -1,24 +1,27 @@
 # -*- Makefile -*-
+
 EXE = tests/tests
+MLTON_SRC = src/GENERATOR_SIG-mlton.sml src/RandGen-mlton.sml \
+            tests/from-to-mlton.sml
 
-MLTON_SRC = src/GENERATOR_SIG-mlton.sml src/RandGen-mlton.sml
-
-default: $(MLTON_SRC)
+default: $(MLTON_SRC) src/QCheckVersion.sml 
 
 include Makefile.version
 
 all: $(EXE)
+
 test: all
 	$(EXE)
 
-$(MLTON_SRC): mlton-basis.txt
-	$(PERL) scripts/mlton-basis.pl $<
+$(MLTON_SRC): mlton-basis.txt scripts/basis-gen.pl scripts/mlton-basis.pl
+	$(PERL) scripts/basis-gen.pl $(MLTON_SRC) \
+	  `$(PERL) scripts/mlton-basis.pl $<`
 
 mlton-basis.txt:
 	$(MLTON) -show-basis $@
 
 $(EXE): $(VERSION_SRC) $(MLTON_SRC)
-	$(MLTON) -output $@ tests/tests.cm
+	$(MLTON) -output $@ tests.cm
 
 mostlyclean:
 	$(RM) mlton-basis.txt

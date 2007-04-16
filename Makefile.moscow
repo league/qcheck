@@ -1,8 +1,17 @@
 #  -*- Makefile -*-
 default: src/QCheck.uo src/CMStyle.uo
+
 all: default
+
 test: all
 	./compose
+
+MOSML_SRC = src/GENERATOR_SIG-moscow.sml src/RandGen-moscow.sml \
+            tests/from-to-moscow.sml
+MOSML_BASIS = Int LargeInt Word Word8
+
+$(MOSML_SRC):
+	$(PERL) scripts/basis-gen.pl $(MOSML_SRC) $(MOSML_BASIS)
 
 MOSML_INVOKE=$(MOSML) -I src -I compat/moscow
 doc/mosml.texi: doc/mosml.texin default
@@ -10,6 +19,15 @@ doc/mosml.texi: doc/mosml.texin default
 	echo '% $(MOSML_INVOKE)' >>$@
 	echo '@end example' >>$@
 	$(PERL) -- doc/transcribe.pl $(MOSML_INVOKE) <$< >>$@
+
+mostlyclean: moscow.mostlyclean
+clean: mosmake.clean moscow.clean
+realclean: mosmake.realclean moscow.realclean
+
+moscow.mostlyclean:
+moscow.clean: moscow.mostlyclean
+	$(RM) $(MOSML_SRC)
+moscow.realclean: moscow.clean
 
 include Makefile.version
 include $(MOSMAKE)/Makefile.inc

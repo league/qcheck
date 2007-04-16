@@ -61,7 +61,8 @@ val _ = rcheck "to-from" T.genT T.toString (pred to)
    that case is not counted.  This demonstrates a conditional
    property. *)
 
-val ok = isSome o T.fromString
+fun ok x = isSome(T.fromString x)
+           handle Overflow => false
 fun from s = T.eqStr(s, T.toString(valOf(T.fromString s)))
 val _ = rcheck "from-to" T.genStr (fn s => s) (implies(ok, pred from))
 
@@ -144,7 +145,7 @@ structure D = TestFromToString
 (* To test the various Integer types, we'll use the following functor
    as an adaptor. *)
 
-functor IntFromTo(I : INTEGER) : FROM_TO =
+functor IntFromTo(I : INTEGER) (*: FROM_TO*) =
 struct
   open QCheck I
   type t = int
@@ -153,7 +154,7 @@ struct
   fun prec NONE = "Inf"
     | prec (SOME n) = Int.toString n
 
-  val name = "Int" ^ prec I.precision
+(*  val name = "Int" ^ prec I.precision*)
 
   fun len NONE = 64
     | len (SOME n) = Int.- (size(I.toString n), 1)

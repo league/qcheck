@@ -18,7 +18,7 @@ the GNU Lesser General Public License (LGPL) as published by the Free
 Software Foundation.  @xref{License}.
 
 @itemize
-@item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}.  
+@item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}
 @item Bundled releases: @url{http://comsci.liu.edu/~league/dist/qcheck/}
 @item Fetch repository: @code{darcs get http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck}
 @item Browse repository: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary}

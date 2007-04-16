@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+
+POLY_SRC = src/GENERATOR_SIG.sml src/RandGen.sml tests/from-to-poly.sml
+POLY_BASIS = Int LargeInt Position IntInf Real LargeReal \
+             Word Word8 LargeWord SysWord
+
+default: $(POLY_SRC)
+
+include Makefile.version
+
+all: default $(VERSION_SRC)
+test: all
+	$(POLY) <tests/polytest.sml
+
+$(POLY_SRC): scripts/basis-gen.pl
+	$(PERL) scripts/basis-gen.pl $(POLY_SRC) $(POLY_BASIS)
+
+mostlyclean:
+clean: mostlyclean
+	$(RM) $(POLY_SRC)
+realclean: clean
+
