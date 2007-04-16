@@ -1,22 +1,10 @@
 (* bag.sml -- an unordered collection, where multiplicity is significant
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
-
-signature BAG =
-sig
-    type item
-    type bag
-    val empty : bag
-    val singleton : item -> bag
-    val count : bag * item -> int
-    val add : bag * item -> bag
-    val member : bag * item -> bool
-    val foldli : (item * int * 'a -> 'a) -> 'a -> bag -> 'a
-end
 
 (* We can represent a bag as a map from bag items to the number of
    times they occur in the bag.  Invariant: inDomain(map,item) ==>
@@ -30,7 +18,7 @@ functor BagFromMap
                  val find : 'a map * key -> 'a option
                  val foldli : (key * 'a * 'b -> 'b) -> 'b -> 'a map -> 'b
              end)
-        :> BAG where type item = M.key =
+        :> BAG_SIG where type item = M.key =
 struct
   type item = M.key
   type bag = int M.map

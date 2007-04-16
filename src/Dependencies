@@ -1,11 +1,11 @@
 qcheck: ../compat/moscow/gen file-sys-sig settings-sig prop-sig + 
         ../compat/moscow/strbag file-sys settings prop perl-style 
-        qcheck-ver
+        QCheckVersion
 
 file-sys-sig:
 settings-sig:
 prop-sig:
-qcheck-ver:
+QCheckVersion:
 
 file-sys: + ../compat/moscow/basis
 prop: ../compat/moscow/strbag

@@ -29,7 +29,7 @@ src/file-sys-sig.sml
 src/file-sys.sml
 src/settings-sig.sml
 src/qcheck-sig.sml
-src/qcheck-ver.sml: make
+src/QCheckVersion.sml: make
 src/qcheck.sml
 
 #if(defined(SMLNJ_VERSION))

@@ -1,12 +1,12 @@
 (* qcheck.sml -- main exported module; provides check function
- * Copyright ©2007 Christopher League <league@contrapunctus.net>
+ * Copyright ©2004 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-structure QCheck : QCHECK_SIG =
+structure QCheck : QCHECK =
 struct
 
 open QCheckVersion

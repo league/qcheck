@@ -1,13 +1,13 @@
 (* gen/text.sml -- generate random characters and strings
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-functor GenText (structure Gen : GENERATOR'
-                 structure Text : TEXT) : TEXT_GENERATOR' =
+functor GenText (structure Gen : PREGEN_SIG
+                 structure Text : TEXT) : PRETEXT_GENERATOR =
 struct
 
 open Gen Text

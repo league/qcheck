@@ -1,12 +1,12 @@
 (* filesys.sml -- test cases from files in a directory or lines in a file
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-structure FileSys : FILESYS =
+structure FileSys : FILE_SYS =
 struct
 
 type ('a,'b) reader = 'b -> ('a * 'b) option

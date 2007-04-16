@@ -5,7 +5,7 @@ all: $(EXE)
 test: all
 	$(EXE)
 
-$(EXE): src/qcheck-ver.sml
+$(EXE): src/QCheckVersion.sml
 	$(MLTON) -output $@ tests/tests.cm
 
 mostlyclean:

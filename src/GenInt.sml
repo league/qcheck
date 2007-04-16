@@ -1,5 +1,5 @@
 (* gen/int.sml -- generate random multi-precision integers
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as

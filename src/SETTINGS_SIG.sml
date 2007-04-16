@@ -1,4 +1,4 @@
-signature SETTINGS =
+signature SETTINGS_SIG =
 sig 
 (*<<*)
 type 'a control                           (*@tindex control*)

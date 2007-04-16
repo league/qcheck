@@ -1,12 +1,12 @@
 (* prop.sml -- conditional properties that can track argument distribution
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-structure Property :> PROPERTY =
+structure Property :> PROPERTY_SIG =
 struct
 
 type result = bool option

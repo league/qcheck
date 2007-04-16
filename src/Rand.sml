@@ -1,5 +1,5 @@
 
-structure Rand' =
+structure Rand =
 struct
 
 type rand = real

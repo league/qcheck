@@ -1,12 +1,12 @@
 (* gen/base.sml -- tools for generating random data
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-functor BaseGeneratorFn(R : APPLICATIVE_RNG) : GENERATOR' =
+functor BaseGeneratorFn(R : APPLICATIVE_RNG) : PREGEN_SIG =
 struct
 
 open R

@@ -1,4 +1,4 @@
-signature PROPERTY =
+signature PROPERTY_SIG =
 sig 
 (*<<*)
 (*@ A predicate is just a boolean function over some type.  A property

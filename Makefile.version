@@ -19,7 +19,7 @@ MINOR=0
 VERSION=$(MAJOR).$(MINOR)
 RELEASED=April 2007
 
-src/qcheck-ver.sml: Makefile.version
+src/QCheckVersion.sml: Makefile.version
 	echo 'structure QCheckVersion = struct'      >$@
 	echo 'val version = ($(MAJOR),$(MINOR)) '   >>$@
 	echo 'val context = "\'                     >>$@

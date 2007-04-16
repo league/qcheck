@@ -1,20 +1,20 @@
 (* qcheck.sig -- main signatures for QCheck library
- * Copyright ©2004 Christopher League <league@contrapunctus.net>
+ * Copyright ©2007 Christopher League <league@contrapunctus.net>
  * 
  * This library is free software; you may redistribute and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; see the file COPYING. 
  *)
 
-signature QCHECK = sig
+signature QCHECK_SIG = sig
 (*<<*)
-(*@findex QCHECK signature*)
+(*@findex QCHECK_SIG signature*)
 (*@findex Gen structure*)
-structure Gen : GENERATOR      
+structure Gen : GENERATOR_SIG      
 (*@findex FileSys structure*)
-structure FileSys : FILESYS    
+structure FileSys : FILE_SYS    
 (*@findex Settings structure*)
-structure Settings : SETTINGS
+structure Settings : SETTINGS_SIG
 (*@ The @code{Gen} structure contains random value generators for all
 the basis types, including aggregates like vectors and lists.  It
 also contains a rich library of combinators such as @code{zip},
@@ -25,7 +25,7 @@ or files in a directory as test cases.  @xref{Specifying test
 cases}. @code{Settings} contains various user-customizable settings,
 including user-definable output styles.  @xref{Settings}.
  *)
-include PROPERTY
+include PROPERTY_SIG
 (*@ This signature contains functions for specifying
 properties and observing the distribution of test cases.  In
 preceding sections, we met two of its members: @code{pred}

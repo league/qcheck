@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-default: src/qcheck-ver.sml
+default: src/QCheckVersion.sml
 	echo 'CM.stabilize true "qcheck.cm";' | $(SML)
 all: default
 test: default

@@ -1,8 +1,8 @@
-signature FILESYS =
+signature FILE_SYS =
 sig 
 type ('a,'b) reader = 'b -> ('a * 'b) option
 (*<<*)
-(*@findex FILESYS signature *)
+(*@findex FILE_SYS signature *)
 (*@ The following functions generate file and directory names as 
 test cases.  This is useful, for example, for regression tests of a 
 compiler -- just keep a directory of source files to be compiled.
