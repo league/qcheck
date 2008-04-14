@@ -16,9 +16,9 @@ MLTON = mlton
 POLY = poly
 
 MAJOR=1
-MINOR=0
+MINOR=1
 VERSION=$(MAJOR).$(MINOR)
-RELEASED=April 2007
+RELEASED=April 2008
 VERSION_SRC=src/QCheckVersion.sml
 
 $(VERSION_SRC): Makefile.version

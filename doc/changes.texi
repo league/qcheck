@@ -1,3 +1,10 @@
+@subheading version 1.1
+@itemize @bullet
+@item Released 14 April 2008
+@item Updated to fix WideText structure in MLton 20070826
+@item Minor build system updates
+@end itemize
+
 @subheading version 1.0
 @itemize @bullet
 @item Released 15 April 2007
