@@ -48,7 +48,7 @@ foreach my $mod (@ARGV)
     }
     elsif($mod =~ /Text/)
     {
-        print SIG "structure $mod : TEXT_GENERATOR\n";
+        print SIG "structure $mod : PRETEXT_GENERATOR\n";
         print GEN "structure $mod = GenText(structure Gen=Gen structure Text=$mod)\n";
     }
     else
