@@ -26,8 +26,8 @@ $(VERSION_SRC): Makefile.version
 	echo 'val version = ($(MAJOR),$(MINOR)) '   >>$@
 	echo 'val context = "\'                     >>$@
 	darcs changes --context     \
-	  | sed 's/"\|\\/\\\0/g'    \
-	  | sed 's/^.*$$/\\\0\\n\\/'                 >>$@
+	  | sed 's/\(\"\|\\\)/\\\1/g'    \
+	  | sed 's/^\(.*\)$$/\\\1\\n\\/'              >>$@
 	echo '\" end'                               >>$@
 
 doc/qcheck-ver.texi: Makefile.version
