@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on April, 14 2008 by texi2html 1.78 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
+
+-->
+<head>
+<title>QCheck/SML: 5. Properties</title>
+
+<meta name="description" content="QCheck/SML: 5. Properties">
+<meta name="keywords" content="QCheck/SML: 5. Properties">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.78">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.roman {font-family:serif; font-weight:normal;}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
+ul.toc {list-style: none}
+body {
+    font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
+    font-size: 11pt;
+    color: #111;
+}
+a {
+    text-decoration: none;
+    border-bottom: 1px dotted #ccc;
+}
+a:link {
+    color: #007;
+}
+a:visited {
+    color: #707;
+}
+a:hover {
+    border-bottom: 1px solid #ccc;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="Properties"></a>
+<a name="SEC15"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck_4.html#SEC14" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC16" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck_4.html#SEC11" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_6.html#SEC18" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 5. Properties </h1>
+<p> A predicate is just a boolean function over some type.  A property
+carries some additional data about preconditions and statistics.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example"><b>type</b> 'a pred = 'a &rarr; bool                             
+<a name="IDX100"></a><b>type</b> 'a prop                                          
+<a name="IDX101"></a><b>val</b> pred : 'a pred &rarr; 'a prop                         
+<a name="IDX102"></a><b>val</b> pred2 : ('a * 'b) pred &rarr; 'b &rarr; 'a  prop          
+<a name="IDX103"></a>
+</pre></td></tr></table>
+<p> This function and operator are the same: they construct conditional
+properties.  Test cases that fail the precondition are not counted. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><b>val</b> implies : 'a pred * 'a prop &rarr; 'a prop            
+<a name="IDX104"></a><b>val</b> ==&gt; : 'a pred * 'a pred &rarr; 'a prop                
+<a name="IDX105"></a>
+</pre></td></tr></table>
+ 
+<hr size="6">
+<a name="SEC16"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC15" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_6.html#SEC18" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.1 Statistical distribution </h2>
+<p>One problem with random test-case generation is that we don't know 
+for sure what we're getting.  QCheck provides a way to observe the 
+distribution of test cases by tagging them based on user-definable
+criteria.  For example, suppose we want to test the <code>ListMergeSort</code>
+module in the SML/NJ library, by generating random integer lists.
+</p>
+<p>If we generate and pass 100 cases, what does that mean?  Sorting a list
+with fewer than 2 elements is pretty easy, so how many of our 100 cases 
+are that trivial?  Also, how many of the lists are already ordered?  The
+following functions are designed to help you answer such questions.
+</p> 
+<table><tr><td>&nbsp;</td><td><pre class="example"><b>val</b> trivial : 'a pred &rarr; 'a prop &rarr; 'a prop           
+<a name="IDX106"></a><b>val</b> classify : 'a pred &rarr; string &rarr; 'a prop &rarr; 'a prop
+<a name="IDX107"></a><b>val</b> classify' : ('a &rarr; string option) &rarr; 'a prop &rarr;   
+<a name="IDX108"></a>                'a prop 
+</pre></td></tr></table>
+<p> Here are some examples of how they work.
+</p><table><tr><td>&nbsp;</td><td><pre class="example">fun fewer_than n L = length L &lt; n
+
+val sort_ok = ListMergeSort.sorted op&gt; o
+              ListMergeSort.sort op&gt;
+
+val sort_test = trivial (fewer_than 2)
+               (classify (ListMergeSort.sorted op&gt;) &quot;pre-sorted&quot;
+               (pred sort_ok))
+
+checkGen (Gen.list (Gen.flip'(1,9)) Gen.Int.int, NONE)
+         (&quot;ListMergeSort&quot;, sort_test)
+</pre></td></tr></table>
+<p>Now the test result, if passing, will be accompanied with some
+statistics on the distribution of the specified properties.
+</p><table><tr><td>&nbsp;</td><td><pre class="example">&rsaquo; ListMergeSort..........ok      (100 passed)         33% pre-sorted
+&rsaquo;                                                     28% trivial
+</pre></td></tr></table>
+<p>The functions <code>classify</code> and <code>trivial</code> are specializations of
+the more general <code>classify'</code> (prime), with which we can provide a 
+function that returns the tag.  To see the complete distribution of list 
+lengths, try this:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">fun sizeTag n = 
+    &quot;length &quot;^ StringCvt.padLeft #&quot; &quot; 3 (Int.toString n)
+
+val sort_test = classify' (SOME o sizeTag o length) (pred sort_ok)
+checkGen (Gen.list (Gen.flip'(1,9)) Gen.Int.int, NONE)
+         (&quot;ListMergeSort&quot;, sort_test)
+
+&rsaquo; ListMergeSort..........ok      (100 passed)         13% length   0
+&rsaquo;                                                      7% length   1
+&rsaquo;                                                      6% length   2
+&rsaquo;                                                     13% length   3
+&rsaquo;                                                      8% length   4
+&rsaquo;                                                      6% length   5
+&rsaquo;                                                      3% length   6
+&rsaquo;                                                      2% length   7
+&rsaquo;                                                      5% length   8
+&rsaquo;                                                      5% length   9
+&rsaquo;                                                      2% length  10
+&rsaquo;                                                      5% length  11
+&rsaquo;                                                      3% length  12
+</pre></td></tr></table>
+<p>The list goes on: the maximum length list generated in this run was
+43.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">
+</pre></td></tr></table>
+
+<hr size="6">
+<a name="SEC17"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC16" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_6.html#SEC18" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_6.html#SEC18" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.2 Results </h2>
+
+<table><tr><td>&nbsp;</td><td><pre class="example"><b>type</b> result = bool option                             
+<a name="IDX109"></a><b>type</b> stats = { tags : StringBag.bag,                  
+<a name="IDX110"></a>               count : int }
+
+<b>val</b> test : 'a prop &rarr; 'a * stats &rarr; result * stats    
+<a name="IDX111"></a><b>val</b> stats : stats                                     
+<a name="IDX112"></a><b>val</b> success : result pred                             
+<a name="IDX113"></a><b>val</b> failure : result pred                             
+<a name="IDX114"></a></pre></td></tr></table>
+
+<hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_6.html#SEC18" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Chris League</em> on <em>April, 14 2008</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

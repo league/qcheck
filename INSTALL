@@ -1,0 +1,103 @@
+
+2 Installation
+**************
+
+QCheck is designed to work with various implementations of Standard ML.
+At the time of release, it was built successfully on the following
+systems:
+   * Standard ML of New Jersey v110.67 [built: Sat Mar  1 09:57:31 2008]
+
+   * Moscow ML compiler version 2.01 (January 2004)
+
+   * MLton 20070826 (built Thu Aug 30 11:53:36 2007 on
+     fenrir.uchicago.edu)
+
+   * Poly/ML 5.1 Testing    RTS version: I386-5.1
+   Inquiries and recommendations on improving compatibility are welcome.
+The following sections provide simple installation instructions for each
+system.  A different `Makefile' is supplied for each system, but in all
+of them `make all' will produce the library and/or a test program,
+while `make test' will additionally run the test program.  There is no
+`make install', you must copy the files to an appropriate location by
+hand.  All makefiles are currently dependent on GNU make.
+
+2.1 SML/NJ
+==========
+
+For Standard ML of New Jersey, the CM library specification `qcheck.cm'
+should be all you need.  The default target of `make -f Makefile.nj'
+will ask CM to build and stabilize this library.  This creates a file
+`.cm/x86-unix/qcheck.cm' (alter the arch/os tag as needed) which may be
+copied into the standard CM library path and added to the `pathconfig'.
+
+   If you have multiple installations of SML/NJ, you may specify which
+one to use by providing its path on the `make' command line, like this:
+
+     make -f Makefile.nj SML=~/nj49/bin/sml
+
+2.2 Moscow ML
+=============
+
+Building for Moscow ML is a little trickier; I benefitted enormously
+from the Mosmake system by Henning Makhlom.  Typing
+
+     make -f Makefile.moscow
+   will generate a bunch of `.uo' and `.ui' files in the `src/'
+directory.  To use them in an interactive setting, give the path as a
+`-I' argument to `mosml', like this:
+
+     % mosml -I src
+
+     load "QCheck";
+      -| > val it = () : unit
+     QCheck.pred;
+      -| > val 'a it = fn : ('a -> bool) -> 'a prop
+   Or, copy all the `.uo' and `.ui' files to a different directory, and
+load them from there.
+
+   Using the library in compiled programs is more complex.  Mosmake
+will be a big help, but you will still need to figure out the
+dependencies to particular modules within QCheck.  Moscow ML does not
+currently have a way to package together a set of object files into a
+single library.
+
+   In addition to the default target,
+
+     make -f Makefile.moscow all
+   creates a test program called `compose' in the source directory, and
+the `test' target additionally runs the test.  You may specify the
+location of the `mosmlc' compiler on the command line, in case the one
+you want to use is not first in your path:
+
+     make -f Makefile.moscow MOSMLC=~/mosml/bin/mosmlc
+
+2.3 MLton
+=========
+
+MLton is a whole-program compiler, so you cannot install QCheck as a
+library in the traditional sense.  You may, however, compile its source
+code along with your own to produce test programs.  The QCheck license
+(LGPL) permits incorporating the source even into proprietary programs.
+
+   The `qcheck.cm' file is intended to be readable by MLton as well as
+SML/NJ.
+
+     make -f Makefile.mlton all
+   will ask MLton to compile a test program called `tests/tests'.  As
+always, the `test' target will run the test program.  You may specify
+the path to the MLton compiler by setting the `MLTON' variable on the
+command line.
+
+2.4 Poly/ML
+===========
+
+QCheck will also work with Poly/ML.  In this case, there is nothing to
+compile in advance, but `PolyML.make' will work if run from the `src/'
+directory, like this:
+     OS.FileSys.chDir "src";
+     PolyML.make "QCheck";
+   See also the file `tests/polytest.sml' for an example of how to use
+QCheck from Poly/ML.  Running
+     make -f Makefile.poly test
+   will execute the unit tests for Poly/ML.
+

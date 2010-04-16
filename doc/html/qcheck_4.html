@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on April, 14 2008 by texi2html 1.78 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
+
+-->
+<head>
+<title>QCheck/SML: 4. Generating test cases</title>
+
+<meta name="description" content="QCheck/SML: 4. Generating test cases">
+<meta name="keywords" content="QCheck/SML: 4. Generating test cases">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.78">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.roman {font-family:serif; font-weight:normal;}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
+ul.toc {list-style: none}
+body {
+    font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
+    font-size: 11pt;
+    color: #111;
+}
+a {
+    text-decoration: none;
+    border-bottom: 1px dotted #ccc;
+}
+a:link {
+    color: #007;
+}
+a:visited {
+    color: #707;
+}
+a:hover {
+    border-bottom: 1px solid #ccc;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="Generating-test-cases"></a>
+<a name="SEC11"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC12" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 4. Generating test cases </h1>
+
+<p>The QuickCheck tool for Haskell uses type classes so that arbitrary
+values of various types may be generated behind the scenes.  In SML,
+we need to be more explicit, but the same holds true in Haskell if we
+don't want the default generator (positive integers only, for
+example).  The <code>Gen</code> module holds a wide range of tools for
+creating random values of various structured types and, yes, even
+functions!
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX27"></a></pre></td></tr></table>
+<p> We begin with the raw random number generator.  The <code>new</code>
+function generates a seed based on the current time.  The <code>range</code>
+function produces random integers between those in the given pair,
+inclusive.  The generator is applicative, in the sense that it returns
+the new state of the random number generator.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX28"></a><b>type</b> rand
+<a name="IDX29"></a><b>val</b> new : unit &rarr; rand
+<a name="IDX30"></a><b>val</b> range : int * int &rarr; rand &rarr; int * rand
+</pre></td></tr></table>
+<p> The generator for a type takes a random number stream
+and produces a value of that type, along with the new state
+of the stream. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX31"></a><b>type</b> 'a gen = rand &rarr; 'a * rand
+<a name="IDX32"></a><b>type</b> ('a, 'b) co = 'a &rarr; 'b gen &rarr; 'b gen
+</pre></td></tr></table>
+
+<hr size="6">
+<a name="SEC12"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC11" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC13" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.1 Random-value combinators </h2>
+<p><code>lift v</code> is a generator that always produces the given value.
+<code>select</code> picks uniform randomly from the values in the vector,
+while <code>choose</code> picks uniform randomly from the <i>generators</i>
+in the vector, to produce a value.  For example:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">   Gen.choose #[Gen.lift 42, Gen.Int.int]
+</pre></td></tr></table>
+<p>will return the number 42 with 50% probability, and a random integer
+otherwise (but recall that <code>Gen.Int.int</code> is biased toward zero and
+the extrema).  The primed version pairs each generator with an integer
+weight to bias the choice (making it non-uniform). 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX33"></a><b>val</b> lift : 'a &rarr; 'a gen
+<a name="IDX34"></a><b>val</b> select : 'a vector &rarr; 'a gen
+<a name="IDX35"></a><b>val</b> choose : 'a gen vector &rarr; 'a gen
+<a name="IDX36"></a><b>val</b> choose' : (int * 'a gen) vector &rarr; 'a gen
+</pre></td></tr></table>
+<p> The functions ending in <code>L</code> are the same, except they
+operate on lists instead of vectors. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX37"></a><b>val</b> selectL : 'a list &rarr; 'a gen
+<a name="IDX38"></a><b>val</b> chooseL : 'a gen list &rarr; 'a gen
+<a name="IDX39"></a><b>val</b> chooseL' : (int * 'a gen) list &rarr; 'a gen
+</pre></td></tr></table>
+<p> Here are some basic map and filtering functions over generators. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX40"></a><b>val</b> filter : ('a &rarr; bool) &rarr; 'a gen &rarr; 'a gen
+<a name="IDX41"></a><b>val</b> zip : ('a gen * 'b gen) &rarr; ('a * 'b) gen
+<a name="IDX42"></a><b>val</b> zip3 : ('a gen * 'b gen * 'c gen) &rarr;
+           ('a * 'b * 'c) gen
+<a name="IDX43"></a><b>val</b> zip4 : ('a gen * 'b gen * 'c gen * 'd gen) &rarr;
+           ('a * 'b * 'c * 'd) gen
+<a name="IDX44"></a><b>val</b> map : ('a &rarr; 'b) &rarr; 'a gen &rarr; 'b gen
+<a name="IDX45"></a><b>val</b> map2 : ('a * 'b &rarr; 'c) &rarr; ('a gen * 'b gen) &rarr;
+           'c gen
+<a name="IDX46"></a><b>val</b> map3 : ('a * 'b * 'c &rarr; 'd) &rarr;
+           ('a gen * 'b gen * 'c gen) &rarr; 'd gen
+<a name="IDX47"></a><b>val</b> map4 : ('a * 'b * 'c * 'd &rarr; 'e) &rarr;
+           ('a gen * 'b gen * 'c gen * 'd gen) &rarr;
+           'e gen
+
+</pre></td></tr></table>
+<p> <code>flip</code> is just like flipping a fair coin.  With
+<code>flip'</code>, the coin is biased by the pair of integers given:
+<code>flip' (3,5)</code> will choose <code>true</code> three-eights of the time,
+and <code>false</code> five-eights. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX48"></a><b>val</b> flip : bool gen
+<a name="IDX49"></a><b>val</b> flip' : int * int &rarr; bool gen
+
+</pre></td></tr></table>
+<p> These produce lists or optional values by consulting the
+boolean generator about when to produce the nil list or <code>NONE</code>. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX50"></a><b>val</b> list : bool gen &rarr; 'a gen &rarr; 'a list gen
+<a name="IDX51"></a><b>val</b> option : bool gen &rarr; 'a gen &rarr; 'a option gen
+</pre></td></tr></table>
+<p> The following function produces any kind of sequential
+collection type, you just provide the <code>tabulate</code> function
+as the first parameter.  The integer generator then determines
+how many elements the collection will have. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX52"></a><b>val</b> vector : (int * (int &rarr; 'a) &rarr; 'b) &rarr;
+             int gen * 'a gen &rarr; 'b gen
+</pre></td></tr></table>
+<p> Here is an example, showing how we can generate strings
+with <code>vector</code>:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">    Gen.vector CharVector.tabulate
+               (Gen.range(6,10), Gen.select #[#&quot;a&quot;, #&quot;b&quot;, #&quot;c&quot;])
+</pre></td></tr></table>
+<p>Here is a sample of the strings it generated in one test:
+</p><table><tr><td>&nbsp;</td><td><pre class="example"> &rsaquo; &quot;abbacccbbb&quot; : CharVector.vector
+ &rsaquo; &quot;bccbaabacb&quot; : CharVector.vector
+ &rsaquo; &quot;aacbbbaba&quot; : CharVector.vector
+ &rsaquo; &quot;aabbaca&quot; : CharVector.vector
+ &rsaquo; &quot;acaacbb&quot; : CharVector.vector
+ &rsaquo; &quot;cbbbccab&quot; : CharVector.vector
+ &rsaquo; &quot;bbcaccca&quot; : CharVector.vector
+</pre></td></tr></table>
+
+<table><tr><td>&nbsp;</td><td><pre class="example">
+<a name="IDX53"></a><b>val</b> variant : (int,'b) co
+<a name="IDX54"></a><b>val</b> arrow : ('a, 'b) co * 'b gen &rarr; ('a &rarr; 'b) gen
+<a name="IDX55"></a><b>val</b> cobool : (bool, 'b) co
+<a name="IDX56"></a><b>val</b> colist : ('a, 'b) co &rarr; ('a list, 'b) co
+<a name="IDX57"></a><b>val</b> coopt : ('a, 'b) co &rarr; ('a option, 'b) co
+
+</pre></td></tr></table>
+<p> These turn generators into a stream of values.  You can
+limit them by a given integer, or just use the default maximum
+number of values from the <code>Settings</code>.  
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX58"></a><b>type</b> stream
+<a name="IDX59"></a><b>val</b> start : rand &rarr; stream
+<a name="IDX60"></a><b>val</b> limit' : int &rarr; 'a gen &rarr; ('a,stream) reader
+<a name="IDX61"></a><b>val</b> limit : 'a gen &rarr; ('a,stream) reader
+</pre></td></tr></table>
+
+<hr size="6">
+<a name="SEC13"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC12" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC14" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.2 Basis types </h2>
+<p>In addition to the general combinators, practically all of the
+SML Basis types have associated generators in sub-structures.  The
+following generators can be instantiated for whatever character and
+string types your implementation provides, such as
+<code>Gen.WideText.charByType</code>.  For the default character and string
+types, however, these are found in the top-level of the <code>Gen</code>
+structure. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX62"></a><b>type</b> char                                       
+<a name="IDX63"></a><b>type</b> string                                     
+<a name="IDX64"></a><b>type</b> substring                                  
+<a name="IDX65"></a><b>val</b> char : char gen                             
+<a name="IDX66"></a><b>val</b> charRange : char * char &rarr; char gen         
+<a name="IDX67"></a><b>val</b> charFrom : string &rarr; char gen               
+<a name="IDX68"></a><b>val</b> charByType : (char &rarr; bool) &rarr; char gen     
+<a name="IDX69"></a><b>val</b> string : (int gen * char gen) &rarr; string gen 
+<a name="IDX70"></a><b>val</b> substring : string gen &rarr; substring gen     
+<a name="IDX71"></a><b>val</b> cochar : (char, 'b) co                      
+<a name="IDX72"></a><b>val</b> costring : (string, 'b) co                  
+<a name="IDX73"></a><b>val</b> cosubstring : (substring, 'b) co            
+</pre></td></tr></table>
+<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX74"></a></pre></td></tr></table>
+<p> The functions in <code>Gen.Int</code> (and <code>Gen.Int32</code>, <code>Gen.IntInf</code>,
+etc.) generate integers in various ranges.  They can easily be instantiated
+for whatever integer types your implementation provides.  They are biased
+so that zero, <code>maxInt</code>, and <code>minInt</code> (if they exist) are
+generated much more often than other integers. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX75"></a>eqtype int                              
+<a name="IDX76"></a><b>val</b> int : int gen                       
+<a name="IDX77"></a><b>val</b> pos : int gen                       
+<a name="IDX78"></a><b>val</b> neg : int gen                       
+<a name="IDX79"></a><b>val</b> nonpos : int gen                    
+<a name="IDX80"></a><b>val</b> nonneg : int gen                    
+<a name="IDX81"></a><b>val</b> coint : (int, 'b) co                
+</pre></td></tr></table>
+<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX82"></a></pre></td></tr></table>
+<p> The functions generating unsigned words are in structures such as
+<code>Gen.Word</code>, <code>Gen.Word8</code>, <code>Gen,Word32</code>, etc., depending
+on your implementation. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX83"></a>eqtype word                             
+<a name="IDX84"></a><b>val</b> word : word gen                     
+<a name="IDX85"></a><b>val</b> coword : (word, 'b) co              
+</pre></td></tr></table>
+<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX86"></a></pre></td></tr></table>
+<p> These are in <code>Gen.Real</code> structure.  Currently, real numbers are
+generated from strings of (decimal) digits, rather than from bits.
+So some valid reals will never be generated. This may not be sufficient
+for testing numerical code. 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX87"></a><b>type</b> real                               
+<a name="IDX88"></a><b>val</b> real : real gen                     
+<a name="IDX89"></a><b>val</b> frac : real gen                     
+<a name="IDX90"></a><b>val</b> pos : real gen                      
+<a name="IDX91"></a><b>val</b> neg : real gen                      
+<a name="IDX92"></a><b>val</b> nonpos : real gen                   
+<a name="IDX93"></a><b>val</b> nonneg : real gen                   
+<a name="IDX94"></a><b>val</b> finite : real gen                   
+</pre></td></tr></table>
+<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX95"></a></pre></td></tr></table>
+<p> Generate dates and times from <code>Gen.DateTime</code>.  The
+<code>dateFromYear</code> function uses the given generator to produce
+the year, but then it comes up with a month, day, hour, minute,
+and second itself.  A few days are more likely than others because
+we do not bother to generate the correct number of days based on the
+month.  This makes May 1st more likely than May 2nd, because it could
+also have been generated as April 31st.  (The Basis <code>Date.date</code>
+normalizes the dates though, so you will never see April 31st.) 
+</p><table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX96"></a><b>val</b> weekday : Date.weekday gen              
+<a name="IDX97"></a><b>val</b> month : Date.month gen                  
+<a name="IDX98"></a><b>val</b> dateFromYear : int gen &rarr; Date.date gen 
+<a name="IDX99"></a><b>val</b> time : Time.time gen                    
+</pre></td></tr></table>
+
+<hr size="6">
+<a name="SEC14"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC13" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.3 Recursive types </h2>
+<p>As pointed out in the QuickCheck paper, one needs to be careful when
+generating tree-structured data, due to the strong possibility of
+non-termination.  To avoid this problem, make the generator a function
+of a decreasing integer parameter.  When that parameter reaches zero,
+the only choice is to return a leaf.
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example"><b>datatype</b> tree = Node of tree * tree | Leaf of int
+<b>fun</b> gentree 0 = Gen.map Leaf Gen.Int.int
+  | gentree n = 
+    Gen.choose' #[(1,Gen.map Leaf Gen.Int.int),
+                  (4,Gen.map Node (Gen.zip(gentree(n div 2),
+                                           gentree(n div 2))))]
+</pre></td></tr></table>
+
+<hr size="6">
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC11" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Chris League</em> on <em>April, 14 2008</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>
