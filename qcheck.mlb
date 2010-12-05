@@ -1,0 +1,41 @@
+local
+ $(SML_LIB)/basis/basis.mlb
+ src/APPLICATIVE_RNG.sml
+ src/BAG_SIG.sml
+ src/BagFromMap.sml
+ src/GEN_TYPES.sml
+ src/PREGEN_SIG.sml
+ src/Settings.sml
+ src/BaseGeneratorFn.sml
+ src/StringBag.sml
+ src/PROPERTY_SIG.sml
+ src/Property.sml
+ src/CMStyle.sml
+ src/DATE_TIME_GENERATOR.sml
+ src/FILES_SIG.sml
+ src/TextStreamIO.sml
+ src/Files.sml
+ src/PRETEXT_GENERATOR.sml
+ src/TEXT_GENERATOR.sml
+ src/INT_GENERATOR.sml
+ src/REAL_GENERATOR.sml
+ src/WORD_GENERATOR.sml
+ src/GenInt.sml
+ src/GenDateTime.sml
+ src/GenReal.sml
+ src/GenText.sml
+ src/GenWord.sml
+ src/PerlStyle.sml
+ src/SETTINGS_SIG.sml
+ src/QCheckVersion.sml
+ src/Rand.sml
+ src/GENERATOR_SIG-mlton.sml
+ src/RandGen-mlton.sml
+ src/QCHECK_SIG.sml
+ src/QCheck.sml
+in
+ structure QCheck
+ functor GenInt
+ structure PerlStyle
+ structure CMStyle
+end

@@ -1,0 +1,7 @@
+$(SML_LIB)/basis/basis.mlb
+(* $(SML_LIB)/qcheck/qcheck.mlb *)
+qcheck.mlb
+tests/reverse.sml
+tests/compose.sml
+tests/from-to-str.sml
+tests/from-to-mlton.sml

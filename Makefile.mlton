@@ -21,7 +21,7 @@ mlton-basis.txt:
 	$(MLTON) -show-basis $@
 
 $(EXE): $(VERSION_SRC) $(MLTON_SRC)
-	$(MLTON) -output $@ tests.cm
+	$(MLTON) -output $@ tests.mlb
 
 mostlyclean:
 	$(RM) mlton-basis.txt
