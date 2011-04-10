@@ -3,6 +3,7 @@ Library
   functor GenInt
   structure PerlStyle
   structure CMStyle
+  structure StringBag
 is
   src/APPLICATIVE_RNG.sml
   src/BAG_SIG.sml
