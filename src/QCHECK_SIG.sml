@@ -91,6 +91,22 @@ test case itself:
 (*@findex checkOne*)
 val checkOne : 'a rep -> string * 'a prop -> 'a -> unit
 (*@
+Third, if we want to provide a shrinking function, QCheck will
+try to find a smaller counterexample:
+*)
+(*@findex checkGenShrink*)
+val checkGenShrink : ('a -> 'a list) -> 'a Gen.gen * 'a rep ->     
+               string * 'a prop -> unit
+(*@
+Fourth, if we want to use the checker as an API, we can pass a 
+continuation that takes a list of bad objects some stats.
+*)
+val cpsCheck : ('a -> 'a list) -> Property.stats -> ('a, 's) reader * 'a rep ->     
+               'a prop ->
+               (string option * Property.result * Property.stats -> unit) -> 
+               ('a list -> Property.stats -> 'b) -> 's -> 'b
+(*@findex cpsCheck*)
+(*@
 Finally, the @code{Qcheck} structure includes a pair @code{version}
 that can be useful in determining the version of QCheck you are using.
 The @code{context} contains expanded version information that can be 
