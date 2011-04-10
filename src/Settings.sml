@@ -16,6 +16,7 @@ val set = op:=
 val gen_target = ref(SOME 100) (* Number of valid random cases to test *)
 val gen_max = ref 400 (* Maximum number of random cases to consider *)
 val examples = ref(SOME 5)  (* Number of counter-examples to report *)
+val sort_examples = ref true (* Sort counter-examples smallest first *)
 val outstream = ref TextIO.stdErr (* Output stream for test results *)
 val show_stats = ref true        (* Show distribution of test cases *)
 val column_width = ref 22              (* Width of test name column *)

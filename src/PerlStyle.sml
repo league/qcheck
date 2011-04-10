@@ -34,6 +34,20 @@ Bool/valid............|FAILED  |(9999/9999 passed)  |
 fun new tag =
 let
     val errs = ref nil
+    val sort = Settings.get Settings.sort_examples
+    fun addErr obj =
+      let fun errsize NONE = 999999
+            | errsize (SOME s) = size s
+          fun insert [] = [obj]
+            | insert (err::errs) =
+                if errsize obj <= errsize err then obj :: err :: errs
+                else err :: insert errs
+      in  errs := insert (!errs)
+      end
+
+    fun addErrNosort obj = errs := obj :: (!errs)
+
+    val addErr = if sort then addErr else addErrNosort
 
     val os = Settings.get Settings.outstream
     val namew = Settings.get Settings.column_width
@@ -70,7 +84,7 @@ let
            << flush
 
     fun status (obj, result, stats) =
-        (if Property.failure result then errs := obj :: !errs
+        (if Property.failure result then addErr obj
          else();
          os << update stats false << return())
 

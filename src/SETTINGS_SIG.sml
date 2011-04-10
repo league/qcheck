@@ -17,6 +17,9 @@ many even if @code{gen_target} has not been reached.  Default is 400. *)
 val examples : int option control         (*@findex examples*)
 (*@ Maximum number of counter-examples to report.  Default is 5. *)
 
+val sort_examples : bool control          (*@findex sort_examples*)
+(*@ Whether counter-examples should appear shortest first.  Default is true. *)
+
 val outstream : TextIO.outstream control  (*@findex outstream*)
 (*@ Output stream for test results. *)
 
