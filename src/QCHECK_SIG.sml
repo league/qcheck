@@ -75,7 +75,7 @@ from the file system, etc.
 
 @end enumerate 
 
-We provide two specializations of @code{check} that are useful in
+We provide several specializations of @code{check} that are useful in
 particular circumstances.  First, @code{checkGen} is for checking
 randomly generated test cases.  The random number stream is implicit,
 and the reader is always a generator from the @code{Gen} module.
