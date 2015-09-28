@@ -1,5 +1,27 @@
+# SML/NJ
 .cm
-*~
 src/GENERATOR_SIG-nj.sml
 src/RandGen-nj.sml
 tests/from-to-nj.sml
+
+# MLton
+mlton-basis.txt
+tests/tests
+src/GENERATOR_SIG-mlton.sml
+src/RandGen-mlton.sml
+tests/from-to-mlton.sml
+
+# Moscow ML
+*.ui
+*.uo
+*~
+compose
+mosmake.dep
+src/GENERATOR_SIG-moscow.sml
+src/RandGen-moscow.sml
+tests/from-to-moscow.sml
+
+# Poly/ML
+src/GENERATOR_SIG.sml
+src/RandGen.sml
+tests/from-to-poly.sml
