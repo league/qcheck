@@ -51,9 +51,18 @@ val nonneg = chooseL' [(1, zero), (ratio, pos)]
 val nonpos = chooseL' [(1, zero), (ratio, neg)]
 val int = chooseL [nonneg, nonpos]
 
+(* this should be similar to coword *)
+fun coabs n =
+    if n = z then variant' (2,0)
+    else coabs (Int.quot(n, two))
+       o cobool (Int.mod(n, two) <> z)
+       o variant' (2,1)
+
 fun coint n = 
-    if n = z then variant 0
-    else if Int.< (n, z) then variant 1 o coint (Int.~ n)
-    else variant 2 o coint (Int.div(n,two))
+    if n = z then variant' (2,0)
+    else coabs (Int.quot(n, two))
+       o cobool (Int.mod(n, two) <> z)
+       o cobool (Int.< (n, z))
+       o variant' (2,1)
 
 end

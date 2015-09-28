@@ -107,14 +107,19 @@ fun limit gen = limit' (Settings.get Settings.gen_max) gen
 
 type ('a, 'b) co = 'a -> 'b gen -> 'b gen
 
+fun splitrights (r,0) = r
+  | splitrights (r,n) = splitrights (#2 (split r), n-1)
+
+fun splitleft r = #1 (split r)
+
 fun variant v g r =
-    let fun nth (i, r) = 
-            let val (r1,r2) = split r
-             in if i = 0 then r1
-                else nth(i-1, r2)
-            end
-     in g(nth(v,r))
-    end
+    if v < 0 then raise Subscript
+    else g (splitleft (splitrights (r,v)))
+
+fun variant' (b,v) g r =
+    if v < 0 orelse v >= b then raise Subscript
+    else if v = b-1 then g (splitrights (r,v))
+    else g (splitleft (splitrights (r,v)))
 
 fun arrow (cogen, gen) r = 
     let val (r1, r2) = split r
@@ -125,14 +130,14 @@ fun arrow (cogen, gen) r =
      in (g, r2)
     end
 
-fun cobool false = variant 0
-  | cobool true = variant 1
+fun cobool false = variant' (2,0)
+  | cobool true = variant' (2,1)
 
-fun colist _ [] = variant 0
+fun colist _ [] = variant' (2,0)
   | colist co (x::xs) = 
-    variant 1 o co x o colist co xs
+    colist co xs o co x o variant' (2,1)
 
-fun coopt _ NONE = variant 0
-  | coopt co (SOME x) = variant 1 o co x
+fun coopt _ NONE = variant' (2,0)
+  | coopt co (SOME x) = co x o variant' (2,1)
 
 end 

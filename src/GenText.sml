@@ -34,12 +34,14 @@ fun substring gen r =
      in (Substring.substring(s,i,j), r)
     end
 
+(* this should be similar to coword *)
 fun cochar c =
-    if Char.ord c = 0 then variant 0
-    else variant 1 o cochar (Char.chr (Char.ord c div 2))
+    if Char.ord c = 0 then variant' (2,0)
+    else cochar (Char.chr (Char.ord c div 2))
+       o cobool (Char.ord c mod 2 <> 0)
+       o variant' (2,1)
 
-fun cosubstring s =
-    Substring.foldr (fn(c,v) => cochar c o v) (variant 0) s
+fun cosubstring s = colist cochar (Substring.explode s)
 
 fun costring s = cosubstring (Substring.full s)
 

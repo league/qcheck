@@ -27,12 +27,11 @@ fun word r =
 val z = Word.fromInt 0
 val one = Word.fromInt 1
 
+(* this should be equivalent to @code{colist cobool bits} *)
 fun coword w =
-    if w = z then variant 0
-    else let val b = Word.andb(w,one) <> z
-             val w' = Word.>>(w,0w1)
-          in if b then variant 1 o coword w'
-             else variant 2 o coword w'
-         end
+    if w = z then variant' (2,0)
+    else coword (Word.>>(w, 0w1))
+       o cobool (Word.andb(w, one) <> z)
+       o variant' (2,1)
 
 end

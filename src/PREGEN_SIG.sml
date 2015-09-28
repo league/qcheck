@@ -98,8 +98,20 @@ Here is a sample of the strings it generated in one test:
 @end example
 *)
 
+(*@ Here are some basic co-generators.
+@code{variant} takes a small non-negative @code{int} and performs
+simple unary branching.  @code{variant'} is similar but
+takes an additional bound to save the last split.
+@code{variant'} is the building block of all other built-in co-generators.
+
+Note: @code{variant v} is equivalent to @code{variant' (v+2, v)} for small @code{v}.
+@code{variant' (b, v)} raises @code{Subscript} if @code{v < 0} or @code{v >= b}.
+*)
+
 (*@findex variant*)
 val variant : (int,'b) co
+(*@findex variant'*)
+val variant' : (int*int,'b) co
 (*@findex arrow*)
 val arrow : ('a, 'b) co * 'b gen -> ('a -> 'b) gen
 (*@findex cobool*)
