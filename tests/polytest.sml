@@ -1,4 +1,3 @@
-PolyML.Compiler.printTypesWithStructureName := false;
 PolyML.print_depth 0;
 OS.FileSys.chDir "src";
 PolyML.make "QCheck";

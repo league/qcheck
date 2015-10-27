@@ -1,6 +1,5 @@
 signature SUBSTRING =
 sig include Substring
-    val full : string -> substring
 end
 
 structure Substring =
@@ -56,7 +55,8 @@ struct
         | D i => 
           case TextIO.inputLine i
            of "" => (TextIO.closeIn i; p := E; NONE)
-            | ln => 
+           of NONE => (TextIO.closeIn i; p := E; NONE)
+            | SOME ln =>
               let val p' = getInstream i
                in p := I(ln, p')
                 ; SOME(ln, p')
