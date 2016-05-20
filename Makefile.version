@@ -24,11 +24,9 @@ VERSION_SRC=src/QCheckVersion.sml
 $(VERSION_SRC): Makefile.version
 	echo 'structure QCheckVersion = struct'      >$@
 	echo 'val version = ($(MAJOR),$(MINOR)) '   >>$@
-	echo 'val context = "\'                     >>$@
-	darcs changes --context     \
-	  | sed 's/\(\"\|\\\)/\\\1/g'    \
-	  | sed 's/^\(.*\)$$/\\\1\\n\\/'              >>$@
-	echo '\" end'                               >>$@
+	echo -n 'val context = "'                   >>$@
+	echo -n `git describe --dirty=+`            >>$@
+	echo '" end'                                >>$@
 
 doc/qcheck-ver.texi: Makefile.version
 	echo '@set VERSION $(VERSION)'    >$@

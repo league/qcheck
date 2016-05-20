@@ -50,18 +50,8 @@ doc/html/qcheck.html: doc/html
 	sed -i 's/-&gt;/\&rarr;/g' $</*.html
 	sed -i 's/\-|/\&rsaquo;/g' $</*.html
 
-## predist is 'chmod +x compat/moscow/mosmake/wrap; make docs clean'
-dist:
-	REPODIR=$$PWD darcs dist --dist-name qcheck-$(VERSION)
-
 DIST_BRANCH = trunk
 DIST_REPO = comsci.liu.edu:public_html/dist/qcheck
-
-darcs-put:
-	darcs put -v --no-pristine-tree $(DIST_REPO)/$(DIST_BRANCH)
-
-darcs-push:
-	darcs push $(DIST_REPO)/$(DIST_BRANCH)
 
 mostlyclean: master.mostlyclean
 	$(each-ml)

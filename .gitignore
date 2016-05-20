@@ -2,6 +2,7 @@
 .cm
 src/GENERATOR_SIG-nj.sml
 src/RandGen-nj.sml
+src/QCheckVersion.sml
 tests/from-to-nj.sml
 
 # MLton
