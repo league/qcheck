@@ -1,0 +1,10 @@
+_require "basis.smi"
+
+structure TextStreamIO =
+struct
+  type instream   = TextIO.StreamIO.instream
+  val getInstream = TextIO.getInstream
+  val inputLine   = TextIO.StreamIO.inputLine
+end
+
+

@@ -1,5 +1,5 @@
 define each-ml
-  for m in nj moscow mlton poly; do $(MAKE) -f Makefile.$$m $@; done
+  for m in nj moscow mlton poly smlsharp; do $(MAKE) -f Makefile.$$m $@; done
 endef
 
 default: 

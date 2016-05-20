@@ -1,0 +1,16 @@
+_require "basis.smi"
+
+structure Settings =
+  struct
+    type 'a control = 'a ref
+	val get : 'a ref -> 'a
+	val set : 'a ref * 'a -> unit
+    val column_width : int ref
+    val examples : int option ref
+    val gen_max : int ref
+    val gen_target : int option ref
+    val outstream : TextIO.outstream ref
+    val show_stats : bool ref
+    val sort_examples : bool ref
+  end
+

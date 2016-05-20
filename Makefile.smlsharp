@@ -1,0 +1,110 @@
+# -*- Makefile -*-
+####################################################################################
+#
+# QCheck
+#     automatic unit testing of Standard ML modules.
+# 
+####################################################################################
+
+SMLSHARP = smlsharp
+PERL = perl
+
+## search directories
+VROOT = .
+VPATH = $(VROOT):$(VROOT)/src
+INCDIR = $(patsubst %,-I%,$(subst :, ,$(VPATH)))
+
+## compile options
+SMLSHARPFLAGS = $(INCDIR)
+
+## test patterns
+TESTS = compose reverse from-to-str from-to-smlsharp
+
+## source code
+SRC=src
+SRCS= $(SRC)/BagFromMap.sml         \
+      $(SRC)/BaseGeneratorFn.sml    \
+      $(SRC)/CMStyle.sml            \
+      $(SRC)/Files.sml              \
+      $(SRC)/GenDateTime.sml        \
+      $(SRC)/GenInt.sml             \
+      $(SRC)/GenReal.sml            \
+      $(SRC)/GenText.sml            \
+      $(SRC)/GenWord.sml            \
+      $(SRC)/PerlStyle.sml          \
+      $(SRC)/Property.sml           \
+      $(SRC)/QCheck.sml             \
+      $(SRC)/QCheckVersion.sml      \
+      $(SRC)/Rand.sml               \
+      $(SRC)/RandGen-smlsharp.sml   \
+      $(SRC)/Settings.sml           \
+      $(SRC)/StringBag.sml          \
+      $(SRC)/TextStreamIO.sml
+
+SHARP_SRC = $(SRC)/GENERATOR_SIG-smlsharp.sml \
+            $(SRC)/RandGen-smlsharp.sml \
+            tests/from-to-smlsharp.sml
+
+## categorise object file
+OBJS   = $(filter %.o,$(SRCS:.sml=.o))
+
+## default targets
+all: $(OBJS)
+
+include Makefile.version
+
+## compiler dependent modules
+$(SHARP_SRC): scripts/basis-gen.pl scripts/smlsharp-basis.pl
+	$(PERL) scripts/basis-gen.pl $(SHARP_SRC) \
+	  `$(PERL) scripts/smlsharp-basis.pl $(SMLSHARP)`
+
+## .o type rules
+%.o: %.sml
+	@echo "  SML# [$@]"
+	@SMLSHARP_HEAPSIZE=32M:2G $(SMLSHARP) $(SMLSHARPFLAGS) -c $<
+
+## generate for SML dependence
+%.d: %.sml
+	@echo "  GEN [$@]"
+	@$(SHELL) -ec '$(SMLSHARP) -MM $(SMLSHARPFLAGS) $< \
+		| sed "s!\($*\)\.o[ :]*!\1.o $@ : !g" > $@; \
+		[ -s $@ ] || rm -rf $@'
+
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
+## include generated dependence
+include $(filter %.d,$(SRCS:.sml=.d))
+endif
+
+
+## test rules
+TEST_EXES = $(addprefix tests/,$(TESTS))
+
+TEST_SRCS = $(addsuffix .sml,$(addprefix tests/,$(TESTS)))
+TEST_OBJS = $(TEST_SRCS:.sml=.o)
+
+$(TEST_EXES): $(TEST_OBJS)
+	@echo "  [LINK] $@"
+	@$(SMLSHARP) $(SMLSHARPFLAGS) -o $@ $(addsuffix .smi,$@)
+
+test: $(OBJS) $(TEST_EXES)
+	@for test in $(TEST_EXES); do \
+		echo "  [TEST] $$(basename $$test)"; \
+		$$test ; \
+	done
+
+ifeq (test,$(findstring test,$(MAKECMDGOALS)))
+include $(TEST_SRCS:.sml=.d)
+endif
+
+.PHONY: clean
+clean:
+	$(RM) $(OBJS)
+	$(RM) $(filter %.d,$(SRCS:.sml=.d))
+	$(RM) $(SHARP_SRC)
+	$(RM) $(TEST_SRCS:.sml=.d)
+	$(RM) $(TEST_OBJS)
+	$(RM) $(TEST_EXES)
+
+realclean: clean
+mostlyclean: clean
+

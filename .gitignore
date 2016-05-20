@@ -25,3 +25,11 @@ tests/from-to-moscow.sml
 src/GENERATOR_SIG.sml
 src/RandGen.sml
 tests/from-to-poly.sml
+
+# SML#
+*.o
+*.d
+src/GENERATOR_SIG-smlsharp.sml
+src/RandGen-smlsharp.sml
+tests/from-to-smlsharp.sml
+

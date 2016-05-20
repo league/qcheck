@@ -1,0 +1,73 @@
+_require "basis.smi"
+_require "qcheck.smi"
+
+functor TestFromToString (
+  T : (* FROM_TO *)
+  sig
+    type t
+    val toString : t -> string
+    val fromString : string -> t option
+
+    val eqT : t * t -> bool
+    val eqStr : string * string -> bool
+
+    val genT : t QCheck.Gen.gen
+    val genStr : string QCheck.Gen.gen
+
+    val valid : string list
+    val invalid : string list
+    val name : string
+  end)
+=
+struct (* empty *) end
+
+functor IntFromTo(
+  I : (* INTEGER *)
+  sig
+    type int
+    val precision : Int.int option
+    val minInt : int option
+    val maxInt : int option
+    val toLarge : int -> IntInf.int
+    val fromLarge : IntInf.int -> int
+    val toInt : int -> Int.int
+    val fromInt : Int.int -> int
+    val ~ : int -> int
+    val + : int * int -> int
+    val - : int * int -> int
+    val * : int * int -> int
+    val div : int * int -> int
+    val mod : int * int -> int
+    val quot : int * int -> int
+    val rem : int * int -> int
+    val min : int * int -> int
+    val max : int * int -> int
+    val abs : int -> int
+    val sign : int -> Int.int
+    val sameSign : int * int -> bool
+    val > : int * int -> bool
+    val >= : int * int -> bool
+    val < : int * int -> bool
+    val <= : int * int -> bool
+    val compare : int * int -> order
+    val toString : int -> string
+    val fromString : string -> int option
+    val scan : StringCvt.radix -> (char,'a) StringCvt.reader -> (int,'a) StringCvt.reader
+    val fmt : StringCvt.radix -> int -> string
+  end) (*: FROM_TO*) =
+struct
+  type t = I.int
+  val toString : t -> string
+  val fromString : string -> t option
+
+  val eqT : t * t -> bool
+  val eqStr : string * string -> bool
+
+  val genT : t QCheck.Gen.gen
+  val genStr : string QCheck.Gen.gen
+
+  val valid : string list
+  val invalid : string list
+end
+
+
