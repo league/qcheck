@@ -54,7 +54,6 @@ struct
         | I(s,i) => SOME(s,i)
         | D i => 
           case TextIO.inputLine i
-           of "" => (TextIO.closeIn i; p := E; NONE)
            of NONE => (TextIO.closeIn i; p := E; NONE)
             | SOME ln =>
               let val p' = getInstream i
