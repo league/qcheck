@@ -13,9 +13,7 @@ This manual describes QCheck/SML (version @value{VERSION}), an
 automatic testing library for Standard ML.  It is modeled after the
 QuickCheck library for Haskell (ICFP 2000) by Koen Claessen and John
 Hughes, with many thanks.  QCheck/SML (including this manual) is free
-software.  You may redistribute and/or modify it under the terms of
-the GNU Lesser General Public License (LGPL) as published by the Free
-Software Foundation.  @xref{License}.
+software.@xref{License}.
 
 @itemize
 @item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}
@@ -54,8 +52,8 @@ Software Foundation.  @xref{License}.
 * Properties::                  Specifying properties to be tested.
 * Settings::                    Many settings are configurable.
 * Release notes::               Summary of user-visible changes.
-* License::                     GNU Lesser General Public License.
-* Index::                       
+* License::                     Redistribution is permitted.
+* Index::
 @end menu
 
 @end ifnottex
@@ -116,7 +114,7 @@ integers, and a @emph{printer} that can convert integers to strings
 @transcript quiet
 open QCheck infix ==>
 @end transcript
-@transcript 
+@transcript
 val int = (Gen.Int.int, SOME Int.toString)
 @end transcript
 
@@ -397,7 +395,7 @@ the only choice is to return a leaf.
 @transcript quiet
 datatype tree = Node of tree * tree | Leaf of int
 fun gentree 0 = Gen.map Leaf Gen.Int.int
-  | gentree n = 
+  | gentree n =
     Gen.choose' #[(1,Gen.map Leaf Gen.Int.int),
                   (4,Gen.map Node (Gen.zip(gentree(n div 2),
                                            gentree(n div 2))))]
@@ -443,7 +441,7 @@ To select this style, just do:
 @include doc/changes.texi
 
 @node License, Index, Release notes, Top
-@chapter GNU Lesser General Public License
+@chapter License
 @include doc/copying.texi
 
 @node Index,  , License, Top

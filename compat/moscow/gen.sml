@@ -1,9 +1,7 @@
 (* gen/gen.sml -- instantiate all the functors to basis types
  * Copyright ©2004 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 signature GENERATOR =
@@ -17,7 +15,7 @@ end
 
 functor GeneratorFn(R : APPLICATIVE_RNG) : GENERATOR =
 struct
-  local 
+  local
     structure Gen = BaseGeneratorFn(R)
     structure Gen = GenText(structure Gen=Gen structure Text=Text)
   in

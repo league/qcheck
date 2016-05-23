@@ -1,9 +1,7 @@
 (* prop.sml -- conditional properties that can track argument distribution
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure Property :> PROPERTY_SIG =
@@ -31,7 +29,7 @@ fun implies(cond, p) (x,s) =
 
 fun ==> (p1,p2) = implies(p1, pred p2)
 
-fun wrap trans p (x,s) = 
+fun wrap trans p (x,s) =
     let val (result,s) = p(x,s)
      in (result, trans (x, result, s))
     end
@@ -44,7 +42,7 @@ fun classify' f =
                       else tags,
               count = count })
 
-fun classify p tag = 
+fun classify p tag =
     classify' (fn x => if p x then SOME tag else NONE)
 
 fun trivial cond = classify cond "trivial"

@@ -1,13 +1,11 @@
 (* tests/compose.sml -- function composition is associative
  * Copyright ©2004 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure TestCompose : sig end  = struct
-open QCheck 
+open QCheck
 
 (* This is another example from the QuickCheck (Haskell) paper.  We
    can check that function composition is associative, by generating

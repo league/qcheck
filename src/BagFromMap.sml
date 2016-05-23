@@ -1,16 +1,14 @@
 (* bag.sml -- an unordered collection, where multiplicity is significant
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 (* We can represent a bag as a map from bag items to the number of
    times they occur in the bag.  Invariant: inDomain(map,item) ==>
    count(bag,item) > 0. *)
 
-functor BagFromMap 
+functor BagFromMap
         (M : sig type key
                  type 'a map
                  val empty : 'a map
@@ -31,5 +29,5 @@ struct
   val foldli = M.foldli
 end
 
-(*structure StringBag = 
+(*structure StringBag =
 BagFromMap(RedBlackMapFn(open String type ord_key = string)) *)

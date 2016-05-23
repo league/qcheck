@@ -1,9 +1,7 @@
 (* qcheck.sml -- main exported module; provides check function
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure QCheck : QCHECK_SIG =
@@ -18,14 +16,14 @@ structure Settings = struct
   val style = ref PerlStyle.style
 end
 
-open Property 
+open Property
 
 type ('a,'b) reader = 'b -> ('a * 'b) option
 type 'a rep = ('a -> string) option
 
 fun ('a, 'b) cpsCheck (shrink:'a -> 'a list) (s0:Property.stats) (next : ('a, 's) reader, show : 'a rep) (prop : 'a prop) (status : string option * Property.result * Property.stats -> unit) (k : 'a list -> Property.stats -> 'b) : 's -> 'b =
   let
-    val rep = case show 
+    val rep = case show
      of NONE => (fn _ => NONE)
       | SOME f => SOME o f
 
@@ -58,8 +56,8 @@ fun ('a, 'b) cpsCheck (shrink:'a -> 'a list) (s0:Property.stats) (next : ('a, 's
       end
 
     fun iter(NONE, stats) = k (!badobjs) stats
-      | iter(SOME(obj,stream), stats) = 
-        if quit(#count stats, Settings.get Settings.gen_target) 
+      | iter(SOME(obj,stream), stats) =
+        if quit(#count stats, Settings.get Settings.gen_target)
         then k (!badobjs) stats
         else let val (result, stats') = Property.test prop (obj, stats)
               in if Property.failure result then tryShrink obj stats
@@ -71,7 +69,7 @@ end
 
 
 fun check'' s0 shrink (next, show) (tag, prop) =
-let 
+let
     val {status, finish} = #ctor (Settings.get Settings.style) tag
 in
     cpsCheck shrink s0 (next, show) prop status (fn _ => ignore o finish)

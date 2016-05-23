@@ -1,9 +1,7 @@
 (* tests/from-to-str.sml -- toString o fromString == identity?
  * Copyright ©2004 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING.
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 (* Lots of Basis types have fromString/toString functions.  The idea,
@@ -44,7 +42,7 @@ end
    check. *)
 
 functor TestFromToString (T : FROM_TO) : sig end = struct
-open QCheck 
+open QCheck
 
 fun rcheck tag gen show prop =
     checkGen (gen, SOME show) (T.name^"/"^tag, prop)
@@ -79,11 +77,11 @@ end
    strings. *)
 
 structure BFT = TestFromToString
-   (open QCheck Bool 
+   (open QCheck Bool
     val name = "Bool"
     type t = bool
     val eqT = op=
-    fun eqStr(s1,s2) = 
+    fun eqStr(s1,s2) =
         String.map Char.toLower (String.substring(s1,0,4)) =
         String.map Char.toLower (String.substring(s2,0,4))
     val valid = ["false", "true", "False", "True", "falsey", "truer",
@@ -93,7 +91,7 @@ structure BFT = TestFromToString
     val genStr = Gen.select (Vector.fromList valid))
 
 structure CFT = TestFromToString
-   (open QCheck Char 
+   (open QCheck Char
     val name = "Char"
     type t = char
     val eqT = op=
@@ -125,9 +123,9 @@ structure D = TestFromToString
     fun eqT(d1,d2) = Date.compare(d1,d2) = EQUAL
     val genT = Gen.DateTime.dateFromYear (Gen.range (1980, 2010))
     (* avoid day of week when comparing *)
-    fun eqStr(s1,s2) = 
+    fun eqStr(s1,s2) =
         String.extract(s1,3,NONE) = String.extract(s2,3,NONE)
-    fun genStr r = 
+    fun genStr r =
         let val(dow,r) = Gen.selectL ["Mon", "Thu", "Sat"] r
             val(mon,r) = Gen.selectL ["Jan", "Feb", "Dec"] r
             val(day,r) = Gen.range(1,28) r
@@ -166,7 +164,7 @@ struct
     (* to compare strings, we need to drop leading "0"s *)
   fun zerop #"0" = true | zerop _ = false
   val dropZeros = Substring.dropl zerop o Substring.full
-  fun eqStr (s1,s2) = 
+  fun eqStr (s1,s2) =
       Substring.compare(dropZeros s1, dropZeros s2) = EQUAL
 
   val valid = ["000123", "0", "000", "012abc", "  34"]
@@ -188,12 +186,10 @@ structure R = TestFromToString
     (* to compare strings, we need to drop leading "0"s *)
     open Substring
     fun zerop #"0" = true | zerop _ = false
-    fun norm s = 
+    fun norm s =
         let val s = dropl zerop (all s)
          in if isSubstring "." s then dropr zerop s else s
         end
     fun eqString (s1,s2) = compare(norm s1, norm s2) = EQUAL
     )
  ***)
-
-

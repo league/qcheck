@@ -1,9 +1,7 @@
 (* gen/word.sml -- generate random multi-precision words
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 functor GenWord (include TEXT_GENERATOR
@@ -18,7 +16,7 @@ type word = Word.word
 fun digits n = string (range(1,n), charFrom "0123456789ABCDEF")
 val maxDigits = Real.ceil (real Word.wordSize / 4.0)
 
-fun word r = 
+fun word r =
     let val (s,r) = digits maxDigits r
      in (valOf(Word.fromString s), r)
         handle Overflow => word r

@@ -1,14 +1,12 @@
 (* gen/int.sml -- generate random multi-precision integers
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 
 functor GenInt (include TEXT_GENERATOR
-                structure Int : INTEGER) : 
+                structure Int : INTEGER) :
         INT_GENERATOR =
 struct
 
@@ -22,7 +20,7 @@ val nonzero = string (lift 1, charRange (#"1", #"9"))
 fun digits' n = string (range(0,n-1), digit)
 fun digits n = map2 op^ (nonzero, digits' n)
 
-val maxDigits = case Int.maxInt 
+val maxDigits = case Int.maxInt
                  of NONE => 64
                   | SOME n => size (Int.toString n)
 
@@ -42,7 +40,7 @@ end
 val pos = pos_or_neg (fn x => x) Int.maxInt
 val neg = pos_or_neg Int.~ Int.minInt
 val z = Int.fromInt 0
-val two = Int.fromInt 2 
+val two = Int.fromInt 2
     handle Overflow => (print "Error: need at least 3-bit ints\n";
                         raise Overflow)
 val zero = lift z
@@ -58,7 +56,7 @@ fun coabs n =
        o cobool (Int.mod(n, two) <> z)
        o variant' (2,1)
 
-fun coint n = 
+fun coint n =
     if n = z then variant' (2,0)
     else coabs (Int.quot(n, two))
        o cobool (Int.mod(n, two) <> z)

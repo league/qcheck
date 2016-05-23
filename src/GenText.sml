@@ -1,9 +1,7 @@
 (* gen/text.sml -- generate random characters and strings
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 functor GenText (structure Gen : PREGEN_SIG
@@ -19,15 +17,15 @@ type substring = Substring.substring
 val char = map Char.chr (range (0, Char.maxOrd))
 fun charRange (lo,hi) = map Char.chr (range (Char.ord lo, Char.ord hi))
 
-fun charFrom s = 
-    choose (Vector.tabulate (String.size s, 
+fun charFrom s =
+    choose (Vector.tabulate (String.size s,
                              fn i => lift (String.sub(s,i))))
 
 fun charByType p = filter p char
 
 val string = vector CharVector.tabulate
 
-fun substring gen r = 
+fun substring gen r =
     let val (s,r) = gen r
         val (i,r) = range (0, String.size s) r
         val (j,r) = range (0, String.size s - i) r

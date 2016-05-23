@@ -1,9 +1,7 @@
 (* styles/cm.sml -- meshes with CM output; highlighted in sml-mode
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure CMStyle =
@@ -17,7 +15,7 @@ val i = s o Int.toString
 fun pad wd = s o StringCvt.padLeft #"0" wd o Int.toString
 fun return x _ = x
 
-fun new tag = 
+fun new tag =
 let
     val os = TextIO.stdOut
     val _ = os <<s "[testing " <<s tag <<s "... "
@@ -26,7 +24,7 @@ let
     val errs = ref nil
 
     fun status (obj, result, stats) =
-        (if isSome result then tests := !tests + 1 
+        (if isSome result then tests := !tests + 1
          else();
          if Property.failure result then errs := obj :: !errs
          else())
@@ -37,12 +35,12 @@ let
       | (n, nil) =>
         (case Settings.get Settings.gen_target
            of NONE => os <<s "ok]\n" << return true
-            | SOME goal => 
+            | SOME goal =>
               (if n >= goal then os <<s "ok]\n" << return true
-               else os <<s "ok on " 
+               else os <<s "ok on "
                        <<i n <<s "; "
                        <<i goal <<s " required]\n" << return true))
-      | (_, es) => 
+      | (_, es) =>
         let val wd = size(Int.toString(length es))
             fun each (NONE,i) = i+1
               | each (SOME e,i) =

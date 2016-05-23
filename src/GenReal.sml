@@ -1,9 +1,7 @@
 (* gen/real.sml -- generate random real numbers from strings of digits
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 functor GenReal (include TEXT_GENERATOR
@@ -15,10 +13,10 @@ type 'a gen = 'a gen
 type ('a,'b) co = ('a,'b) co
 type real = Real.real
 
-val digits = string (range(1, Real.precision), 
+val digits = string (range(1, Real.precision),
                      charRange(#"0", #"9"))
 
-fun frac r = 
+fun frac r =
     let val (s,r) = digits r
      in (valOf(Real.fromString s), r)
     end
@@ -28,7 +26,7 @@ val {exp=maxExp,...} = Real.toManExp Real.posInf
 
 val ratio = 99
 
-fun mk r = 
+fun mk r =
     let val (a,r) = digits r
         val (b,r) = digits r
         val (e,r) = range (minExp div 4, maxExp div 4) r

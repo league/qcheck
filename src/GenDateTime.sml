@@ -1,9 +1,7 @@
 (* gen/date.sml -- generate random dates and times
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 functor GenDateTime (Gen : TEXT_GENERATOR) : DATE_TIME_GENERATOR =
@@ -12,10 +10,10 @@ struct
 open Gen Date
 
 val weekday = selectL [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
-val month = selectL [Jan, Feb, Mar, Apr, May, Jun, 
+val month = selectL [Jan, Feb, Mar, Apr, May, Jun,
                      Jul, Aug, Sep, Oct, Nov, Dec]
 
-fun dateFromYear year r = 
+fun dateFromYear year r =
     let val (Y,r) = year r
         val (M,r) = month r
         val (D,r) = range(1,31) r
@@ -33,7 +31,7 @@ structure LG = GenInt(open Gen
 val time = map Time.fromMilliseconds LG.int
 
 (* doesn't work very well.. way biased towards 1970. *)
-fun dateFromUTC r = 
+fun dateFromUTC r =
     let val (t,r) = time r
      in print ("Trying: "^Time.toString t^"\n")
       ; (Date.fromTimeUniv t, r)

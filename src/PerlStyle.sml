@@ -1,9 +1,7 @@
 (* styles/perl.sml -- similar to the output of Perl unit tests
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure PerlStyle =
@@ -56,21 +54,21 @@ let
     val allw = namew + resultw + countw + 2
 
     fun resultStr _ {count=0,...} = "dubious"
-      | resultStr false (_ : Property.stats) = 
+      | resultStr false (_ : Property.stats) =
         if null(!errs) then "ok"
         else "FAILED"
-      | resultStr true {count,tags,...}  = 
+      | resultStr true {count,tags,...}  =
         if not(null(!errs)) then "FAILED"
-        else case (StringBag.member(tags, "__GEN"), 
+        else case (StringBag.member(tags, "__GEN"),
                    Settings.get Settings.gen_target)
                of (true, SOME target) =>
                   if count < target then "dubious" else "ok"
                 | _ => "ok"
 
     fun countStr 0 = "(0/0 passed)"
-      | countStr count = 
+      | countStr count =
         case length(!errs)
-          of 0 => nil << keep "(" << keep (int count) 
+          of 0 => nil << keep "(" << keep (int count)
                       << keep " passed)" << ends
            | n => nil << keep "(" << keep (int (count-n))
                       << keep "/" << keep (int count)
@@ -88,7 +86,7 @@ let
          else();
          os << update stats false << return())
 
-    fun prtag count (tag,n,(os,first)) = 
+    fun prtag count (tag,n,(os,first)) =
         if String.isPrefix "__" tag then (os, first)
         else let val ratio = real n / real count
                  val ratio = round(ratio * 100.0)
@@ -103,11 +101,11 @@ let
             #1(StringBag.foldli (prtag count) (os, true) tags)
         else os
 
-    fun err os = 
+    fun err os =
         let val limit = 4
             fun iter nil _ os = os
               | iter(NONE::es) k os = os << iter es k
-              | iter(SOME e::es) k os = 
+              | iter(SOME e::es) k os =
                 if k >= limit then os
                 else os << put (padLeft #" " namew (if k>0 then ""
                                                     else "counter-examples"))

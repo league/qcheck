@@ -1,9 +1,7 @@
 (* tests/regex.sml -- demonstrates generation of recursive datatype
  * Copyright ©2004 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING.
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 functor TestRegexEng
@@ -26,7 +24,7 @@ fun gsubr (m,n) r =
      in ((i,j),r)
     end
 
-val gleaf = 
+val gleaf =
     Gen.choose #[ Gen.map MatchSet gcs
                  ,Gen.map NonmatchSet gcs
                  ,Gen.map Char gc
@@ -35,17 +33,17 @@ val gleaf =
                  ]
 
 fun genRegexAst 0 = gleaf
-  | genRegexAst d = 
+  | genRegexAst d =
     let val re = genRegexAst (d div 2)
-        val gnode = 
+        val gnode =
             Gen.choose #[ Gen.map Group re
                          ,Gen.map Alt (gl re)
                          ,Gen.map Concat (gl re)
-                         ,(Gen.map2 (fn(s,(i,j))=> Interval(s,i,j)) 
+                         ,(Gen.map2 (fn(s,(i,j))=> Interval(s,i,j))
                                     (re, gsubr(0,8)))
                          ,Gen.map Option re
                          ,Gen.map Star re
-                         ,Gen.map Plus re 
+                         ,Gen.map Plus re
                          ]
      in Gen.choose #[gleaf, gnode]
     end
@@ -64,7 +62,7 @@ fun size re = case re
   | (Group r | Star r | Plus r | Option r | Interval(r,_,_)) => size r + 1
   | (Alt rs | Concat rs) => foldr op+ 1 (map size rs)
 
-fun sizeClass n = 
+fun sizeClass n =
     if n <= 4 then        "size  1-4 nodes"
     else if n <= 8 then   "size  5-8"
     else if n <= 16 then  "size  9-16"
@@ -90,22 +88,22 @@ fun show re os = case re
   | (Star r) => os << show r << put "*"
   | (Plus r) => os << show r << put "+"
   | (Option r) => os << show r << put "?"
-  | (Interval(r,x,NONE)) => 
-    os << show r << put "{" 
+  | (Interval(r,x,NONE)) =>
+    os << show r << put "{"
        << put(Int.toString x) << put "-}"
-  | (Interval(r,x,SOME y)) => 
+  | (Interval(r,x,SOME y)) =>
     os << show r << put "{"
        << put(Int.toString x) << put "-"
        << put(Int.toString y) << put "}"
-  | (MatchSet S) => 
+  | (MatchSet S) =>
     os << put "[" << set S << put "]"
-  | (NonmatchSet S) => 
+  | (NonmatchSet S) =>
     os << put "[^" << set S << put "]"
   | Alt nil => os << put "()"
-  | Alt(r::rs) => 
+  | Alt(r::rs) =>
     foldl (fn(r,os) => os << put "|" << show r)
           (os << show r) rs
-  | Concat rs => 
+  | Concat rs =>
     foldl (fn(r,os) => show r os) os rs
 
 and showL rs os =

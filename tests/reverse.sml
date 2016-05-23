@@ -1,9 +1,7 @@
 (* tests/reverse.sml -- list-reversal properties; from QuickCheck paper
  * Copyright ©2004 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING.
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure TestReverse : sig end = struct
@@ -22,8 +20,8 @@ val revUnit = pred ((fn x => rev [x] = [x]))
 val revApp = trivial (fn(xs,ys) => null xs orelse null ys)
                      (pred ((fn(xs,ys) => rev (xs@ys) = rev ys @ rev xs)))
 
-fun lc xs = 
-    case length xs 
+fun lc xs =
+    case length xs
       of 0 => SOME "length 0"
        | 1 => SOME "length 1-2"
        | 2 => SOME "length 1-2"

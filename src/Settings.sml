@@ -1,13 +1,11 @@
 (* settings.sml -- global user-customizable settings
  * Copyright ©2007 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
 structure Settings =
-struct 
+struct
 
 type 'a control = 'a ref
 val get = op!

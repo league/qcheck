@@ -1,22 +1,19 @@
 (* gen/random.sml -- instantiate generators using applicative RNG
  * Copyright ©2004 Christopher League <league@contrapunctus.net>
- * 
- * This library is free software; you may redistribute and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; see the file COPYING. 
+ *
+ * This library is free software; see the LICENSE file.
  *)
 
-structure Rand' = 
+structure Rand' =
 struct
     type rand = Rand.rand
     val new = Word.fromLargeInt o Time.toMilliseconds o Time.now
-    fun range (x,y) r = 
+    fun range (x,y) r =
         (Rand.range (x,y) r,
          Rand.random r)
     val mask = 0wx3afebabe
     fun salt w s = Word.>>(Word.xorb(w,s), 0w1)
-    fun split r = 
-        (salt r mask, 
+    fun split r =
+        (salt r mask,
          salt r (Word.notb mask))
 end
-
