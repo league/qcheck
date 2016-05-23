@@ -1,27 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Created on April, 14 2008 by texi2html 1.78 -->
-<!--
-Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+<!-- Created on May 23, 2016 by texi2html 5.0
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
             Olaf Bachmann <obachman@mathematik.uni-kl.de>
             and many others.
 Maintained by: Many creative people.
 Send bugs and suggestions to <texi2html-bug@nongnu.org>
-
 -->
 <head>
-<title>QCheck/SML: 1. Overview</title>
+<title>QCheck/SML: 1 Overview</title>
 
-<meta name="description" content="QCheck/SML: 1. Overview">
-<meta name="keywords" content="QCheck/SML: 1. Overview">
+<meta name="description" content="QCheck/SML: 1 Overview">
+<meta name="keywords" content="QCheck/SML: 1 Overview">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
-<meta name="Generator" content="texi2html 1.78">
+<meta name="Generator" content="texi2html 5.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
 pre.display {font-family: serif}
 pre.format {font-family: serif}
 pre.menu-comment {font-family: serif}
@@ -30,9 +36,11 @@ pre.smalldisplay {font-family: serif; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: serif; font-size: smaller}
 pre.smalllisp {font-size: smaller}
-span.roman {font-family:serif; font-weight:normal;}
-span.sansserif {font-family:sans-serif; font-weight:normal;}
-ul.toc {list-style: none}
+span.nocodebreak {white-space:pre}
+span.nolinebreak {white-space:pre}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
 body {
     font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
     font-size: 11pt;
@@ -61,66 +69,65 @@ a:hover {
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
 <a name="Overview"></a>
-<a name="SEC1"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC2" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[ &lt;&lt; ]</td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck.html#Top" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Simple-properties-of-integers" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 1. Overview </h1>
+<a name="Overview-1"></a>
+<h1 class="chapter">1 Overview</h1>
 
 
 <p>QCheck is a library for automatic unit testing of Standard ML modules.
 You provide specifications (in the form of ML code) of the properties
-that your module's functions should satisfy, and ask QCheck to
+that your module&rsquo;s functions should satisfy, and ask QCheck to
 exercise the module with randomly-chosen test cases.  It will show how
 many cases passed the test, and print counter-examples in case of
 failure.  Actually, random testing is just one possibility;
 QCheck can pull test cases from any kind of stream (disk file, data
 structure, etc.)
 </p>
-<hr size="6">
-<a name="SEC2"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC1" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC3" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="Simple-properties-of-integers"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Overview" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Overview" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Overview" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Generating-pairs-of-integers" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 1.1 Simple properties of integers </h2>
+<h2 class="section">1.1 Simple properties of integers</h2>
 
 <p>The best way to demonstrate the capabilities of QCheck is with a
-simple example.  Let's begin by writing a few tiny functions on
+simple example.  Let&rsquo;s begin by writing a few tiny functions on
 integers: successor, even, and odd:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>fun</b> succ x = x+1
+<div class="example">
+<pre class="example"><b>fun</b> succ x = x+1
 <b>fun</b> even x = x mod 2 = 0
 <b>fun</b> odd x = x mod 2 = 1
  &rsaquo; <i>val succ = fn : int &rarr; int</i>
  &rsaquo; <i>val even = fn : int &rarr; bool</i>
  &rsaquo; <i>val odd = fn : int &rarr; bool</i>
-</pre></td></tr></table>
+</pre></div>
 
 <p>Now we need to think of a property that we expect to hold for this
 implementation.  Here is a trivial one: every integer is <em>either</em>
@@ -130,197 +137,212 @@ false.  One way to specify this in ML is to use <code>&lt;&gt;</code> (not
 equal), which amounts to an exclusive OR when applied to boolean
 values.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>fun</b> even_xor_odd x = even x &lt;&gt; odd x
+<div class="example">
+<pre class="example"><b>fun</b> even_xor_odd x = even x &lt;&gt; odd x
  &rsaquo; <i>val even_xor_odd = fn : int &rarr; bool</i>
-</pre></td></tr></table>
+</pre></div>
 
-<a name="IDX1"></a>
-<a name="IDX2"></a>
+<a name="index-polymorphic"></a>
+<a name="index-counter_002dexample"></a>
 <p>We now call upon QCheck to test this property on a bunch of randomly
 chosen integers.  QCheck checkers are polymorphic.  To test integers,
-we'll have to specify two things: a <em>generator</em> that produces
+we&rsquo;ll have to specify two things: a <em>generator</em> that produces
 integers, and a <em>printer</em> that can convert integers to strings
 (in case there are counter-examples to be printed).
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">open QCheck infix ==&gt;
-</pre></td></tr></table>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>val</b> int = (Gen.Int.int, SOME Int.toString)
+<div class="example">
+<pre class="example">open QCheck infix ==&gt;
+</pre></div>
+<div class="example">
+<pre class="example"><b>val</b> int = (Gen.Int.int, SOME Int.toString)
  &rsaquo; <i>val int = (fn,SOME fn) : int Gen.gen * (int &rarr; string) option</i>
-</pre></td></tr></table>
+</pre></div>
 
 <p>Finally, we call <code>checkGen</code> with the <code>int</code> spec, a string
 to identify the test, and the property we are testing.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">checkGen int (&quot;even&lt;&gt;odd&quot;, pred even_xor_odd);
+<div class="example">
+<pre class="example">checkGen int (&quot;even&lt;&gt;odd&quot;, pred even_xor_odd);
  &rsaquo; <i>even&lt;&gt;odd..............ok      (100 passed)        </i>
  &rsaquo; <i>val it = () : unit</i>
-</pre></td></tr></table>
+</pre></div>
 
 <p>The output indicates that QCheck tested the property on 100 random
 integers, and all of them succeeded.  (The number of cases required to
-complete the test is configurable.  See section <a href="qcheck_6.html#SEC18">Settings</a>.)
+complete the test is configurable.  See section <a href="qcheck_6.html#Settings">Settings</a>.)
 </p>
-<a name="IDX3"></a>
+<a name="index-conditional"></a>
 <p>For the next example, we will demonstrate a <em>conditional</em>
 property: the successor of any even number should be odd.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>val</b> succ_even_odd = even ==&gt; odd o succ
- &rsaquo; <i>val succ_even_odd = - : int prop</i>
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><b>val</b> succ_even_odd = even ==&gt; odd o succ
+ &rsaquo; <i>val succ_even_odd = </i>
+</pre></div>
 
-<table><tr><td>&nbsp;</td><td><pre class="example">checkGen int (&quot;even+1=odd&quot;, succ_even_odd);
+<div class="example">
+<pre class="example">checkGen int (&quot;even+1=odd&quot;, succ_even_odd);
+ &rsaquo; <i>: int prop</i>
  &rsaquo; <i>even+1=odd.............ok      (100 passed)        </i>
  &rsaquo; <i>val it = () : unit</i>
-</pre></td></tr></table>
+</pre></div>
 
 <p>In this example, the 100 test cases that passed were all ones that met
 the condition: they were all even.  Odd numbers trivially
 satisfy the property (by falsifying the condition) and are not counted.
 </p>
-<p>Now, let's try the inverse property: the successor of an odd number
+<p>Now, let&rsquo;s try the inverse property: the successor of an odd number
 should be even:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">checkGen int (&quot;odd+1=even&quot;, odd ==&gt; even o succ);
- &rsaquo; <i>odd+1=even.............FAILED  (99/100 passed)     </i>
+<div class="example">
+<pre class="example">checkGen int (&quot;odd+1=even&quot;, odd ==&gt; even o succ);
+ &rsaquo; <i>odd+1=even.............ok      (32 passed)         Shrinking...</i>
+ &rsaquo; <i>odd+1=even.............FAILED  (49/50 passed)      Shrinking...</i>
+ &rsaquo; <i>odd+1=even.............FAILED  (98/100 passed)     </i>
  &rsaquo; <i>      counter-examples:       1073741823</i>
+ &rsaquo; <i>                              1073741823</i>
  &rsaquo; <i>val it = () : unit</i>
-</pre></td></tr></table>
+</pre></div>
 
-<a name="IDX4"></a>
+<a name="index-boundary-condition"></a>
 <p>Oops!  QCheck found a counter-example: the maximum 31-bit integer.  It
 is odd, but since its successor is undefined, the property does not
 hold.  (We were not extraordinarily lucky to generate <code>maxInt</code> this time
 around; in fact, the generator is biased so that zero, <code>minInt</code>, and
 <code>maxInt</code> are chosen more frequently than other integers, precisely
-because they are often &ldquo;boundary conditions.&rdquo;  See section <a href="qcheck_4.html#SEC11">Generating test cases</a>.)
+because they are often &ldquo;boundary conditions.&rdquo;  See section <a href="qcheck_4.html#Generating-test-cases">Generating test cases</a>.)
 </p>
 <p>At any rate, what is broken here is not really our implementation,
 but rather the specification of the property.  We need to limit it to
 odd integers that are less than <code>maxInt</code>.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>fun</b> odd_not_max x = odd x andalso x &lt; valOf(Int.maxInt);
- &rsaquo; <i>val odd_not_max = fn : int &rarr; bool</i>
+<div class="example">
+<pre class="example"><b>fun</b> odd_not_max x = odd x andalso x &lt; valOf(Int.maxInt);
 checkGen int (&quot;odd+1=even&quot;, odd_not_max ==&gt; even o succ)
+ &rsaquo; <i>val odd_not_max = fn : int &rarr; bool</i>
  &rsaquo; <i>odd+1=even.............ok      (100 passed)        </i>
  &rsaquo; <i>val it = () : unit</i>
-</pre></td></tr></table>
+</pre></div>
 
-<hr size="6">
-<a name="SEC3"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC2" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC4" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="Generating-pairs-of-integers"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Overview" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Simple-properties-of-integers" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Overview" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#The-QCheck-structure" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 1.2 Generating pairs of integers </h2>
+<h2 class="section">1.2 Generating pairs of integers</h2>
 
 <p>Other properties involve pairs of integers.  For example, the sum of
 two odd numbers is even.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>fun</b> both_odd(x,y) = odd x andalso odd y
+<div class="example">
+<pre class="example"><b>fun</b> both_odd(x,y) = odd x andalso odd y
 <b>fun</b> sum_even(x,y) = even (x+y)
 <b>fun</b> show_pair(x,y) = Int.toString x ^&quot;,&quot;^ Int.toString y
  &rsaquo; <i>val both_odd = fn : int * int &rarr; bool</i>
  &rsaquo; <i>val sum_even = fn : int * int &rarr; bool</i>
  &rsaquo; <i>val show_pair = fn : int * int &rarr; string</i>
-</pre></td></tr></table>
+</pre></div>
 
 <p>QCheck includes not only generators for most primitive and aggregate
 data types, but also functions for combining them in various ways.
 To generate random pairs of integers, we &ldquo;zip&rdquo; together two integer
 generators.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">checkGen (Gen.zip(Gen.Int.int, Gen.Int.int), SOME show_pair)
+<div class="example">
+<pre class="example">checkGen (Gen.zip(Gen.Int.int, Gen.Int.int), SOME show_pair)
          (&quot;odd+odd=even&quot;, both_odd ==&gt; sum_even)
- &rsaquo; <i>odd+odd=even...........FAILED  (93/96 passed)      </i>
- &rsaquo; <i>      counter-examples:       4919,1073741823</i>
- &rsaquo; <i>                              995224081,1073741823</i>
- &rsaquo; <i>                              1073741823,561</i>
+ &rsaquo; <i>odd+odd=even...........ok      (44 passed)         Shrinking...</i>
+ &rsaquo; <i>odd+odd=even...........FAILED  (96/97 passed)      </i>
+ &rsaquo; <i>      counter-examples:       7689,1073741823</i>
  &rsaquo; <i>val it = () : unit</i>
-</pre></td></tr></table>
+</pre></div>
 
-<p>All of the counter-examples overflow the sum computation.  I'll leave
+<p>All of the counter-examples overflow the sum computation.  I&rsquo;ll leave
 fixing this specification as an exercise for the reader.
 </p>
 <p>Test cases need not be randomly generated.  Here is an example where
 the pairs will be taken from a list, but they could just as easily be
-read from a file.  See section <a href="qcheck_3.html#SEC10">Specifying test cases</a>.
+read from a file.  See section <a href="qcheck_3.html#Specifying-test-cases">Specifying test cases</a>.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">check (List.getItem, SOME show_pair)
+<div class="example">
+<pre class="example">check (List.getItem, SOME show_pair)
       (&quot;sum_odds_even[]&quot;, both_odd ==&gt; sum_even)
       [(1,1), (3,5), (3,4), (* this one won't count! *)
        (~1,1), (21,21), (7,13)]
  &rsaquo; <i>sum_odds_even[]........ok      (5 passed)          </i>
  &rsaquo; <i>val it = () : unit</i>
-</pre></td></tr></table>
+</pre></div>
 
 <p>I provided 6 pairs in the list, but only 5 counted because
 <code>(3,4)</code> did not meet the precondition of the property.
 </p>
-<hr size="6">
-<a name="SEC4"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC3" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC1" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="The-QCheck-structure"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Overview" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Generating-pairs-of-integers" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Overview" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 1.3 The QCheck structure </h2>
+<h2 class="section">1.3 The QCheck structure</h2>
 
 <p>The examples in the preceding sections used several top-level functions
 from the <code>QCheck</code> structure.  Here, we will examine the signature
 of <code>QCheck</code>, beginning with its sub-structures.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX5"></a><a name="IDX6"></a><b>structure</b> Gen : GENERATOR_SIG      
-<a name="IDX7"></a><b>structure</b> Files : FILES_SIG    
-<a name="IDX8"></a><b>structure</b> Settings : SETTINGS_SIG
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-QCHECK_005fSIG-signature"></a><a name="index-Gen-structure"></a><b>structure</b> Gen : GENERATOR_SIG
+<a name="index-Files-structure"></a><b>structure</b> Files : FILES_SIG
+<a name="index-Settings-structure"></a><b>structure</b> Settings : SETTINGS_SIG
+</pre></div>
 <p> The <code>Gen</code> structure contains random value generators for all
 the basis types, including aggregates like vectors and lists.  It
 also contains a rich library of combinators such as <code>zip</code>,
-<code>map</code>, and <code>filter</code>.  See section <a href="qcheck_4.html#SEC11">Generating test cases</a>.
+<code>map</code>, and <code>filter</code>.  See section <a href="qcheck_4.html#Generating-test-cases">Generating test cases</a>.
 </p>
 <p><code>Files</code> is provided to make it easy to use lines in a file
-or files in a directory as test cases.  See section <a href="qcheck_3.html#SEC10">Specifying test cases</a>. <code>Settings</code> contains various user-customizable settings,
-including user-definable output styles.  See section <a href="qcheck_6.html#SEC18">Settings</a>.
+or files in a directory as test cases.  See section <a href="qcheck_3.html#Specifying-test-cases">Specifying test cases</a>. <code>Settings</code> contains various user-customizable settings,
+including user-definable output styles.  See section <a href="qcheck_6.html#Settings">Settings</a>.
 </p> 
-<table><tr><td>&nbsp;</td><td><pre class="example">include PROPERTY_SIG
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">include PROPERTY_SIG
+</pre></div>
 <p> This signature contains functions for specifying
 properties and observing the distribution of test cases.  In
 preceding sections, we met two of its members: <code>pred</code>
 converts a predicate (boolean function) on a given type to a
 property, and <code>==&gt;</code> creates a conditional property.  A
 property over a given type <code>t</code> has type <code>t prop</code>.
-See section <a href="qcheck_5.html#SEC15">Properties</a>.
+See section <a href="qcheck_5.html#Properties">Properties</a>.
 </p> 
 <p> Two types are useful for discussing the parameters of the various
 <code>check</code> functions:
 </p> 
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX9"></a><b>type</b> ('a,'b) reader = 'b &rarr; ('a * 'b) option  
-<a name="IDX10"></a><b>type</b> 'a rep = ('a &rarr; string) option           
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-reader"></a><b>type</b> ('a,'b) reader = 'b &rarr; ('a * 'b) option
+<a name="index-rep"></a><b>type</b> 'a rep = ('a &rarr; string) option
+</pre></div>
 <p> An <code>('a,'b) reader</code> pulls objects of type <code>'a</code> from a
 stream of type <code>'b</code>.  In this case, the objects are test
 cases of some type.  (This is defined the same way as
@@ -331,10 +353,11 @@ there are counter-examples to be printed.
 <p> Now, the most general function for invoking QCheck is called
 <code>check</code>.  It takes 3 (curried) parameters:
 </p> 
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX11"></a><b>val</b> check : ('a,'b) reader * 'a rep &rarr;   
-            string * 'a prop &rarr; 
+<div class="example">
+<pre class="example"><a name="index-check"></a><b>val</b> check : ('a,'b) reader * 'a rep &rarr;
+            string * 'a prop &rarr;
             'b &rarr; unit
-</pre></td></tr></table>
+</pre></div>
  <ol>
 <li>
 The first parameter is a reader and representation pair.  It contains
@@ -351,58 +374,84 @@ to distinguish the results of this test in the output.
 Finally, you provide a stream of test cases.  The source of the test
 cases is arbitrary, as long as a matching reader is provided.  They
 could be randomly generated, read from a data structure, extracted
-from the file system, etc.  
+from the file system, etc.
 
 </li></ol>
 
-
-<p>We provide two specializations of <code>check</code> that are useful in
+<p>We provide several specializations of <code>check</code> that are useful in
 particular circumstances.  First, <code>checkGen</code> is for checking
 randomly generated test cases.  The random number stream is implicit,
 and the reader is always a generator from the <code>Gen</code> module.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX12"></a><b>val</b> checkGen : 'a Gen.gen * 'a rep &rarr;     
+<div class="example">
+<pre class="example"><a name="index-checkGen"></a><b>val</b> checkGen : 'a Gen.gen * 'a rep &rarr;
                string * 'a prop &rarr; unit
-</pre></td></tr></table>
- 
+</pre></div>
+
 <p>Second, if we just want to check one particular test case, the
-reader is trivial (and therefore omitted), and the `stream' is just the
-test case itself: 
+reader is trivial (and therefore omitted), and the &lsquo;stream&rsquo; is just the
+test case itself:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX13"></a><b>val</b> checkOne : 'a rep &rarr; string * 'a prop &rarr; 'a &rarr; unit
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-checkOne"></a><b>val</b> checkOne : 'a rep &rarr; string * 'a prop &rarr; 'a &rarr; unit
+</pre></div>
+
+<p>Third, if we want to provide a shrinking function, QCheck will
+try to find a smaller counterexample:
+</p>
+<div class="example">
+<pre class="example"><a name="index-checkGenShrink"></a><b>val</b> checkGenShrink : ('a &rarr; 'a list) &rarr; 'a Gen.gen * 'a rep &rarr;
+                     string * 'a prop &rarr; unit
+</pre></div>
+
+<p>Fourth, if we want to use the checker as an API, we can pass a
+continuation that takes a list of bad objects and some stats.
+</p>
+<div class="example">
+<pre class="example"><b>val</b> cpsCheck :
+    ('a &rarr; 'a list)
+    &rarr; Property.stats
+    &rarr; ('a, 's) reader * 'a rep
+    &rarr; 'a prop
+    &rarr; (string option * Property.result * Property.stats &rarr; unit)
+    &rarr; ('a list &rarr; Property.stats &rarr; 'b)
+    &rarr; 's
+    &rarr; 'b
+<a name="index-cpsCheck"></a></pre></div>
 
 <p>Finally, the <code>Qcheck</code> structure includes a pair <code>version</code>
 that can be useful in determining the version of QCheck you are using.
-The <code>context</code> contains expanded version information that can be 
+The <code>context</code> contains expanded version information that can be
 used by darcs to reconstruct this precise configuration of QCheck.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX14"></a><b>val</b> version : int * int   
-<a name="IDX15"></a><b>val</b> context : string      
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-version"></a><b>val</b> version : int * int
+<a name="index-context"></a><b>val</b> context : string
+</pre></div>
 
 <p>The version information currently reported by <code>QCheck.version</code> is:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">QCheck.version;
+</p><div class="example">
+<pre class="example">QCheck.version;
  &rsaquo; <i>val it = (1,1) : int * int</i>
-</pre></td></tr></table>
+</pre></div>
 
-<hr size="6">
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
+<hr>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Overview" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Chris League</em> on <em>April, 14 2008</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78</em></a>.
+  This document was generated on <i>May 23, 2016</i> using <a href="http://www.nongnu.org/texi2html/"><i>texi2html 5.0</i></a>.
  </font>
  <br>
 

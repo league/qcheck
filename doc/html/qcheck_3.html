@@ -1,27 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Created on April, 14 2008 by texi2html 1.78 -->
-<!--
-Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+<!-- Created on May 23, 2016 by texi2html 5.0
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
             Olaf Bachmann <obachman@mathematik.uni-kl.de>
             and many others.
 Maintained by: Many creative people.
 Send bugs and suggestions to <texi2html-bug@nongnu.org>
-
 -->
 <head>
-<title>QCheck/SML: 3. Specifying test cases</title>
+<title>QCheck/SML: 3 Specifying test cases</title>
 
-<meta name="description" content="QCheck/SML: 3. Specifying test cases">
-<meta name="keywords" content="QCheck/SML: 3. Specifying test cases">
+<meta name="description" content="QCheck/SML: 3 Specifying test cases">
+<meta name="keywords" content="QCheck/SML: 3 Specifying test cases">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
-<meta name="Generator" content="texi2html 1.78">
+<meta name="Generator" content="texi2html 5.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
 pre.display {font-family: serif}
 pre.format {font-family: serif}
 pre.menu-comment {font-family: serif}
@@ -30,9 +36,11 @@ pre.smalldisplay {font-family: serif; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: serif; font-size: smaller}
 pre.smalllisp {font-size: smaller}
-span.roman {font-family:serif; font-weight:normal;}
-span.sansserif {font-family:sans-serif; font-weight:normal;}
-ul.toc {list-style: none}
+span.nocodebreak {white-space:pre}
+span.nolinebreak {white-space:pre}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
 body {
     font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
     font-size: 11pt;
@@ -61,26 +69,26 @@ a:hover {
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
 <a name="Specifying-test-cases"></a>
-<a name="SEC10"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="qcheck_2.html#SEC9" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_4.html#SEC11" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_4.html#SEC11" title="Next chapter"> &gt;&gt; </a>]</td>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_2.html#SML_0023" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_4.html#Generating-test-cases" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_4.html#Generating-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 3. Specifying test cases </h1>
+<a name="Specifying-test-cases-1"></a>
+<h1 class="chapter">3 Specifying test cases</h1>
 
-<blockquote><p>Once a human tester finds a bug, it should be the last time a human
+<blockquote>
+<p>Once a human tester finds a bug, it should be the last time a human
 tester finds that bug.  Automatic tests should check for it from then
 on.
 </p></blockquote>
@@ -94,7 +102,8 @@ of the overview is one way, but another is reading them from a
 file.  QCheck provides a small API for using files within a directory
 or lines within a text file as test cases.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX17"></a></pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-FILES_005fSIG-signature"></a></pre></div>
 <p> The following functions generate file and directory names as 
 test cases.  This is useful, for example, for regression tests of a 
 compiler &ndash; just keep a directory of source files to be compiled.
@@ -102,54 +111,59 @@ The directory stream should be read all the way to the end, or else
 the directory handle will not be properly closed.  (The check function
 does this automatically.)
 </p> 
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX18"></a><b>type</b> dirstream                              
-<a name="IDX19"></a><b>val</b> openDir : string &rarr; dirstream           
-<a name="IDX20"></a><b>val</b> nextFile : (string, dirstream) reader   
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-dirstream"></a><b>type</b> dirstream                              
+<a name="index-openDir"></a><b>val</b> openDir : string &rarr; dirstream           
+<a name="index-nextFile"></a><b>val</b> nextFile : (string, dirstream) reader   
+</pre></div>
 <p> Here is an example of how to run tests on filenames in a 
 directory:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">    check (Files.nextFile, pretty_printer)
+</p><div class="example">
+<pre class="example">    check (Files.nextFile, pretty_printer)
           (test_name, test_predicate)
           (Files.openDir directory_path)
-</pre></td></tr></table>
+</pre></div>
  
-<table><tr><td>&nbsp;</td><td><pre class="example">
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">
+</pre></div>
 <p> The following functions produce lines of text from a file as
 test cases.  The produced strings include newlines, but see below 
 for how to filter them.
 </p> 
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX21"></a><b>type</b> filestream                             
-<a name="IDX22"></a><b>val</b> openFile : string &rarr; filestream         
-<a name="IDX23"></a><b>val</b> nextLine : (string, filestream) reader  
+<div class="example">
+<pre class="example"><a name="index-filestream"></a><b>type</b> filestream                             
+<a name="index-openFile"></a><b>val</b> openFile : string &rarr; filestream         
+<a name="index-nextLine"></a><b>val</b> nextLine : (string, filestream) reader  
 
-</pre></td></tr></table>
+</pre></div>
 <p> Here are some simple utilities for readers.  The types should be 
 self-explanatory.  The <code>chop</code> function removes newlines from the 
 ends of string readers (such as <code>nextLine</code>).
 </p> 
-<table><tr><td>&nbsp;</td><td><pre class="example"><a name="IDX24"></a><b>val</b> map : ('a &rarr; 'b) &rarr; ('a,'c) reader &rarr; ('b,'c) reader 
-<a name="IDX25"></a><b>val</b> filter : ('a &rarr; bool) &rarr; ('a,'b) reader &rarr; ('a,'b) reader 
-<a name="IDX26"></a><b>val</b> chop : (string,'a) reader &rarr; (string,'a) reader 
-</pre></td></tr></table>
+<div class="example">
+<pre class="example"><a name="index-map"></a><b>val</b> map : ('a &rarr; 'b) &rarr; ('a,'c) reader &rarr; ('b,'c) reader 
+<a name="index-filter"></a><b>val</b> filter : ('a &rarr; bool) &rarr; ('a,'b) reader &rarr; ('a,'b) reader 
+<a name="index-chop"></a><b>val</b> chop : (string,'a) reader &rarr; (string,'a) reader 
+</pre></div>
 
-<hr size="6">
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="qcheck_2.html#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_4.html#SEC11" title="Next chapter"> &gt;&gt; </a>]</td>
+<hr>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck_2.html#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_4.html#Generating-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Chris League</em> on <em>April, 14 2008</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78</em></a>.
+  This document was generated on <i>May 23, 2016</i> using <a href="http://www.nongnu.org/texi2html/"><i>texi2html 5.0</i></a>.
  </font>
  <br>
 

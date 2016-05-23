@@ -1,4 +1,4 @@
-This is doc/qcheck.info, produced by makeinfo version 4.11 from doc/qcheck.texi.
+This is qcheck.info, produced by makeinfo version 6.1 from qcheck.texi.
 
 
 File: qcheck.info,  Node: Top,  Next: Overview,  Prev: (dir),  Up: (dir)
@@ -8,26 +8,12 @@ QCheck/SML
 
 Copyright (C) 2007 Christopher League.
 
-   This manual describes QCheck/SML (version 1.1), an automatic testing
-library for Standard ML.  It is modeled after the QuickCheck library
-for Haskell (ICFP 2000) by Koen Claessen and John Hughes, with many
-thanks.  QCheck/SML (including this manual) is free software.  You may
-redistribute and/or modify it under the terms of the GNU Lesser General
-Public License (LGPL) as published by the Free Software Foundation.
-*Note License::.
+   This manual describes QCheck/SML (version 1.2), an automatic testing
+library for Standard ML. It is modeled after the QuickCheck library for
+Haskell (ICFP 2000) by Koen Claessen and John Hughes, with many thanks.
+QCheck/SML (including this manual) is free software.*Note License::.
 
-   * Main web page: `http://contrapunctus.net/league/haques/qcheck/'
-
-   * Bundled releases: `http://comsci.liu.edu/~league/dist/qcheck/'
-
-   * RSS feed:
-     `http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=rss'
-
-   * Browse repo.:
-     `http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary'
-
-   * Checkout: `darcs get
-     http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck'
+   <https://github.com/league/qcheck>
 
 * Menu:
 
@@ -38,7 +24,7 @@ Public License (LGPL) as published by the Free Software Foundation.
 * Properties::                  Specifying properties to be tested.
 * Settings::                    Many settings are configurable.
 * Release notes::               Summary of user-visible changes.
-* License::                     GNU Lesser General Public License.
+* License::                     Redistribution is permitted.
 * Index::
 
 
@@ -50,8 +36,8 @@ File: qcheck.info,  Node: Overview,  Next: Installation,  Prev: Top,  Up: Top
 QCheck is a library for automatic unit testing of Standard ML modules.
 You provide specifications (in the form of ML code) of the properties
 that your module's functions should satisfy, and ask QCheck to exercise
-the module with randomly-chosen test cases.  It will show how many
-cases passed the test, and print counter-examples in case of failure.
+the module with randomly-chosen test cases.  It will show how many cases
+passed the test, and print counter-examples in case of failure.
 Actually, random testing is just one possibility; QCheck can pull test
 cases from any kind of stream (disk file, data structure, etc.)
 
@@ -71,9 +57,9 @@ successor, even, and odd:
 
 Now we need to think of a property that we expect to hold for this
 implementation.  Here is a trivial one: every integer is _either_ even
-or odd.  That is, for any `x' exactly _one_ of the functions `even' or
-`odd' returns true; the other returns false.  One way to specify this
-in ML is to use `<>' (not equal), which amounts to an exclusive OR when
+or odd.  That is, for any 'x' exactly _one_ of the functions 'even' or
+'odd' returns true; the other returns false.  One way to specify this in
+ML is to use '<>' (not equal), which amounts to an exclusive OR when
 applied to boolean values.
 
      fun even_xor_odd x = even x <> odd x
@@ -86,15 +72,14 @@ and a _printer_ that can convert integers to strings (in case there are
 counter-examples to be printed).
 
      open QCheck infix ==>
-
      val int = (Gen.Int.int, SOME Int.toString)
       -| val int = (fn,SOME fn) : int Gen.gen * (int -> string) option
 
-Finally, we call `checkGen' with the `int' spec, a string to identify
+Finally, we call 'checkGen' with the 'int' spec, a string to identify
 the test, and the property we are testing.
 
      checkGen int ("even<>odd", pred even_xor_odd);
-      -| even<>odd..............ok      (100 passed)
+      -| even<>odd..............ok      (100 passed)        
       -| val it = () : unit
 
 The output indicates that QCheck tested the property on 100 random
@@ -105,10 +90,11 @@ complete the test is configurable.  *Note Settings::.)
 the successor of any even number should be odd.
 
      val succ_even_odd = even ==> odd o succ
-      -| val succ_even_odd = - : int prop
+      -| val succ_even_odd = 
 
      checkGen int ("even+1=odd", succ_even_odd);
-      -| even+1=odd.............ok      (100 passed)
+      -| : int prop
+      -| even+1=odd.............ok      (100 passed)        
       -| val it = () : unit
 
 In this example, the 100 test cases that passed were all ones that met
@@ -119,33 +105,36 @@ property (by falsifying the condition) and are not counted.
 should be even:
 
      checkGen int ("odd+1=even", odd ==> even o succ);
-      -| odd+1=even.............FAILED  (99/100 passed)
+      -| odd+1=even.............ok      (32 passed)         Shrinking...
+      -| odd+1=even.............FAILED  (49/50 passed)      Shrinking...
+      -| odd+1=even.............FAILED  (98/100 passed)     
       -|       counter-examples:       1073741823
+      -|                               1073741823
       -| val it = () : unit
 
 Oops!  QCheck found a counter-example: the maximum 31-bit integer.  It
 is odd, but since its successor is undefined, the property does not
-hold.  (We were not extraordinarily lucky to generate `maxInt' this time
-around; in fact, the generator is biased so that zero, `minInt', and
-`maxInt' are chosen more frequently than other integers, precisely
+hold.  (We were not extraordinarily lucky to generate 'maxInt' this time
+around; in fact, the generator is biased so that zero, 'minInt', and
+'maxInt' are chosen more frequently than other integers, precisely
 because they are often "boundary conditions."  *Note Generating test
 cases::.)
 
    At any rate, what is broken here is not really our implementation,
 but rather the specification of the property.  We need to limit it to
-odd integers that are less than `maxInt'.
+odd integers that are less than 'maxInt'.
 
      fun odd_not_max x = odd x andalso x < valOf(Int.maxInt);
-      -| val odd_not_max = fn : int -> bool
      checkGen int ("odd+1=even", odd_not_max ==> even o succ)
-      -| odd+1=even.............ok      (100 passed)
+      -| val odd_not_max = fn : int -> bool
+      -| odd+1=even.............ok      (100 passed)        
       -| val it = () : unit
 
 1.2 Generating pairs of integers
 ================================
 
-Other properties involve pairs of integers.  For example, the sum of
-two odd numbers is even.
+Other properties involve pairs of integers.  For example, the sum of two
+odd numbers is even.
 
      fun both_odd(x,y) = odd x andalso odd y
      fun sum_even(x,y) = even (x+y)
@@ -161,10 +150,9 @@ generators.
 
      checkGen (Gen.zip(Gen.Int.int, Gen.Int.int), SOME show_pair)
               ("odd+odd=even", both_odd ==> sum_even)
-      -| odd+odd=even...........FAILED  (93/96 passed)
-      -|       counter-examples:       4919,1073741823
-      -|                               995224081,1073741823
-      -|                               1073741823,561
+      -| odd+odd=even...........ok      (44 passed)         Shrinking...
+      -| odd+odd=even...........FAILED  (96/97 passed)      
+      -|       counter-examples:       7689,1073741823
       -| val it = () : unit
 
 All of the counter-examples overflow the sum computation.  I'll leave
@@ -178,62 +166,60 @@ read from a file.  *Note Specifying test cases::.
            ("sum_odds_even[]", both_odd ==> sum_even)
            [(1,1), (3,5), (3,4), (* this one won't count! *)
             (~1,1), (21,21), (7,13)]
-      -| sum_odds_even[]........ok      (5 passed)
+      -| sum_odds_even[]........ok      (5 passed)          
       -| val it = () : unit
 
-I provided 6 pairs in the list, but only 5 counted because `(3,4)' did
+I provided 6 pairs in the list, but only 5 counted because '(3,4)' did
 not meet the precondition of the property.
 
 1.3 The QCheck structure
 ========================
 
 The examples in the preceding sections used several top-level functions
-from the `QCheck' structure.  Here, we will examine the signature of
-`QCheck', beginning with its sub-structures.
+from the 'QCheck' structure.  Here, we will examine the signature of
+'QCheck', beginning with its sub-structures.
 
      structure Gen : GENERATOR_SIG
      structure Files : FILES_SIG
      structure Settings : SETTINGS_SIG
-   The `Gen' structure contains random value generators for all the
-basis types, including aggregates like vectors and lists.  It also
-contains a rich library of combinators such as `zip', `map', and
-`filter'.  *Note Generating test cases::.
+The 'Gen' structure contains random value generators for all the basis
+types, including aggregates like vectors and lists.  It also contains a
+rich library of combinators such as 'zip', 'map', and 'filter'.  *Note
+Generating test cases::.
 
-   `Files' is provided to make it easy to use lines in a file or files
+   'Files' is provided to make it easy to use lines in a file or files
 in a directory as test cases.  *Note Specifying test cases::.
-`Settings' contains various user-customizable settings, including
+'Settings' contains various user-customizable settings, including
 user-definable output styles.  *Note Settings::.
 
      include PROPERTY_SIG
-   This signature contains functions for specifying properties and
-observing the distribution of test cases.  In preceding sections, we
-met two of its members: `pred' converts a predicate (boolean function)
-on a given type to a property, and `==>' creates a conditional
-property.  A property over a given type `t' has type `t prop'.  *Note
-Properties::.
+This signature contains functions for specifying properties and
+observing the distribution of test cases.  In preceding sections, we met
+two of its members: 'pred' converts a predicate (boolean function) on a
+given type to a property, and '==>' creates a conditional property.  A
+property over a given type 't' has type 't prop'.  *Note Properties::.
 
-   Two types are useful for discussing the parameters of the various
-`check' functions:
+Two types are useful for discussing the parameters of the various
+'check' functions:
 
      type ('a,'b) reader = 'b -> ('a * 'b) option
      type 'a rep = ('a -> string) option
-   An `('a,'b) reader' pulls objects of type `'a' from a stream of type
-`'b'.  In this case, the objects are test cases of some type.  (This is
-defined the same way as `StringCvt.reader'.) The type `'a rep' is an
+An '('a,'b) reader' pulls objects of type ''a' from a stream of type
+''b'.  In this case, the objects are test cases of some type.  (This is
+defined the same way as 'StringCvt.reader'.)  The type ''a rep' is an
 (optional) method for rendering test cases as strings.  It is used in
 case there are counter-examples to be printed.
 
-   Now, the most general function for invoking QCheck is called
-`check'.  It takes 3 (curried) parameters:
+Now, the most general function for invoking QCheck is called 'check'.
+It takes 3 (curried) parameters:
 
      val check : ('a,'b) reader * 'a rep ->
                  string * 'a prop ->
                  'b -> unit
-
   1. The first parameter is a reader and representation pair.  It
-     contains everything the checker needs to know about the type of
-     the test cases, and the same pair can be reused to check
-     additional properties of the same type.
+     contains everything the checker needs to know about the type of the
+     test cases, and the same pair can be reused to check additional
+     properties of the same type.
 
   2. Next is the property name and specification.  This parameter will
      be different for each property checked.  The name is just a string
@@ -244,28 +230,48 @@ case there are counter-examples to be printed.
      They could be randomly generated, read from a data structure,
      extracted from the file system, etc.
 
-
-   We provide two specializations of `check' that are useful in
-particular circumstances.  First, `checkGen' is for checking randomly
+   We provide several specializations of 'check' that are useful in
+particular circumstances.  First, 'checkGen' is for checking randomly
 generated test cases.  The random number stream is implicit, and the
-reader is always a generator from the `Gen' module.
+reader is always a generator from the 'Gen' module.
 
      val checkGen : 'a Gen.gen * 'a rep ->
                     string * 'a prop -> unit
-   Second, if we just want to check one particular test case, the
-reader is trivial (and therefore omitted), and the `stream' is just the
-test case itself:
+
+   Second, if we just want to check one particular test case, the reader
+is trivial (and therefore omitted), and the 'stream' is just the test
+case itself:
 
      val checkOne : 'a rep -> string * 'a prop -> 'a -> unit
-   Finally, the `Qcheck' structure includes a pair `version' that can
-be useful in determining the version of QCheck you are using.  The
-`context' contains expanded version information that can be used by
+
+   Third, if we want to provide a shrinking function, QCheck will try to
+find a smaller counterexample:
+
+     val checkGenShrink : ('a -> 'a list) -> 'a Gen.gen * 'a rep ->
+                          string * 'a prop -> unit
+
+   Fourth, if we want to use the checker as an API, we can pass a
+continuation that takes a list of bad objects and some stats.
+
+     val cpsCheck :
+         ('a -> 'a list)
+         -> Property.stats
+         -> ('a, 's) reader * 'a rep
+         -> 'a prop
+         -> (string option * Property.result * Property.stats -> unit)
+         -> ('a list -> Property.stats -> 'b)
+         -> 's
+         -> 'b
+
+   Finally, the 'Qcheck' structure includes a pair 'version' that can be
+useful in determining the version of QCheck you are using.  The
+'context' contains expanded version information that can be used by
 darcs to reconstruct this precise configuration of QCheck.
 
      val version : int * int
      val context : string
 
-The version information currently reported by `QCheck.version' is:
+The version information currently reported by 'QCheck.version' is:
      QCheck.version;
       -| val it = (1,1) : int * int
 
@@ -278,33 +284,31 @@ File: qcheck.info,  Node: Installation,  Next: Specifying test cases,  Prev: Ove
 QCheck is designed to work with various implementations of Standard ML.
 At the time of release, it was built successfully on the following
 systems:
-   * Standard ML of New Jersey v110.67 [built: Sat Mar  1 09:57:31 2008]
-
-   * Moscow ML compiler version 2.01 (January 2004)
-
-   * MLton 20070826 (built Thu Aug 30 11:53:36 2007 on
-     fenrir.uchicago.edu)
-
-   * Poly/ML 5.1 Testing    RTS version: I386-5.1
-   Inquiries and recommendations on improving compatibility are welcome.
+   * Standard ML of New Jersey v110.79 [built: Sat Nov 21 15:48:37 2015]
+   * Moscow ML compiler version 2.10
+   * MLton 20130715 (built Thu Nov 6 11:40:47 CET 2014 on alexander)
+   * Poly/ML 5.6 Release RTS version: X86_64-5.6
+   * SML# 3.0.1 (2016-04-04 22:16:17 JST) for x86_64-pc-linux-gnu with
+     LLVM 3.7.1
+Inquiries and recommendations on improving compatibility are welcome.
 The following sections provide simple installation instructions for each
-system.  A different `Makefile' is supplied for each system, but in all
-of them `make all' will produce the library and/or a test program,
-while `make test' will additionally run the test program.  There is no
-`make install', you must copy the files to an appropriate location by
-hand.  All makefiles are currently dependent on GNU make.
+system.  A different 'Makefile' is supplied for each system, but in all
+of them 'make all' will produce the library and/or a test program, while
+'make test' will additionally run the test program.  There is no 'make
+install', you must copy the files to an appropriate location by hand.
+All makefiles are currently dependent on GNU make.
 
 2.1 SML/NJ
 ==========
 
-For Standard ML of New Jersey, the CM library specification `qcheck.cm'
-should be all you need.  The default target of `make -f Makefile.nj'
+For Standard ML of New Jersey, the CM library specification 'qcheck.cm'
+should be all you need.  The default target of 'make -f Makefile.nj'
 will ask CM to build and stabilize this library.  This creates a file
-`.cm/x86-unix/qcheck.cm' (alter the arch/os tag as needed) which may be
-copied into the standard CM library path and added to the `pathconfig'.
+'.cm/x86-unix/qcheck.cm' (alter the arch/os tag as needed) which may be
+copied into the standard CM library path and added to the 'pathconfig'.
 
    If you have multiple installations of SML/NJ, you may specify which
-one to use by providing its path on the `make' command line, like this:
+one to use by providing its path on the 'make' command line, like this:
 
      make -f Makefile.nj SML=~/nj49/bin/sml
 
@@ -315,32 +319,29 @@ Building for Moscow ML is a little trickier; I benefitted enormously
 from the Mosmake system by Henning Makhlom.  Typing
 
      make -f Makefile.moscow
-   will generate a bunch of `.uo' and `.ui' files in the `src/'
-directory.  To use them in an interactive setting, give the path as a
-`-I' argument to `mosml', like this:
-
+will generate a bunch of '.uo' and '.ui' files in the 'src/' directory.
+To use them in an interactive setting, give the path as a '-I' argument
+to 'mosml', like this:
      % mosml -I src
-
      load "QCheck";
       -| > val it = () : unit
      QCheck.pred;
       -| > val 'a it = fn : ('a -> bool) -> 'a prop
-   Or, copy all the `.uo' and `.ui' files to a different directory, and
+Or, copy all the '.uo' and '.ui' files to a different directory, and
 load them from there.
 
-   Using the library in compiled programs is more complex.  Mosmake
-will be a big help, but you will still need to figure out the
-dependencies to particular modules within QCheck.  Moscow ML does not
-currently have a way to package together a set of object files into a
-single library.
+   Using the library in compiled programs is more complex.  Mosmake will
+be a big help, but you will still need to figure out the dependencies to
+particular modules within QCheck.  Moscow ML does not currently have a
+way to package together a set of object files into a single library.
 
    In addition to the default target,
 
      make -f Makefile.moscow all
-   creates a test program called `compose' in the source directory, and
-the `test' target additionally runs the test.  You may specify the
-location of the `mosmlc' compiler on the command line, in case the one
-you want to use is not first in your path:
+creates a test program called 'compose' in the source directory, and the
+'test' target additionally runs the test.  You may specify the location
+of the 'mosmlc' compiler on the command line, in case the one you want
+to use is not first in your path:
 
      make -f Makefile.moscow MOSMLC=~/mosml/bin/mosmlc
 
@@ -352,27 +353,36 @@ library in the traditional sense.  You may, however, compile its source
 code along with your own to produce test programs.  The QCheck license
 (LGPL) permits incorporating the source even into proprietary programs.
 
-   The `qcheck.cm' file is intended to be readable by MLton as well as
+   The 'qcheck.cm' file is intended to be readable by MLton as well as
 SML/NJ.
 
      make -f Makefile.mlton all
-   will ask MLton to compile a test program called `tests/tests'.  As
-always, the `test' target will run the test program.  You may specify
-the path to the MLton compiler by setting the `MLTON' variable on the
+will ask MLton to compile a test program called 'tests/tests'.  As
+always, the 'test' target will run the test program.  You may specify
+the path to the MLton compiler by setting the 'MLTON' variable on the
 command line.
 
 2.4 Poly/ML
 ===========
 
-QCheck will also work with Poly/ML.  In this case, there is nothing to
-compile in advance, but `PolyML.make' will work if run from the `src/'
+QCheck will also work with Poly/ML. In this case, there is nothing to
+compile in advance, but 'PolyML.make' will work if run from the 'src/'
 directory, like this:
      OS.FileSys.chDir "src";
      PolyML.make "QCheck";
-   See also the file `tests/polytest.sml' for an example of how to use
-QCheck from Poly/ML.  Running
+   See also the file 'tests/polytest.sml' for an example of how to use
+QCheck from Poly/ML. Running
      make -f Makefile.poly test
    will execute the unit tests for Poly/ML.
+
+2.5 SML#
+========
+
+QCheck will also work with SML#.  SML# requires separate compilation
+like below:
+     make -f Makefile.smlsharp
+   To use QCheck as a library from SML#, add '_require
+"/path/to/qcheck.smi"' to your .smi files.
 
 
 File: qcheck.info,  Node: Specifying test cases,  Next: Generating test cases,  Prev: Installation,  Up: Top
@@ -383,43 +393,42 @@ File: qcheck.info,  Node: Specifying test cases,  Next: Generating test cases,  
      Once a human tester finds a bug, it should be the last time a human
      tester finds that bug.  Automatic tests should check for it from
      then on.
-
                                            Andrew Hunt and David Thomas
-                                             `The Pragmatic Programmer'
+                                             'The Pragmatic Programmer'
 
    Random testing is neat, and sometimes uncovers interesting cases that
-you may not have tried.  But to be sure you are covering specific
-cases, you need to specify them somehow.  The list example at the end
-of the overview is one way, but another is reading them from a file.
-QCheck provides a small API for using files within a directory or lines
-within a text file as test cases.
+you may not have tried.  But to be sure you are covering specific cases,
+you need to specify them somehow.  The list example at the end of the
+overview is one way, but another is reading them from a file.  QCheck
+provides a small API for using files within a directory or lines within
+a text file as test cases.
 
-   The following functions generate file and directory names as test
-cases.  This is useful, for example, for regression tests of a compiler
-- just keep a directory of source files to be compiled.  The directory
-stream should be read all the way to the end, or else the directory
-handle will not be properly closed.  (The check function does this
-automatically.)
+The following functions generate file and directory names as test cases.
+This is useful, for example, for regression tests of a compiler - just
+keep a directory of source files to be compiled.  The directory stream
+should be read all the way to the end, or else the directory handle will
+not be properly closed.  (The check function does this automatically.)
 
      type dirstream
      val openDir : string -> dirstream
      val nextFile : (string, dirstream) reader
-   Here is an example of how to run tests on filenames in a directory:
+Here is an example of how to run tests on filenames in a directory:
          check (Files.nextFile, pretty_printer)
                (test_name, test_predicate)
                (Files.openDir directory_path)
 
 
-   The following functions produce lines of text from a file as test
-cases.  The produced strings include newlines, but see below for how to
-filter them.
+The following functions produce lines of text from a file as test cases.
+The produced strings include newlines, but see below for how to filter
+them.
 
      type filestream
      val openFile : string -> filestream
      val nextLine : (string, filestream) reader
-   Here are some simple utilities for readers.  The types should be
-self-explanatory.  The `chop' function removes newlines from the ends
-of string readers (such as `nextLine').
+
+Here are some simple utilities for readers.  The types should be
+self-explanatory.  The 'chop' function removes newlines from the ends of
+string readers (such as 'nextLine').
 
      val map : ('a -> 'b) -> ('a,'c) reader -> ('b,'c) reader
      val filter : ('a -> bool) -> ('a,'b) reader -> ('a,'b) reader
@@ -433,49 +442,47 @@ File: qcheck.info,  Node: Generating test cases,  Next: Properties,  Prev: Speci
 
 The QuickCheck tool for Haskell uses type classes so that arbitrary
 values of various types may be generated behind the scenes.  In SML, we
-need to be more explicit, but the same holds true in Haskell if we
-don't want the default generator (positive integers only, for example).
-The `Gen' module holds a wide range of tools for creating random values
-of various structured types and, yes, even functions!
+need to be more explicit, but the same holds true in Haskell if we don't
+want the default generator (positive integers only, for example).  The
+'Gen' module holds a wide range of tools for creating random values of
+various structured types and, yes, even functions!
 
-   We begin with the raw random number generator.  The `new' function
-generates a seed based on the current time.  The `range' function
+We begin with the raw random number generator.  The 'new' function
+generates a seed based on the current time.  The 'range' function
 produces random integers between those in the given pair, inclusive.
-The generator is applicative, in the sense that it returns the new
-state of the random number generator.
+The generator is applicative, in the sense that it returns the new state
+of the random number generator.
 
      type rand
      val new : unit -> rand
      val range : int * int -> rand -> int * rand
-
-   The generator for a type takes a random number stream and produces a
+The generator for a type takes a random number stream and produces a
 value of that type, along with the new state of the stream.
      type 'a gen = rand -> 'a * rand
      type ('a, 'b) co = 'a -> 'b gen -> 'b gen
 
-
 4.1 Random-value combinators
 ============================
 
-`lift v' is a generator that always produces the given value.  `select'
-picks uniform randomly from the values in the vector, while `choose'
+'lift v' is a generator that always produces the given value.  'select'
+picks uniform randomly from the values in the vector, while 'choose'
 picks uniform randomly from the generators in the vector, to produce a
 value.  For example:
         Gen.choose #[Gen.lift 42, Gen.Int.int]
    will return the number 42 with 50% probability, and a random integer
-otherwise (but recall that `Gen.Int.int' is biased toward zero and the
+otherwise (but recall that 'Gen.Int.int' is biased toward zero and the
 extrema).  The primed version pairs each generator with an integer
 weight to bias the choice (making it non-uniform).
      val lift : 'a -> 'a gen
      val select : 'a vector -> 'a gen
      val choose : 'a gen vector -> 'a gen
      val choose' : (int * 'a gen) vector -> 'a gen
-   The functions ending in `L' are the same, except they operate on
-lists instead of vectors.
+The functions ending in 'L' are the same, except they operate on lists
+instead of vectors.
      val selectL : 'a list -> 'a gen
      val chooseL : 'a gen list -> 'a gen
      val chooseL' : (int * 'a gen) list -> 'a gen
-    Here are some basic map and filtering functions over generators.
+   Here are some basic map and filtering functions over generators.
      val filter : ('a -> bool) -> 'a gen -> 'a gen
      val zip : ('a gen * 'b gen) -> ('a * 'b) gen
      val zip3 : ('a gen * 'b gen * 'c gen) ->
@@ -490,23 +497,24 @@ lists instead of vectors.
      val map4 : ('a * 'b * 'c * 'd -> 'e) ->
                 ('a gen * 'b gen * 'c gen * 'd gen) ->
                 'e gen
-   `flip' is just like flipping a fair coin.  With `flip'', the coin is
-biased by the pair of integers given: `flip' (3,5)' will choose `true'
-three-eights of the time, and `false' five-eights.
+
+'flip' is just like flipping a fair coin.  With 'flip'', the coin is
+biased by the pair of integers given: 'flip' (3,5)' will choose 'true'
+three-eights of the time, and 'false' five-eights.
      val flip : bool gen
      val flip' : int * int -> bool gen
-   These produce lists or optional values by consulting the boolean
-generator about when to produce the nil list or `NONE'.
+
+These produce lists or optional values by consulting the boolean
+generator about when to produce the nil list or 'NONE'.
      val list : bool gen -> 'a gen -> 'a list gen
      val option : bool gen -> 'a gen -> 'a option gen
-   The following function produces any kind of sequential collection
-type, you just provide the `tabulate' function as the first parameter.
-The integer generator then determines how many elements the collection
-will have.
+The following function produces any kind of sequential collection type,
+you just provide the 'tabulate' function as the first parameter.  The
+integer generator then determines how many elements the collection will
+have.
      val vector : (int * (int -> 'a) -> 'b) ->
                   int gen * 'a gen -> 'b gen
-   Here is an example, showing how we can generate strings with
-`vector':
+Here is an example, showing how we can generate strings with 'vector':
          Gen.vector CharVector.tabulate
                     (Gen.range(6,10), Gen.select #[#"a", #"b", #"c"])
    Here is a sample of the strings it generated in one test:
@@ -519,29 +527,39 @@ will have.
       -| "bbcaccca" : CharVector.vector
 
 
+Here are some basic co-generators.  'variant' takes a small non-negative
+'int' and performs simple unary branching.  'variant'' is similar but
+takes an additional bound to save the last split.  'variant'' is the
+building block of all other built-in co-generators.
+
+   Note: 'variant v' is equivalent to 'variant' (v+2, v)' for small 'v'.
+'variant' (b, v)' raises 'Subscript' if 'v < 0' or 'v >= b'.
+
+
      val variant : (int,'b) co
+     val variant' : (int*int,'b) co
      val arrow : ('a, 'b) co * 'b gen -> ('a -> 'b) gen
      val cobool : (bool, 'b) co
      val colist : ('a, 'b) co -> ('a list, 'b) co
      val coopt : ('a, 'b) co -> ('a option, 'b) co
-   These turn generators into a stream of values.  You can limit them
-by a given integer, or just use the default maximum number of values
-from the `Settings'.
+
+These turn generators into a stream of values.  You can limit them by a
+given integer, or just use the default maximum number of values from the
+'Settings'.
      type stream
      val start : rand -> stream
      val limit' : int -> 'a gen -> ('a,stream) reader
      val limit : 'a gen -> ('a,stream) reader
 
-
 4.2 Basis types
 ===============
 
-In addition to the general combinators, practically all of the SML
-Basis types have associated generators in sub-structures.  The
-following generators can be instantiated for whatever character and
-string types your implementation provides, such as
-`Gen.WideText.charByType'.  For the default character and string types,
-however, these are found in the top-level of the `Gen' structure.
+In addition to the general combinators, practically all of the SML Basis
+types have associated generators in sub-structures.  The following
+generators can be instantiated for whatever character and string types
+your implementation provides, such as 'Gen.WideText.charByType'.  For
+the default character and string types, however, these are found in the
+top-level of the 'Gen' structure.
      type char
      type string
      type substring
@@ -554,11 +572,10 @@ however, these are found in the top-level of the `Gen' structure.
      val cochar : (char, 'b) co
      val costring : (string, 'b) co
      val cosubstring : (substring, 'b) co
-
-   The functions in `Gen.Int' (and `Gen.Int32', `Gen.IntInf', etc.)
+The functions in 'Gen.Int' (and 'Gen.Int32', 'Gen.IntInf', etc.)
 generate integers in various ranges.  They can easily be instantiated
 for whatever integer types your implementation provides.  They are
-biased so that zero, `maxInt', and `minInt' (if they exist) are
+biased so that zero, 'maxInt', and 'minInt' (if they exist) are
 generated much more often than other integers.
      eqtype int
      val int : int gen
@@ -567,17 +584,15 @@ generated much more often than other integers.
      val nonpos : int gen
      val nonneg : int gen
      val coint : (int, 'b) co
-
-   The functions generating unsigned words are in structures such as
-`Gen.Word', `Gen.Word8', `Gen,Word32', etc., depending on your
+The functions generating unsigned words are in structures such as
+'Gen.Word', 'Gen.Word8', 'Gen,Word32', etc., depending on your
 implementation.
      eqtype word
      val word : word gen
      val coword : (word, 'b) co
-
-   These are in `Gen.Real' structure.  Currently, real numbers are
+These are in 'Gen.Real' structure.  Currently, real numbers are
 generated from strings of (decimal) digits, rather than from bits.  So
-some valid reals will never be generated. This may not be sufficient
+some valid reals will never be generated.  This may not be sufficient
 for testing numerical code.
      type real
      val real : real gen
@@ -587,15 +602,14 @@ for testing numerical code.
      val nonpos : real gen
      val nonneg : real gen
      val finite : real gen
-
-   Generate dates and times from `Gen.DateTime'.  The `dateFromYear'
-function uses the given generator to produce the year, but then it
-comes up with a month, day, hour, minute, and second itself.  A few
-days are more likely than others because we do not bother to generate
-the correct number of days based on the month.  This makes May 1st more
-likely than May 2nd, because it could also have been generated as April
-31st.  (The Basis `Date.date' normalizes the dates though, so you will
-never see April 31st.)
+Generate dates and times from 'Gen.DateTime'.  The 'dateFromYear'
+function uses the given generator to produce the year, but then it comes
+up with a month, day, hour, minute, and second itself.  A few days are
+more likely than others because we do not bother to generate the correct
+number of days based on the month.  This makes May 1st more likely than
+May 2nd, because it could also have been generated as April 31st.  (The
+Basis 'Date.date' normalizes the dates though, so you will never see
+April 31st.)
      val weekday : Date.weekday gen
      val month : Date.month gen
      val dateFromYear : int gen -> Date.date gen
@@ -630,12 +644,12 @@ carries some additional data about preconditions and statistics.
      type 'a prop
      val pred : 'a pred -> 'a prop
      val pred2 : ('a * 'b) pred -> 'b -> 'a  prop
-     
-   This function and operator are the same: they construct conditional
+
+This function and operator are the same: they construct conditional
 properties.  Test cases that fail the precondition are not counted.
      val implies : 'a pred * 'a prop -> 'a prop
      val ==> : 'a pred * 'a pred -> 'a prop
-     
+
 
 5.1 Statistical distribution
 ============================
@@ -643,7 +657,7 @@ properties.  Test cases that fail the precondition are not counted.
 One problem with random test-case generation is that we don't know for
 sure what we're getting.  QCheck provides a way to observe the
 distribution of test cases by tagging them based on user-definable
-criteria.  For example, suppose we want to test the `ListMergeSort'
+criteria.  For example, suppose we want to test the 'ListMergeSort'
 module in the SML/NJ library, by generating random integer lists.
 
    If we generate and pass 100 cases, what does that mean?  Sorting a
@@ -656,7 +670,7 @@ questions.
      val classify : 'a pred -> string -> 'a prop -> 'a prop
      val classify' : ('a -> string option) -> 'a prop ->
                      'a prop
-   Here are some examples of how they work.
+Here are some examples of how they work.
      fun fewer_than n L = length L < n
 
      val sort_ok = ListMergeSort.sorted op> o
@@ -672,10 +686,10 @@ questions.
 statistics on the distribution of the specified properties.
      -| ListMergeSort..........ok      (100 passed)         33% pre-sorted
      -|                                                     28% trivial
-   The functions `classify' and `trivial' are specializations of the
-more general `classify'' (prime), with which we can provide a function
-that returns the tag.  To see the complete distribution of list
-lengths, try this:
+   The functions 'classify' and 'trivial' are specializations of the
+more general 'classify'' (prime), with which we can provide a function
+that returns the tag.  To see the complete distribution of list lengths,
+try this:
      fun sizeTag n =
          "length "^ StringCvt.padLeft #" " 3 (Int.toString n)
 
@@ -700,6 +714,7 @@ lengths, try this:
 43.
 
 
+
 5.2 Results
 ===========
 
@@ -711,7 +726,6 @@ lengths, try this:
      val stats : stats
      val success : result pred
      val failure : result pred
-     
 
 
 File: qcheck.info,  Node: Settings,  Next: Release notes,  Prev: Properties,  Up: Top
@@ -722,34 +736,31 @@ File: qcheck.info,  Node: Settings,  Next: Release notes,  Prev: Properties,  Up
      type 'a control
      val get : 'a control -> 'a
      val set : 'a control * 'a -> unit
-     
 Many run-time parameters can be adjusted before running your unit tests.
 
      val gen_target : int option control
-     
-    Number of valid random cases to test.  Default is 100.
+   Number of valid random cases to test.  Default is 100.
 
      val gen_max : int control
-     
-   Maximum number of random cases to consider; stop after this many
-even if `gen_target' has not been reached.  Default is 400.
+Maximum number of random cases to consider; stop after this many even if
+'gen_target' has not been reached.  Default is 400.
 
      val examples : int option control
-     
-    Maximum number of counter-examples to report.  Default is 5.
+   Maximum number of counter-examples to report.  Default is 5.
+
+     val sort_examples : bool control
+   Whether counter-examples should appear shortest first.  Default is
+true.
 
      val outstream : TextIO.outstream control
-     
-    Output stream for test results.
+   Output stream for test results.
 
      val column_width : int control
-     
-   Width of test name column.  Its interpretation depends on the output
+Width of test name column.  Its interpretation depends on the output
 style.  Default is 22.
 
      val show_stats : bool control
-     
-    Show distribution of test cases.  Default is true.
+   Show distribution of test cases.  Default is true.
 
      val style :
          { name: string,
@@ -757,22 +768,22 @@ style.  Default is 22.
                  { status: string option * Property.result
                            * Property.stats -> unit,
                    finish: Property.stats -> bool } } control
-    This controls the style of the output.  See below.
+   This controls the style of the output.  See below.
 
 6.1 Pluggable output styles
 ===========================
 
-The default output style (`PerlStyle.style') is modeled after the
+The default output style ('PerlStyle.style') is modeled after the
 unit-testing framework for Perl.  It makes room for statistics and
-counter-examples, while leaving clear a column down the middle where
-the "ok/FAILED" results can be easily read.  The Perl style uses the
-carriage return character \r to update the current line with each test
-- this is a useful progress indicator for tests that take a long time.
+counter-examples, while leaving clear a column down the middle where the
+"ok/FAILED" results can be easily read.  The Perl style uses the
+carriage return character \r to update the current line with each test -
+this is a useful progress indicator for tests that take a long time.
 
    Output styles are completely configurable just by writing a function
-of a particular type.  An alternate style is provided, which is meant
-to mesh well with the output of the SML/NJ Compilation Manager (CM),
-like this:
+of a particular type.  An alternate style is provided, which is meant to
+mesh well with the output of the SML/NJ Compilation Manager (CM), like
+this:
 
       -| [testing Bool/to-from... ok]
       -| [testing Bool/from-to... ok]
@@ -788,566 +799,78 @@ File: qcheck.info,  Node: Release notes,  Next: License,  Prev: Settings,  Up: T
 7 Release notes
 ***************
 
+version 1.2
+-----------
+
+   * Released 23 May 2016
+   * Support shrinking of test cases
+   * License changed to BSD
+   * Compatibility fixes for more recent MoscowML and PolyML
+   * Support SML#
+
 version 1.1
 -----------
 
    * Released 14 April 2008
-
    * Updated to fix WideText structure in MLton 20070826
-
    * Minor build system updates
 
 version 1.0
 -----------
 
    * Released 15 April 2007
-
-   * Major documentation updates - now there's a full manual, not just
-     a README file.
-
+   * Major documentation updates - now there's a full manual, not just a
+     README file.
    * Support for Poly/ML, which required some major restructuring.
-
    * Minor build system updates.  Now available as a darcs repository.
 
 version 0.8a
 ------------
 
    * Released 14 September 2004
-
    * Added support for MLton and Moscow ML.
 
 version 0.7
 -----------
 
    * Released 9 June 2004
-
    * First public release, worked only for SML/NJ.
 
 
 File: qcheck.info,  Node: License,  Next: Index,  Prev: Release notes,  Up: Top
 
-8 GNU Lesser General Public License
-***********************************
-
-Version 2.1, February 1999
-
-Copyright (C)1991, 1999 Free Software Foundation, Inc.
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-Everyone is permitted to copy and distribute verbatim copies
-of this license document, but changing it is not allowed.
-
-[This is the first released version of the Lesser GPL.  It also counts
-as the successor of the GNU Library Public License, version 2, hence
-the version number 2.1.]
-
-Preamble
-========
-
-The licenses for most software are designed to take away your freedom
-to share and change it.  By contrast, the GNU General Public Licenses
-are intended to guarantee your freedom to share and change free
-software--to make sure the software is free for all its users.
-
-   This license, the Lesser General Public License, applies to some
-specially designated software packages--typically libraries--of the
-Free Software Foundation and other authors who decide to use it.  You
-can use it too, but we suggest you first think carefully about whether
-this license or the ordinary General Public License is the better
-strategy to use in any particular case, based on the explanations below.
-
-   When we speak of free software, we are referring to freedom of use,
-not price.  Our General Public Licenses are designed to make sure that
-you have the freedom to distribute copies of free software (and charge
-for this service if you wish); that you receive source code or can get
-it if you want it; that you can change the software and use pieces of
-it in new free programs; and that you are informed that you can do
-these things.
-
-   To protect your rights, we need to make restrictions that forbid
-distributors to deny you these rights or to ask you to surrender these
-rights.  These restrictions translate to certain responsibilities for
-you if you distribute copies of the library or if you modify it.
-
-   For example, if you distribute copies of the library, whether gratis
-or for a fee, you must give the recipients all the rights that we gave
-you.  You must make sure that they, too, receive or can get the source
-code.  If you link other code with the library, you must provide
-complete object files to the recipients, so that they can relink them
-with the library after making changes to the library and recompiling
-it.  And you must show them these terms so they know their rights.
-
-   We protect your rights with a two-step method: (1) we copyright the
-library, and (2) we offer you this license, which gives you legal
-permission to copy, distribute and/or modify the library.
-
-   To protect each distributor, we want to make it very clear that
-there is no warranty for the free library.  Also, if the library is
-modified by someone else and passed on, the recipients should know that
-what they have is not the original version, so that the original
-author's reputation will not be affected by problems that might be
-introduced by others.
-
-   Finally, software patents pose a constant threat to the existence of
-any free program.  We wish to make sure that a company cannot
-effectively restrict the users of a free program by obtaining a
-restrictive license from a patent holder.  Therefore, we insist that
-any patent license obtained for a version of the library must be
-consistent with the full freedom of use specified in this license.
-
-   Most GNU software, including some libraries, is covered by the
-ordinary GNU General Public License.  This license, the GNU Lesser
-General Public License, applies to certain designated libraries, and is
-quite different from the ordinary General Public License.  We use this
-license for certain libraries in order to permit linking those
-libraries into non-free programs.
-
-   When a program is linked with a library, whether statically or using
-a shared library, the combination of the two is legally speaking a
-combined work, a derivative of the original library.  The ordinary
-General Public License therefore permits such linking only if the
-entire combination fits its criteria of freedom.  The Lesser General
-Public License permits more lax criteria for linking other code with
-the library.
-
-   We call this license the _Lesser_ General Public License because it
-does Less to protect the user's freedom than the ordinary General
-Public License.  It also provides other free software developers Less
-of an advantage over competing non-free programs.  These disadvantages
-are the reason we use the ordinary General Public License for many
-libraries.  However, the Lesser license provides advantages in certain
-special circumstances.
-
-   For example, on rare occasions, there may be a special need to
-encourage the widest possible use of a certain library, so that it
-becomes a de-facto standard.  To achieve this, non-free programs must be
-allowed to use the library.  A more frequent case is that a free
-library does the same job as widely used non-free libraries.  In this
-case, there is little to gain by limiting the free library to free
-software only, so we use the Lesser General Public License.
-
-   In other cases, permission to use a particular library in non-free
-programs enables a greater number of people to use a large body of free
-software.  For example, permission to use the GNU C Library in non-free
-programs enables many more people to use the whole GNU operating
-system, as well as its variant, the GNU/Linux operating system.
-
-   Although the Lesser General Public License is Less protective of the
-users' freedom, it does ensure that the user of a program that is
-linked with the Library has the freedom and the wherewithal to run that
-program using a modified version of the Library.
-
-   The precise terms and conditions for copying, distribution and
-modification follow.  Pay close attention to the difference between a
-"work based on the library" and a "work that uses the library."  The
-former contains code derived from the library, whereas the latter must
-be combined with the library in order to run.
-
-TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-===============================================================
-
-  0. This License Agreement applies to any software library or other
-     program which contains a notice placed by the copyright holder or
-     other authorized party saying it may be distributed under the
-     terms of this Lesser General Public License (also called "this
-     License").  Each licensee is addressed as "you."
-
-     A "library" means a collection of software functions and/or data
-     prepared so as to be conveniently linked with application programs
-     (which use some of those functions and data) to form executables.
-
-     The "Library," below, refers to any such software library or work
-     which has been distributed under these terms.  A "work based on the
-     Library" means either the Library or any derivative work under
-     copyright law: that is to say, a work containing the Library or a
-     portion of it, either verbatim or with modifications and/or
-     translated straightforwardly into another language.  (Hereinafter,
-     translation is included without limitation in the term
-     "modification.")
-
-     "Source code" for a work means the preferred form of the work for
-     making modifications to it.  For a library, complete source code
-     means all the source code for all modules it contains, plus any
-     associated interface definition files, plus the scripts used to
-     control compilation and installation of the library.
-
-     Activities other than copying, distribution and modification are
-     not covered by this License; they are outside its scope.  The act
-     of running a program using the Library is not restricted, and
-     output from such a program is covered only if its contents
-     constitute a work based on the Library (independent of the use of
-     the Library in a tool for writing it).  Whether that is true
-     depends on what the Library does and what the program that uses
-     the Library does.
-
-  1. You may copy and distribute verbatim copies of the Library's
-     complete source code as you receive it, in any medium, provided
-     that you conspicuously and appropriately publish on each copy an
-     appropriate copyright notice and disclaimer of warranty; keep
-     intact all the notices that refer to this License and to the
-     absence of any warranty; and distribute a copy of this License
-     along with the Library.
-
-     You may charge a fee for the physical act of transferring a copy,
-     and you may at your option offer warranty protection in exchange
-     for a fee.
-
-  2. You may modify your copy or copies of the Library or any portion
-     of it, thus forming a work based on the Library, and copy and
-     distribute such modifications or work under the terms of Section 1
-     above, provided that you also meet all of these conditions:
-
-       a. The modified work must itself be a software library.
-
-       b. You must cause the files modified to carry prominent notices
-          stating that you changed the files and the date of any change.
-
-       c. You must cause the whole of the work to be licensed at no
-          charge to all third parties under the terms of this License.
-
-       d. If a facility in the modified Library refers to a function or
-          a table of data to be supplied by an application program that
-          uses the facility, other than as an argument passed when the
-          facility is invoked, then you must make a good faith effort
-          to ensure that, in the event an application does not supply
-          such function or table, the facility still operates, and
-          performs whatever part of its purpose remains meaningful.
-
-          (For example, a function in a library to compute square roots
-          has a purpose that is entirely well-defined independent of the
-          application.  Therefore, Subsection 2d requires that any
-          application-supplied function or table used by this function
-          must be optional: if the application does not supply it, the
-          square root function must still compute square roots.)
-
-     These requirements apply to the modified work as a whole.  If
-     identifiable sections of that work are not derived from the
-     Library, and can be reasonably considered independent and separate
-     works in themselves, then this License, and its terms, do not
-     apply to those sections when you distribute them as separate
-     works.  But when you distribute the same sections as part of a
-     whole which is a work based on the Library, the distribution of
-     the whole must be on the terms of this License, whose permissions
-     for other licensees extend to the entire whole, and thus to each
-     and every part regardless of who wrote it.
-
-     Thus, it is not the intent of this section to claim rights or
-     contest your rights to work written entirely by you; rather, the
-     intent is to exercise the right to control the distribution of
-     derivative or collective works based on the Library.
-
-     In addition, mere aggregation of another work not based on the
-     Library with the Library (or with a work based on the Library) on
-     a volume of a storage or distribution medium does not bring the
-     other work under the scope of this License.
-
-  3. You may opt to apply the terms of the ordinary GNU General Public
-     License instead of this License to a given copy of the Library.
-     To do this, you must alter all the notices that refer to this
-     License, so that they refer to the ordinary GNU General Public
-     License, version 2, instead of to this License.  (If a newer
-     version than version 2 of the ordinary GNU General Public License
-     has appeared, then you can specify that version instead if you
-     wish.)  Do not make any other change in these notices.
-
-     Once this change is made in a given copy, it is irreversible for
-     that copy, so the ordinary GNU General Public License applies to
-     all subsequent copies and derivative works made from that copy.
-
-     This option is useful when you wish to copy part of the code of
-     the Library into a program that is not a library.
-
-  4. You may copy and distribute the Library (or a portion or
-     derivative of it, under Section 2) in object code or executable
-     form under the terms of Sections 1 and 2 above provided that you
-     accompany it with the complete corresponding machine-readable
-     source code, which must be distributed under the terms of Sections
-     1 and 2 above on a medium customarily used for software
-     interchange.
-
-     If distribution of object code is made by offering access to copy
-     from a designated place, then offering equivalent access to copy
-     the source code from the same place satisfies the requirement to
-     distribute the source code, even though third parties are not
-     compelled to copy the source along with the object code.
-
-  5. A program that contains no derivative of any portion of the
-     Library, but is designed to work with the Library by being
-     compiled or linked with it, is called a "work that uses the
-     Library."  Such a work, in isolation, is not a derivative work of
-     the Library, and therefore falls outside the scope of this License.
-
-     However, linking a "work that uses the Library" with the Library
-     creates an executable that is a derivative of the Library (because
-     it contains portions of the Library), rather than a "work that
-     uses the library."  The executable is therefore covered by this
-     License.  Section 6 states terms for distribution of such
-     executables.
-
-     When a "work that uses the Library" uses material from a header
-     file that is part of the Library, the object code for the work may
-     be a derivative work of the Library even though the source code is
-     not.  Whether this is true is especially significant if the work
-     can be linked without the Library, or if the work is itself a
-     library.  The threshold for this to be true is not precisely
-     defined by law.
-
-     If such an object file uses only numerical parameters, data
-     structure layouts and accessors, and small macros and small inline
-     functions (ten lines or less in length), then the use of the object
-     file is unrestricted, regardless of whether it is legally a
-     derivative work.  (Executables containing this object code plus
-     portions of the Library will still fall under Section 6.)
-
-     Otherwise, if the work is a derivative of the Library, you may
-     distribute the object code for the work under the terms of Section
-     6.  Any executables containing that work also fall under Section 6,
-     whether or not they are linked directly with the Library itself.
-
-  6. As an exception to the Sections above, you may also combine or
-     link a "work that uses the Library" with the Library to produce a
-     work containing portions of the Library, and distribute that work
-     under terms of your choice, provided that the terms permit
-     modification of the work for the customer's own use and reverse
-     engineering for debugging such modifications.
-
-     You must give prominent notice with each copy of the work that the
-     Library is used in it and that the Library and its use are covered
-     by this License.  You must supply a copy of this License.  If the
-     work during execution displays copyright notices, you must include
-     the copyright notice for the Library among them, as well as a
-     reference directing the user to the copy of this License.  Also,
-     you must do one of these things:
-
-       a. Accompany the work with the complete corresponding
-          machine-readable source code for the Library including
-          whatever changes were used in the work (which must be
-          distributed under Sections 1 and 2 above); and, if the work
-          is an executable linked with the Library, with the complete
-          machine-readable "work that uses the Library," as object code
-          and/or source code, so that the user can modify the Library
-          and then relink to produce a modified executable containing
-          the modified Library.  (It is understood that the user who
-          changes the contents of definitions files in the Library will
-          not necessarily be able to recompile the application to use
-          the modified definitions.)
-
-       b. Use a suitable shared library mechanism for linking with the
-          Library.  A suitable mechanism is one that (1) uses at run
-          time a copy of the library already present on the user's
-          computer system, rather than copying library functions into
-          the executable, and (2) will operate properly with a modified
-          version of the library, if the user installs one, as long as
-          the modified version is interface-compatible with the version
-          that the work was made with.
-
-       c. Accompany the work with a written offer, valid for at least
-          three years, to give the same user the materials specified in
-          Subsection 6a, above, for a charge no more than the cost of
-          performing this distribution.
-
-       d. If distribution of the work is made by offering access to copy
-          from a designated place, offer equivalent access to copy the
-          above specified materials from the same place.
-
-       e. Verify that the user has already received a copy of these
-          materials or that you have already sent this user a copy.
-
-     For an executable, the required form of the "work that uses the
-     Library" must include any data and utility programs needed for
-     reproducing the executable from it.  However, as a special
-     exception, the materials to be distributed need not include
-     anything that is normally distributed (in either source or binary
-     form) with the major components (compiler, kernel, and so on) of
-     the operating system on which the executable runs, unless that
-     component itself accompanies the executable.
-
-     It may happen that this requirement contradicts the license
-     restrictions of other proprietary libraries that do not normally
-     accompany the operating system.  Such a contradiction means you
-     cannot use both them and the Library together in an executable
-     that you distribute.
-
-  7. You may place library facilities that are a work based on the
-     Library side-by-side in a single library together with other
-     library facilities not covered by this License, and distribute
-     such a combined library, provided that the separate distribution
-     of the work based on the Library and of the other library
-     facilities is otherwise permitted, and provided that you do these
-     two things:
-
-       a. Accompany the combined library with a copy of the same work
-          based on the Library, uncombined with any other library
-          facilities.  This must be distributed under the terms of the
-          Sections above.
-
-       b. Give prominent notice with the combined library of the fact
-          that part of it is a work based on the Library, and explaining
-          where to find the accompanying uncombined form of the same
-          work.
-
-  8. You may not copy, modify, sublicense, link with, or distribute the
-     Library except as expressly provided under this License.  Any
-     attempt otherwise to copy, modify, sublicense, link with, or
-     distribute the Library is void, and will automatically terminate
-     your rights under this License.  However, parties who have
-     received copies, or rights, from you under this License will not
-     have their licenses terminated so long as such parties remain in
-     full compliance.
-
-  9. You are not required to accept this License, since you have not
-     signed it.  However, nothing else grants you permission to modify
-     or distribute the Library or its derivative works.  These actions
-     are prohibited by law if you do not accept this License.
-     Therefore, by modifying or distributing the Library (or any work
-     based on the Library), you indicate your acceptance of this
-     License to do so, and all its terms and conditions for copying,
-     distributing or modifying the Library or works based on it.
-
- 10. Each time you redistribute the Library (or any work based on the
-     Library), the recipient automatically receives a license from the
-     original licensor to copy, distribute, link with or modify the
-     Library subject to these terms and conditions.  You may not impose
-     any further restrictions on the recipients' exercise of the rights
-     granted herein.  You are not responsible for enforcing compliance
-     by third parties with this License.
-
- 11. If, as a consequence of a court judgment or allegation of patent
-     infringement or for any other reason (not limited to patent
-     issues), conditions are imposed on you (whether by court order,
-     agreement or otherwise) that contradict the conditions of this
-     License, they do not excuse you from the conditions of this
-     License.  If you cannot distribute so as to satisfy simultaneously
-     your obligations under this License and any other pertinent
-     obligations, then as a consequence you may not distribute the
-     Library at all.  For example, if a patent license would not permit
-     royalty-free redistribution of the Library by all those who
-     receive copies directly or indirectly through you, then the only
-     way you could satisfy both it and this License would be to refrain
-     entirely from distribution of the Library.
-
-     If any portion of this section is held invalid or unenforceable
-     under any particular circumstance, the balance of the section is
-     intended to apply, and the section as a whole is intended to apply
-     in other circumstances.
-
-     It is not the purpose of this section to induce you to infringe any
-     patents or other property right claims or to contest validity of
-     any such claims; this section has the sole purpose of protecting
-     the integrity of the free software distribution system which is
-     implemented by public license practices.  Many people have made
-     generous contributions to the wide range of software distributed
-     through that system in reliance on consistent application of that
-     system; it is up to the author/donor to decide if he or she is
-     willing to distribute software through any other system and a
-     licensee cannot impose that choice.
-
-     This section is intended to make thoroughly clear what is believed
-     to be a consequence of the rest of this License.
-
- 12. If the distribution and/or use of the Library is restricted in
-     certain countries either by patents or by copyrighted interfaces,
-     the original copyright holder who places the Library under this
-     License may add an explicit geographical distribution limitation
-     excluding those countries, so that distribution is permitted only
-     in or among countries not thus excluded.  In such case, this
-     License incorporates the limitation as if written in the body of
-     this License.
-
- 13. The Free Software Foundation may publish revised and/or new
-     versions of the Lesser General Public License from time to time.
-     Such new versions will be similar in spirit to the present version,
-     but may differ in detail to address new problems or concerns.
-
-     Each version is given a distinguishing version number.  If the
-     Library specifies a version number of this License which applies
-     to it and "any later version," you have the option of following
-     the terms and conditions either of that version or of any later
-     version published by the Free Software Foundation.  If the Library
-     does not specify a license version number, you may choose any
-     version ever published by the Free Software Foundation.
-
- 14. If you wish to incorporate parts of the Library into other free
-     programs whose distribution conditions are incompatible with these,
-     write to the author to ask for permission.  For software which is
-     copyrighted by the Free Software Foundation, write to the Free
-     Software Foundation; we sometimes make exceptions for this.  Our
-     decision will be guided by the two goals of preserving the free
-     status of all derivatives of our free software and of promoting
-     the sharing and reuse of software generally.
-
- 15. BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE, THERE IS NO
-     WARRANTY FOR THE LIBRARY, TO THE EXTENT PERMITTED BY APPLICABLE
-     LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
-     HOLDERS AND/OR OTHER PARTIES PROVIDE THE LIBRARY "AS IS" WITHOUT
-     WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT
-     NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-     FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS TO THE
-     QUALITY AND PERFORMANCE OF THE LIBRARY IS WITH YOU.  SHOULD THE
-     LIBRARY PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
-     SERVICING, REPAIR OR CORRECTION.
-
- 16. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN
-     WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY
-     MODIFY AND/OR REDISTRIBUTE THE LIBRARY AS PERMITTED ABOVE, BE
-     LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL,
-     INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR
-     INABILITY TO USE THE LIBRARY (INCLUDING BUT NOT LIMITED TO LOSS OF
-     DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU
-     OR THIRD PARTIES OR A FAILURE OF THE LIBRARY TO OPERATE WITH ANY
-     OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN
-     ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
-                      END OF TERMS AND CONDITIONS
-
-How to Apply These Terms to Your New Libraries
-==============================================
-
-If you develop a new library, and you want it to be of the greatest
-possible use to the public, we recommend making it free software that
-everyone can redistribute and change.  You can do so by permitting
-redistribution under these terms (or, alternatively, under the terms of
-the ordinary General Public License).
-
-   To apply these terms, attach the following notices to the library.
-It is safest to attach them to the start of each source file to most
-effectively convey the exclusion of warranty; and each file should have
-at least the "copyright" line and a pointer to where the full notice is
-found.
-
-     <one line to give the library's name and a brief idea of what it does.>
-     Copyright (C) <year>  <name of author>
-
-     This library is free software; you can redistribute it and/or
-     modify it under the terms of the GNU Lesser General Public
-     License as published by the Free Software Foundation; either
-     version 2.1 of the License, or (at your option) any later version.
-
-     This library is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-     Lesser General Public License for more details.
-
-     You should have received a copy of the GNU Lesser General
-     Public License along with this library; if not, write to the
-     Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-     Boston, MA  02111-1307  USA
-
-   Also add information on how to contact you by electronic and paper
-mail.
-
-   You should also get your employer (if you work as a programmer) or
-your school, if any, to sign a "copyright disclaimer" for the library,
-if necessary.  Here is a sample; alter the names:
-
-     Yoyodyne, Inc., hereby disclaims all copyright interest in
-     the library `Frob' (a library for tweaking knobs) written
-     by James Random Hacker.
-
-     <signature of Ty Coon>, 1 April 1990
-     Ty Coon, President of Vice
-
-   That's all there is to it!
+8 License
+*********
+
+Copyright (C)2007 Christopher League
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 
 File: qcheck.info,  Node: Index,  Prev: License,  Up: Top
@@ -1360,211 +883,239 @@ Index
 
 * ==>:                                   Properties.          (line  18)
 * arrow:                                 Generating test cases.
-                                                              (line  95)
-* boundary condition:                    Overview.            (line  82)
+                                                              (line 104)
+* boundary condition:                    Overview.            (line  85)
 * char:                                  Generating test cases.
-                                                              (line 117)
+                                                              (line 126)
+* char <1>:                              Generating test cases.
+                                                              (line 129)
 * charByType:                            Generating test cases.
-                                                              (line 123)
+                                                              (line 132)
 * charFrom:                              Generating test cases.
-                                                              (line 122)
+                                                              (line 131)
 * charRange:                             Generating test cases.
-                                                              (line 121)
-* check:                                 Overview.            (line 185)
-* checkGen:                              Overview.            (line 209)
+                                                              (line 130)
+* check:                                 Overview.            (line 186)
+* checkGen:                              Overview.            (line 208)
+* checkGenShrink:                        Overview.            (line 220)
 * checkOne:                              Overview.            (line 215)
 * choose:                                Generating test cases.
-                                                              (line  43)
+                                                              (line  41)
 * choose':                               Generating test cases.
-                                                              (line  44)
+                                                              (line  42)
 * chooseL:                               Generating test cases.
-                                                              (line  48)
+                                                              (line  46)
 * chooseL':                              Generating test cases.
-                                                              (line  49)
+                                                              (line  47)
 * chop:                                  Specifying test cases.
-                                                              (line  49)
+                                                              (line  48)
 * classify:                              Properties.          (line  37)
 * classify':                             Properties.          (line  38)
 * co:                                    Generating test cases.
-                                                              (line  26)
+                                                              (line  25)
 * cobool:                                Generating test cases.
-                                                              (line  96)
+                                                              (line 105)
 * cochar:                                Generating test cases.
-                                                              (line 126)
+                                                              (line 135)
 * coint:                                 Generating test cases.
-                                                              (line 141)
+                                                              (line 149)
 * colist:                                Generating test cases.
-                                                              (line  97)
-* column_width:                          Settings.            (line  30)
-* compatibility:                         Installation.        (line  17)
-* Compilation Manager:                   Installation.        (line  28)
-* conditional:                           Overview.            (line  60)
-* context:                               Overview.            (line 222)
+                                                              (line 106)
+* column_width:                          Settings.            (line  29)
+* compatibility:                         Installation.        (line  15)
+* Compilation Manager:                   Installation.        (line  26)
+* conditional:                           Overview.            (line  59)
+* context:                               Overview.            (line 242)
 * control:                               Settings.            (line   7)
 * coopt:                                 Generating test cases.
-                                                              (line  98)
+                                                              (line 107)
 * costring:                              Generating test cases.
-                                                              (line 127)
+                                                              (line 136)
 * cosubstring:                           Generating test cases.
-                                                              (line 128)
+                                                              (line 137)
 * counter-example:                       Overview.            (line  38)
 * coword:                                Generating test cases.
-                                                              (line 148)
+                                                              (line 155)
+* cpsCheck:                              Overview.            (line 235)
 * dateFromYear:                          Generating test cases.
-                                                              (line 173)
+                                                              (line 178)
 * DateTime structure:                    Generating test cases.
-                                                              (line 163)
+                                                              (line 168)
 * dirstream:                             Specifying test cases.
-                                                              (line  27)
-* examples:                              Settings.            (line  22)
-* failure:                               Properties.          (line  94)
-* Files structure:                       Overview.            (line 151)
-* FILES_SIG signature:                   Specifying test cases.
-                                                              (line  20)
-* filestream:                            Specifying test cases.
-                                                              (line  40)
-* filter <1>:                            Generating test cases.
-                                                              (line  51)
-* filter:                                Specifying test cases.
-                                                              (line  48)
-* finite:                                Generating test cases.
-                                                              (line 161)
-* flip:                                  Generating test cases.
-                                                              (line  68)
-* flip':                                 Generating test cases.
-                                                              (line  69)
-* frac:                                  Generating test cases.
-                                                              (line 156)
-* gen:                                   Generating test cases.
                                                               (line  25)
-* Gen structure:                         Overview.            (line 150)
-* gen_max:                               Settings.            (line  17)
-* gen_target:                            Settings.            (line  13)
+* examples:                              Settings.            (line  19)
+* failure:                               Properties.          (line  95)
+* Files structure:                       Overview.            (line 153)
+* filestream:                            Specifying test cases.
+                                                              (line  38)
+* FILES_SIG signature:                   Specifying test cases.
+                                                              (line  19)
+* filter:                                Specifying test cases.
+                                                              (line  47)
+* filter <1>:                            Generating test cases.
+                                                              (line  49)
+* finite:                                Generating test cases.
+                                                              (line 167)
+* flip:                                  Generating test cases.
+                                                              (line  67)
+* flip':                                 Generating test cases.
+                                                              (line  68)
+* frac:                                  Generating test cases.
+                                                              (line 162)
+* gen:                                   Generating test cases.
+                                                              (line  24)
+* Gen structure:                         Overview.            (line 152)
 * GENERATOR_SIG signature:               Generating test cases.
                                                               (line  13)
+* gen_max:                               Settings.            (line  15)
+* gen_target:                            Settings.            (line  12)
 * get:                                   Settings.            (line   8)
 * implies:                               Properties.          (line  17)
 * int:                                   Generating test cases.
-                                                              (line 135)
+                                                              (line 143)
+* int <1>:                               Generating test cases.
+                                                              (line 144)
 * Int structures:                        Generating test cases.
-                                                              (line 130)
+                                                              (line 138)
 * lift:                                  Generating test cases.
-                                                              (line  41)
+                                                              (line  39)
 * limit:                                 Generating test cases.
-                                                              (line 105)
+                                                              (line 115)
 * limit':                                Generating test cases.
-                                                              (line 104)
+                                                              (line 114)
 * list:                                  Generating test cases.
                                                               (line  72)
-* map <1>:                               Generating test cases.
-                                                              (line  57)
 * map:                                   Specifying test cases.
-                                                              (line  47)
+                                                              (line  46)
+* map <1>:                               Generating test cases.
+                                                              (line  55)
 * map2:                                  Generating test cases.
-                                                              (line  58)
+                                                              (line  56)
 * map3:                                  Generating test cases.
-                                                              (line  60)
+                                                              (line  58)
 * map4:                                  Generating test cases.
-                                                              (line  62)
-* MLton:                                 Installation.        (line  78)
+                                                              (line  60)
+* MLton:                                 Installation.        (line  73)
 * month:                                 Generating test cases.
-                                                              (line 172)
-* Moscow ML:                             Installation.        (line  42)
+                                                              (line 177)
+* Moscow ML:                             Installation.        (line  40)
 * neg:                                   Generating test cases.
-                                                              (line 138)
+                                                              (line 146)
+* neg <1>:                               Generating test cases.
+                                                              (line 164)
 * new:                                   Generating test cases.
                                                               (line  20)
 * nextFile:                              Specifying test cases.
-                                                              (line  29)
+                                                              (line  27)
 * nextLine:                              Specifying test cases.
-                                                              (line  42)
+                                                              (line  40)
 * nonneg:                                Generating test cases.
-                                                              (line 160)
+                                                              (line 148)
+* nonneg <1>:                            Generating test cases.
+                                                              (line 166)
 * nonpos:                                Generating test cases.
-                                                              (line 139)
+                                                              (line 147)
+* nonpos <1>:                            Generating test cases.
+                                                              (line 165)
 * openDir:                               Specifying test cases.
-                                                              (line  28)
+                                                              (line  26)
 * openFile:                              Specifying test cases.
-                                                              (line  41)
+                                                              (line  39)
 * option:                                Generating test cases.
                                                               (line  73)
 * outstream:                             Settings.            (line  26)
-* Poly/ML:                               Installation.        (line  95)
+* Poly/ML:                               Installation.        (line  90)
 * polymorphic:                           Overview.            (line  38)
 * pos:                                   Generating test cases.
-                                                              (line 137)
-* pred:                                  Properties.          (line  12)
+                                                              (line 145)
+* pos <1>:                               Generating test cases.
+                                                              (line 163)
+* pred:                                  Properties.          (line  10)
+* pred <1>:                              Properties.          (line  12)
 * pred2:                                 Properties.          (line  13)
 * prop:                                  Properties.          (line  11)
-* QCHECK_SIG signature:                  Overview.            (line 150)
+* QCHECK_SIG signature:                  Overview.            (line 152)
 * rand:                                  Generating test cases.
                                                               (line  19)
 * range:                                 Generating test cases.
                                                               (line  21)
-* reader:                                Overview.            (line 174)
+* reader:                                Overview.            (line 175)
 * real:                                  Generating test cases.
-                                                              (line 154)
+                                                              (line 160)
+* real <1>:                              Generating test cases.
+                                                              (line 161)
 * Real structure:                        Generating test cases.
-                                                              (line 150)
+                                                              (line 156)
 * recursive types:                       Generating test cases.
-                                                              (line 179)
-* rep:                                   Overview.            (line 175)
-* result:                                Properties.          (line  87)
+                                                              (line 184)
+* rep:                                   Overview.            (line 176)
+* result:                                Properties.          (line  88)
 * select:                                Generating test cases.
-                                                              (line  42)
+                                                              (line  40)
 * selectL:                               Generating test cases.
-                                                              (line  47)
+                                                              (line  45)
 * set:                                   Settings.            (line   9)
-* Settings structure:                    Overview.            (line 152)
-* show_stats:                            Settings.            (line  35)
-* SML/NJ:                                Installation.        (line  28)
+* Settings structure:                    Overview.            (line 154)
+* show_stats:                            Settings.            (line  33)
+* SML#:                                  Installation.        (line 103)
+* SML/NJ:                                Installation.        (line  26)
+* sort_examples:                         Settings.            (line  22)
 * start:                                 Generating test cases.
-                                                              (line 103)
-* stats:                                 Properties.          (line  88)
+                                                              (line 113)
+* stats:                                 Properties.          (line  89)
+* stats <1>:                             Properties.          (line  93)
 * stream:                                Generating test cases.
-                                                              (line 102)
+                                                              (line 112)
 * string:                                Generating test cases.
-                                                              (line 118)
-* style:                                 Settings.            (line  39)
+                                                              (line 127)
+* string <1>:                            Generating test cases.
+                                                              (line 133)
+* style:                                 Settings.            (line  36)
 * substring:                             Generating test cases.
-                                                              (line 125)
-* success:                               Properties.          (line  93)
+                                                              (line 128)
+* substring <1>:                         Generating test cases.
+                                                              (line 134)
+* success:                               Properties.          (line  94)
 * termination:                           Generating test cases.
-                                                              (line 179)
-* test:                                  Properties.          (line  91)
+                                                              (line 184)
+* test:                                  Properties.          (line  92)
 * time:                                  Generating test cases.
-                                                              (line 174)
+                                                              (line 179)
 * trivial:                               Properties.          (line  36)
 * variant:                               Generating test cases.
-                                                              (line  94)
+                                                              (line 102)
+* variant':                              Generating test cases.
+                                                              (line 103)
 * vector:                                Generating test cases.
                                                               (line  78)
-* version:                               Overview.            (line 221)
+* version:                               Overview.            (line 241)
 * weekday:                               Generating test cases.
-                                                              (line 171)
+                                                              (line 176)
 * word:                                  Generating test cases.
-                                                              (line 146)
+                                                              (line 153)
+* word <1>:                              Generating test cases.
+                                                              (line 154)
 * Word structures:                       Generating test cases.
-                                                              (line 143)
+                                                              (line 150)
 * zip:                                   Generating test cases.
-                                                              (line  52)
+                                                              (line  50)
 * zip3:                                  Generating test cases.
-                                                              (line  53)
+                                                              (line  51)
 * zip4:                                  Generating test cases.
-                                                              (line  55)
+                                                              (line  53)
 
 
 
 Tag Table:
-Node: Top0
-Node: Overview1604
-Node: Installation11084
-Node: Specifying test cases14997
-Node: Generating test cases17157
-Node: Properties25180
-Node: Settings29210
-Node: Release notes31473
-Node: License32232
-Node: Index60280
+Node: Top73
+Node: Overview1065
+Node: Installation11372
+Node: Specifying test cases15550
+Node: Generating test cases17697
+Node: Properties26119
+Node: Settings30128
+Node: Release notes32453
+Node: License33401
+Node: Index34795
 
 End Tag Table

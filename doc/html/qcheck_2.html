@@ -1,27 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Created on April, 14 2008 by texi2html 1.78 -->
-<!--
-Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+<!-- Created on May 23, 2016 by texi2html 5.0
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
             Olaf Bachmann <obachman@mathematik.uni-kl.de>
             and many others.
 Maintained by: Many creative people.
 Send bugs and suggestions to <texi2html-bug@nongnu.org>
-
 -->
 <head>
-<title>QCheck/SML: 2. Installation</title>
+<title>QCheck/SML: 2 Installation</title>
 
-<meta name="description" content="QCheck/SML: 2. Installation">
-<meta name="keywords" content="QCheck/SML: 2. Installation">
+<meta name="description" content="QCheck/SML: 2 Installation">
+<meta name="keywords" content="QCheck/SML: 2 Installation">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
-<meta name="Generator" content="texi2html 1.78">
+<meta name="Generator" content="texi2html 5.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
 pre.display {font-family: serif}
 pre.format {font-family: serif}
 pre.menu-comment {font-family: serif}
@@ -30,9 +36,11 @@ pre.smalldisplay {font-family: serif; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: serif; font-size: smaller}
 pre.smalllisp {font-size: smaller}
-span.roman {font-family:serif; font-weight:normal;}
-span.sansserif {font-family:sans-serif; font-weight:normal;}
-ul.toc {list-style: none}
+span.nocodebreak {white-space:pre}
+span.nolinebreak {white-space:pre}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
 body {
     font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
     font-size: 11pt;
@@ -61,39 +69,40 @@ a:hover {
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
 <a name="Installation"></a>
-<a name="SEC5"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="qcheck_1.html#SEC4" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC6" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck_1.html#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next chapter"> &gt;&gt; </a>]</td>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck_1.html#Overview" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_1.html#The-QCheck-structure" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SML_002fNJ" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 2. Installation </h1>
+<a name="Installation-1"></a>
+<h1 class="chapter">2 Installation</h1>
 
 <p>QCheck is designed to work with various implementations of Standard ML.
 At the time of release, it was built successfully on the following
 systems:
-</p><ul class="toc">
+</p><ul>
 <li>
-Standard ML of New Jersey v110.67 [built: Sat Mar  1 09:57:31 2008]
+Standard ML of New Jersey v110.79 [built: Sat Nov 21 15:48:37 2015]
 </li><li>
-Moscow ML compiler version 2.01 (January 2004)
+Moscow ML compiler version 2.10
 </li><li>
-MLton 20070826 (built Thu Aug 30 11:53:36 2007 on fenrir.uchicago.edu)
+MLton 20130715 (built Thu Nov  6 11:40:47 CET 2014 on alexander)
 </li><li>
-Poly/ML 5.1 Testing    RTS version: I386-5.1
+Poly/ML 5.6 Release    RTS version: X86_64-5.6
+</li><li>
+SML# 3.0.1 (2016-04-04 22:16:17 JST) for x86_64-pc-linux-gnu with LLVM 3.7.1
 </li></ul>
-<a name="IDX16"></a>
+<a name="index-compatibility"></a>
 <p>Inquiries and recommendations on improving compatibility are welcome.
 The following sections provide simple installation instructions for each
 system.  A different <code>Makefile</code> is supplied for each system, but in
@@ -103,25 +112,26 @@ There is no <code>make install</code>, you must copy the files to an
 appropriate location by hand.  All makefiles are currently
 dependent on GNU make.
 </p>
-<hr size="6">
-<a name="SEC6"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC5" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC7" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="SML_002fNJ"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Installation" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Installation" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Moscow-ML" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.1 SML/NJ </h2>
+<h2 class="section">2.1 SML/NJ</h2>
+<a name="index-SML_002fNJ"></a>
+<a name="index-Compilation-Manager"></a>
 <p>For Standard ML of New Jersey, the CM library specification
 &lsquo;<tt>qcheck.cm</tt>&rsquo; should be all you need.  The default target of
 <code>make -f Makefile.nj</code> will ask CM to build and stabilize this
@@ -133,44 +143,48 @@ path and added to the &lsquo;<tt>pathconfig</tt>&rsquo;.
 to use by providing its path on the <code>make</code> command line, like
 this:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">make -f Makefile.nj SML=~/nj49/bin/sml
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">make -f Makefile.nj SML=~/nj49/bin/sml
+</pre></div>
 
-<hr size="6">
-<a name="SEC7"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC6" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC8" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="Moscow-ML"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SML_002fNJ" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Installation" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#MLton" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.2 Moscow ML </h2>
+<h2 class="section">2.2 Moscow ML</h2>
+<a name="index-Moscow-ML"></a>
 <p>Building for Moscow ML is a little trickier; I benefitted enormously
 from the Mosmake system by Henning Makhlom.  Typing
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">make -f Makefile.moscow
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">make -f Makefile.moscow
+</pre></div>
 <p>will generate a bunch of &lsquo;<tt>.uo</tt>&rsquo; and &lsquo;<tt>.ui</tt>&rsquo; files in the
 &lsquo;<tt>src/</tt>&rsquo; directory.  To use them in an
 interactive setting, give the path as a <code>-I</code> argument to
 <code>mosml</code>, like this:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">% mosml -I src
-</pre></td></tr></table>
-<table><tr><td>&nbsp;</td><td><pre class="example">load &quot;QCheck&quot;;
+</p><div class="example">
+<pre class="example">% mosml -I src
+</pre></div>
+<div class="example">
+<pre class="example">load &quot;QCheck&quot;;
  &rsaquo; <i>&gt; val it = () : unit</i>
 QCheck.pred;
  &rsaquo; <i>&gt; val 'a it = fn : ('a &rarr; bool) &rarr; 'a prop</i>
-</pre></td></tr></table>
+</pre></div>
 <p>Or, copy all the &lsquo;<tt>.uo</tt>&rsquo; and &lsquo;<tt>.ui</tt>&rsquo; files to a different
 directory, and load them from there.
 </p>
@@ -182,35 +196,37 @@ single library.
 </p>
 <p>In addition to the default target,
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">make -f Makefile.moscow all
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">make -f Makefile.moscow all
+</pre></div>
 <p>creates a test program called &lsquo;<tt>compose</tt>&rsquo; in the source directory,
 and the <code>test</code> target additionally runs the test.  You may
 specify the location of the <code>mosmlc</code> compiler on the command
 line, in case the one you want to use is not first in your path:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">make -f Makefile.moscow MOSMLC=~/mosml/bin/mosmlc
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">make -f Makefile.moscow MOSMLC=~/mosml/bin/mosmlc
+</pre></div>
 
-<hr size="6">
-<a name="SEC8"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC7" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC9" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="MLton"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Moscow-ML" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Installation" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Poly_002fML" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.3 MLton </h2>
+<h2 class="section">2.3 MLton</h2>
+<a name="index-MLton"></a>
 <p>MLton is a whole-program compiler, so you cannot install QCheck as a
 library in the traditional sense.  You may, however, compile its source
 code along with your own to produce test programs.  The QCheck license
@@ -219,61 +235,92 @@ code along with your own to produce test programs.  The QCheck license
 <p>The <code>qcheck.cm</code> file is intended to be readable by MLton as well as
 SML/NJ.
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">make -f Makefile.mlton all
-</pre></td></tr></table>
+<div class="example">
+<pre class="example">make -f Makefile.mlton all
+</pre></div>
 <p>will ask MLton to compile a test program called &lsquo;<tt>tests/tests</tt>&rsquo;.  As
 always, the <code>test</code> target will run the test program.  You may
 specify the path to the MLton compiler by setting the <code>MLTON</code>
 variable on the command line.
 </p>
-<hr size="6">
-<a name="SEC9"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC8" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC5" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="Poly_002fML"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#MLton" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Installation" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SML_0023" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 2.4 Poly/ML </h2>
+<h2 class="section">2.4 Poly/ML</h2>
+<a name="index-Poly_002fML"></a>
 <p>QCheck will also work with Poly/ML.  In this case, there is nothing to
 compile in advance, but <code>PolyML.make</code> will work if run from the
 &lsquo;<tt>src/</tt>&rsquo; directory, like this:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">OS.FileSys.chDir &quot;src&quot;;
+</p><div class="example">
+<pre class="example">OS.FileSys.chDir &quot;src&quot;;
 PolyML.make &quot;QCheck&quot;;
-</pre></td></tr></table>
+</pre></div>
 <p>See also the file &lsquo;<tt>tests/polytest.sml</tt>&rsquo; for an example of how to
 use QCheck from Poly/ML.  Running
-</p><table><tr><td>&nbsp;</td><td><pre class="example">make -f Makefile.poly test
-</pre></td></tr></table>
+</p><div class="example">
+<pre class="example">make -f Makefile.poly test
+</pre></div>
 <p>will execute the unit tests for Poly/ML.
 </p>
-<hr size="6">
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_3.html#SEC10" title="Next chapter"> &gt;&gt; </a>]</td>
+<hr>
+<a name="SML_0023"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Poly_002fML" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Installation" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section">2.5 SML#</h2>
+<a name="index-SML_0023"></a>
+
+<p>QCheck will also work with SML#.
+SML# requires separate compilation like below:
+</p><div class="example">
+<pre class="example">make -f Makefile.smlsharp
+</pre></div>
+<p>To use QCheck as a library from SML#, add <code>_require
+&quot;/path/to/qcheck.smi&quot;</code> to your .smi files.
+</p>
+<hr>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Installation" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_3.html#Specifying-test-cases" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Chris League</em> on <em>April, 14 2008</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78</em></a>.
+  This document was generated on <i>May 23, 2016</i> using <a href="http://www.nongnu.org/texi2html/"><i>texi2html 5.0</i></a>.
  </font>
  <br>
 

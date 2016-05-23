@@ -1,27 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Created on April, 14 2008 by texi2html 1.78 -->
-<!--
-Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+<!-- Created on May 23, 2016 by texi2html 5.0
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
             Olaf Bachmann <obachman@mathematik.uni-kl.de>
             and many others.
 Maintained by: Many creative people.
 Send bugs and suggestions to <texi2html-bug@nongnu.org>
-
 -->
 <head>
-<title>QCheck/SML: 6. Settings</title>
+<title>QCheck/SML: 6 Settings</title>
 
-<meta name="description" content="QCheck/SML: 6. Settings">
-<meta name="keywords" content="QCheck/SML: 6. Settings">
+<meta name="description" content="QCheck/SML: 6 Settings">
+<meta name="keywords" content="QCheck/SML: 6 Settings">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
-<meta name="Generator" content="texi2html 1.78">
+<meta name="Generator" content="texi2html 5.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
 pre.display {font-family: serif}
 pre.format {font-family: serif}
 pre.menu-comment {font-family: serif}
@@ -30,9 +36,11 @@ pre.smalldisplay {font-family: serif; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: serif; font-size: smaller}
 pre.smalllisp {font-size: smaller}
-span.roman {font-family:serif; font-weight:normal;}
-span.sansserif {font-family:sans-serif; font-weight:normal;}
-ul.toc {list-style: none}
+span.nocodebreak {white-space:pre}
+span.nolinebreak {white-space:pre}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
 body {
     font-family: "Trebuchet MS", "Bitstream Vera Sans", sans-serif;
     font-size: 11pt;
@@ -61,85 +69,96 @@ a:hover {
 <body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
 
 <a name="Settings"></a>
-<a name="SEC18"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="qcheck_5.html#SEC17" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC19" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck_5.html#SEC15" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_7.html#SEC20" title="Next chapter"> &gt;&gt; </a>]</td>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="qcheck_5.html#Properties" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_5.html#Results" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Pluggable-output-styles" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_7.html#Release-notes" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h1 class="chapter"> 6. Settings </h1>
-<table><tr><td>&nbsp;</td><td><pre class="example"><b>type</b> 'a control                           
-<a name="IDX115"></a><b>val</b> get : 'a control &rarr; 'a                
-<a name="IDX116"></a><b>val</b> set : 'a control * 'a &rarr; unit         
-<a name="IDX117"></a></pre></td></tr></table>
+<a name="Settings-1"></a>
+<h1 class="chapter">6 Settings</h1>
+<div class="example">
+<pre class="example"><b>type</b> 'a control                           
+<a name="index-control"></a><b>val</b> get : 'a control &rarr; 'a                
+<a name="index-get"></a><b>val</b> set : 'a control * 'a &rarr; unit         
+<a name="index-set"></a></pre></div>
 <p> Many run-time parameters can be adjusted before running your unit
 tests. 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
 <b>val</b> gen_target : int option control       
-<a name="IDX118"></a></pre></td></tr></table>
+<a name="index-gen_005ftarget"></a></pre></div>
 <p> Number of valid random cases to test.  Default is 100. 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
 <b>val</b> gen_max : int control                 
-<a name="IDX119"></a></pre></td></tr></table>
+<a name="index-gen_005fmax"></a></pre></div>
 <p> Maximum number of random cases to consider; stop after this
 many even if <code>gen_target</code> has not been reached.  Default is 400. 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
 <b>val</b> examples : int option control         
-<a name="IDX120"></a></pre></td></tr></table>
+<a name="index-examples"></a></pre></div>
 <p> Maximum number of counter-examples to report.  Default is 5. 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
+<b>val</b> sort_examples : bool control          
+<a name="index-sort_005fexamples"></a></pre></div>
+<p> Whether counter-examples should appear shortest first.  Default is true. 
+</p><div class="example">
+<pre class="example">
 <b>val</b> outstream : TextIO.outstream control  
-<a name="IDX121"></a></pre></td></tr></table>
+<a name="index-outstream"></a></pre></div>
 <p> Output stream for test results. 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
 <b>val</b> column_width : int control            
-<a name="IDX122"></a></pre></td></tr></table>
+<a name="index-column_005fwidth"></a></pre></div>
 <p> Width of test name column.  Its interpretation 
 depends on the output style.  Default is 22.  
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
 <b>val</b> show_stats : bool control             
-<a name="IDX123"></a></pre></td></tr></table>
+<a name="index-show_005fstats"></a></pre></div>
 <p> Show distribution of test cases.  Default is true. 
-</p><table><tr><td>&nbsp;</td><td><pre class="example">
+</p><div class="example">
+<pre class="example">
 <b>val</b> style :                               
-<a name="IDX124"></a>    { name: string,
+<a name="index-style"></a>    { name: string,
       ctor: string &rarr;
             { status: string option * Property.result 
                       * Property.stats &rarr; unit,
               finish: Property.stats &rarr; bool } } control
-</pre></td></tr></table>
+</pre></div>
 <p> This controls the style of the output.  See below. 
 </p>
-<hr size="6">
-<a name="SEC19"></a>
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC18" title="Previous section in reading order"> &lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_7.html#SEC20" title="Next section in reading order"> &gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="#SEC18" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="#SEC18" title="Up section"> Up </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_7.html#SEC20" title="Next chapter"> &gt;&gt; </a>]</td>
-<td valign="middle" align="left"> &nbsp; </td>
+<hr>
+<a name="Pluggable-output-styles"></a>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Settings" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Settings" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Settings" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_7.html#Release-notes" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_7.html#Release-notes" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
-<h2 class="section"> 6.1 Pluggable output styles </h2>
+<h2 class="section">6.1 Pluggable output styles</h2>
 
 <p>The default output style (<code>PerlStyle.style</code>) is modeled after the
 unit-testing framework for Perl.  It makes room for statistics and
@@ -154,33 +173,35 @@ of a particular type.  An alternate style is provided, which is meant
 to mesh well with the output of the SML/NJ Compilation Manager (CM),
 like this:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example"> &rsaquo; [testing Bool/to-from... ok]
+<div class="example">
+<pre class="example"> &rsaquo; [testing Bool/to-from... ok]
  &rsaquo; [testing Bool/from-to... ok]
  &rsaquo; [testing Bool/valid... FAILED]
  &rsaquo; Bool/valid:1.0 Error: False
  &rsaquo; Bool/valid:2.0 Error: True
-</pre></td></tr></table>
+</pre></div>
 <p>To select this style, just do:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">    Settings.set(Settings.style, CMStyle.style);
-</pre></td></tr></table>
+</p><div class="example">
+<pre class="example">    Settings.set(Settings.style, CMStyle.style);
+</pre></div>
 
-<hr size="6">
-<table cellpadding="1" cellspacing="1" border="0">
-<tr><td valign="middle" align="left">[<a href="#SEC18" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_7.html#SEC20" title="Next chapter"> &gt;&gt; </a>]</td>
+<hr>
+<table class="header" cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Settings" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_7.html#Release-notes" title="Next chapter"> &gt;&gt; </a>]</td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
 <td valign="middle" align="left"> &nbsp; </td>
-<td valign="middle" align="left">[<a href="qcheck.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck.html#Top" title="Cover (top) of document">Top</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
-<td valign="middle" align="left">[<a href="qcheck_9.html#SEC29" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="qcheck_9.html#Index" title="Index">Index</a>]</td>
 <td valign="middle" align="left">[<a href="qcheck_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Chris League</em> on <em>April, 14 2008</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78</em></a>.
+  This document was generated on <i>May 23, 2016</i> using <a href="http://www.nongnu.org/texi2html/"><i>texi2html 5.0</i></a>.
  </font>
  <br>
 
