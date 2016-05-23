@@ -1,5 +1,5 @@
 1 Overview
-**********
+==========
 
 QCheck is a library for automatic unit testing of Standard ML modules.
 You provide specifications (in the form of ML code) of the properties
@@ -25,9 +25,9 @@ successor, even, and odd:
 
 Now we need to think of a property that we expect to hold for this
 implementation.  Here is a trivial one: every integer is _either_ even
-or odd.  That is, for any 'x' exactly _one_ of the functions 'even' or
-'odd' returns true; the other returns false.  One way to specify this in
-ML is to use '<>' (not equal), which amounts to an exclusive OR when
+or odd.  That is, for any `x` exactly _one_ of the functions `even` or
+`odd` returns true; the other returns false.  One way to specify this in
+ML is to use `<>` (not equal), which amounts to an exclusive OR when
 applied to boolean values.
 
      fun even_xor_odd x = even x <> odd x
@@ -43,11 +43,11 @@ counter-examples to be printed).
      val int = (Gen.Int.int, SOME Int.toString)
       -| val int = (fn,SOME fn) : int Gen.gen * (int -> string) option
 
-Finally, we call 'checkGen' with the 'int' spec, a string to identify
+Finally, we call `checkGen` with the `int` spec, a string to identify
 the test, and the property we are testing.
 
      checkGen int ("even<>odd", pred even_xor_odd);
-      -| even<>odd..............ok      (100 passed)        
+      -| even<>odd..............ok      (100 passed)
       -| val it = () : unit
 
 The output indicates that QCheck tested the property on 100 random
@@ -58,11 +58,11 @@ complete the test is configurable.  *Note Settings::.)
 the successor of any even number should be odd.
 
      val succ_even_odd = even ==> odd o succ
-      -| val succ_even_odd = 
+      -| val succ_even_odd =
 
      checkGen int ("even+1=odd", succ_even_odd);
       -| : int prop
-      -| even+1=odd.............ok      (100 passed)        
+      -| even+1=odd.............ok      (100 passed)
       -| val it = () : unit
 
 In this example, the 100 test cases that passed were all ones that met
@@ -73,29 +73,34 @@ property (by falsifying the condition) and are not counted.
 should be even:
 
      checkGen int ("odd+1=even", odd ==> even o succ);
-      -| odd+1=even.............ok      (32 passed)         Shrinking...
-      -| odd+1=even.............FAILED  (49/50 passed)      Shrinking...
-      -| odd+1=even.............FAILED  (98/100 passed)     
+      -| odd+1=even.............ok      (17 passed)         Shrinking...
+      -| odd+1=even.............FAILED  (39/40 passed)      Shrinking...
+      -| odd+1=even.............FAILED  (66/68 passed)      Shrinking...
+      -| odd+1=even.............FAILED  (93/96 passed)      Shrinking...
+      -| odd+1=even.............FAILED  (94/98 passed)      Shrinking...
+      -| odd+1=even.............FAILED  (95/100 passed)
       -|       counter-examples:       1073741823
+      -|                               1073741823
+      -|                               1073741823
       -|                               1073741823
       -| val it = () : unit
 
 Oops!  QCheck found a counter-example: the maximum 31-bit integer.  It
 is odd, but since its successor is undefined, the property does not
-hold.  (We were not extraordinarily lucky to generate 'maxInt' this time
-around; in fact, the generator is biased so that zero, 'minInt', and
-'maxInt' are chosen more frequently than other integers, precisely
+hold.  (We were not extraordinarily lucky to generate `maxInt` this time
+around; in fact, the generator is biased so that zero, `minInt`, and
+`maxInt` are chosen more frequently than other integers, precisely
 because they are often "boundary conditions."  *Note Generating test
 cases::.)
 
    At any rate, what is broken here is not really our implementation,
 but rather the specification of the property.  We need to limit it to
-odd integers that are less than 'maxInt'.
+odd integers that are less than `maxInt`.
 
      fun odd_not_max x = odd x andalso x < valOf(Int.maxInt);
      checkGen int ("odd+1=even", odd_not_max ==> even o succ)
       -| val odd_not_max = fn : int -> bool
-      -| odd+1=even.............ok      (100 passed)        
+      -| odd+1=even.............ok      (100 passed)
       -| val it = () : unit
 
 1.2 Generating pairs of integers
@@ -118,9 +123,9 @@ generators.
 
      checkGen (Gen.zip(Gen.Int.int, Gen.Int.int), SOME show_pair)
               ("odd+odd=even", both_odd ==> sum_even)
-      -| odd+odd=even...........ok      (44 passed)         Shrinking...
-      -| odd+odd=even...........FAILED  (96/97 passed)      
-      -|       counter-examples:       7689,1073741823
+      -| odd+odd=even...........ok      (80 passed)         Shrinking...
+      -| odd+odd=even...........FAILED  (99/100 passed)
+      -|       counter-examples:       1073741823,329
       -| val it = () : unit
 
 All of the counter-examples overflow the sum computation.  I'll leave
@@ -134,56 +139,56 @@ read from a file.  *Note Specifying test cases::.
            ("sum_odds_even[]", both_odd ==> sum_even)
            [(1,1), (3,5), (3,4), (* this one won't count! *)
             (~1,1), (21,21), (7,13)]
-      -| sum_odds_even[]........ok      (5 passed)          
+      -| sum_odds_even[]........ok      (5 passed)
       -| val it = () : unit
 
-I provided 6 pairs in the list, but only 5 counted because '(3,4)' did
+I provided 6 pairs in the list, but only 5 counted because `(3,4)` did
 not meet the precondition of the property.
 
 1.3 The QCheck structure
 ========================
 
 The examples in the preceding sections used several top-level functions
-from the 'QCheck' structure.  Here, we will examine the signature of
-'QCheck', beginning with its sub-structures.
+from the `QCheck` structure.  Here, we will examine the signature of
+`QCheck`, beginning with its sub-structures.
 
      structure Gen : GENERATOR_SIG
      structure Files : FILES_SIG
      structure Settings : SETTINGS_SIG
-The 'Gen' structure contains random value generators for all the basis
+The `Gen` structure contains random value generators for all the basis
 types, including aggregates like vectors and lists.  It also contains a
-rich library of combinators such as 'zip', 'map', and 'filter'.  *Note
+rich library of combinators such as `zip`, `map`, and `filter`.  *Note
 Generating test cases::.
 
-   'Files' is provided to make it easy to use lines in a file or files
+   `Files` is provided to make it easy to use lines in a file or files
 in a directory as test cases.  *Note Specifying test cases::.
-'Settings' contains various user-customizable settings, including
+`Settings` contains various user-customizable settings, including
 user-definable output styles.  *Note Settings::.
 
      include PROPERTY_SIG
 This signature contains functions for specifying properties and
 observing the distribution of test cases.  In preceding sections, we met
-two of its members: 'pred' converts a predicate (boolean function) on a
-given type to a property, and '==>' creates a conditional property.  A
-property over a given type 't' has type 't prop'.  *Note Properties::.
+two of its members: `pred` converts a predicate (boolean function) on a
+given type to a property, and `==>` creates a conditional property.  A
+property over a given type `t` has type `t prop`.  *Note Properties::.
 
 Two types are useful for discussing the parameters of the various
-'check' functions:
+`check` functions:
 
-     type ('a,'b) reader = 'b -> ('a * 'b) option
-     type 'a rep = ('a -> string) option
-An '('a,'b) reader' pulls objects of type ''a' from a stream of type
-''b'.  In this case, the objects are test cases of some type.  (This is
-defined the same way as 'StringCvt.reader'.)  The type ''a rep' is an
+     type (α,β) reader = β -> (α * β) option
+     type α rep = (α -> string) option
+An `(α,β) reader` pulls objects of type `α` from a stream of type
+`β`.  In this case, the objects are test cases of some type.  (This is
+defined the same way as `StringCvt.reader`.)  The type `α rep` is an
 (optional) method for rendering test cases as strings.  It is used in
 case there are counter-examples to be printed.
 
-Now, the most general function for invoking QCheck is called 'check'.
+Now, the most general function for invoking QCheck is called `check`.
 It takes 3 (curried) parameters:
 
-     val check : ('a,'b) reader * 'a rep ->
-                 string * 'a prop ->
-                 'b -> unit
+     val check : (α,β) reader * α rep ->
+                 string * α prop ->
+                 β -> unit
   1. The first parameter is a reader and representation pair.  It
      contains everything the checker needs to know about the type of the
      test cases, and the same pair can be reused to check additional
@@ -198,48 +203,48 @@ It takes 3 (curried) parameters:
      They could be randomly generated, read from a data structure,
      extracted from the file system, etc.
 
-   We provide several specializations of 'check' that are useful in
-particular circumstances.  First, 'checkGen' is for checking randomly
+   We provide several specializations of `check` that are useful in
+particular circumstances.  First, `checkGen` is for checking randomly
 generated test cases.  The random number stream is implicit, and the
-reader is always a generator from the 'Gen' module.
+reader is always a generator from the `Gen` module.
 
-     val checkGen : 'a Gen.gen * 'a rep ->
-                    string * 'a prop -> unit
+     val checkGen : α Gen.gen * α rep ->
+                    string * α prop -> unit
 
    Second, if we just want to check one particular test case, the reader
-is trivial (and therefore omitted), and the 'stream' is just the test
+is trivial (and therefore omitted), and the `stream` is just the test
 case itself:
 
-     val checkOne : 'a rep -> string * 'a prop -> 'a -> unit
+     val checkOne : α rep -> string * α prop -> α -> unit
 
    Third, if we want to provide a shrinking function, QCheck will try to
 find a smaller counterexample:
 
-     val checkGenShrink : ('a -> 'a list) -> 'a Gen.gen * 'a rep ->
-                          string * 'a prop -> unit
+     val checkGenShrink : (α -> α list) -> α Gen.gen * α rep ->
+                          string * α prop -> unit
 
    Fourth, if we want to use the checker as an API, we can pass a
 continuation that takes a list of bad objects and some stats.
 
      val cpsCheck :
-         ('a -> 'a list)
+         (α -> α list)
          -> Property.stats
-         -> ('a, 's) reader * 'a rep
-         -> 'a prop
+         -> (α, σ) reader * α rep
+         -> α prop
          -> (string option * Property.result * Property.stats -> unit)
-         -> ('a list -> Property.stats -> 'b)
-         -> 's
-         -> 'b
+         -> (α list -> Property.stats -> β)
+         -> σ
+         -> β
 
-   Finally, the 'Qcheck' structure includes a pair 'version' that can be
+   Finally, the `Qcheck` structure includes a pair `version` that can be
 useful in determining the version of QCheck you are using.  The
-'context' contains expanded version information that can be used by
+`context` contains expanded version information that can be used by
 darcs to reconstruct this precise configuration of QCheck.
 
      val version : int * int
      val context : string
 
-The version information currently reported by 'QCheck.version' is:
-     QCheck.version;
-      -| val it = (1,1) : int * int
+The version information currently reported by `QCheck.version` is:
 
+     QCheck.version;
+      -| val it = (1,2) : int * int

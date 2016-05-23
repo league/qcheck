@@ -219,6 +219,7 @@ of @code{QCheck}, beginning with its sub-structures.
 
 @noindent
 The version information currently reported by @code{QCheck.version} is:
+
 @transcript
 QCheck.version;
 @end transcript
