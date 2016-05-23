@@ -1,3 +1,12 @@
+@subheading version 1.2
+@itemize @bullet
+@item Released 23 May 2016
+@item Support shrinking of test cases
+@item License changed to BSD
+@item Compatibility fixes for more recent MoscowML and PolyML
+@item Support SML#
+@end itemize
+
 @subheading version 1.1
 @itemize @bullet
 @item Released 14 April 2008

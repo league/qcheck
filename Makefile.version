@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 PERL = perl
 EMACS = emacs
-TEXI2HTML = texi2html -split chapter 
+TEXI2HTML = texi2html -split chapter
 
 SML = sml
 CM = .cm
@@ -17,7 +17,7 @@ POLY = poly
 SMLSHARP = smlsharp
 
 MAJOR=1
-MINOR=1
+MINOR=2
 VERSION=$(MAJOR).$(MINOR)
 RELEASED=April 2008
 VERSION_SRC=src/QCheckVersion.sml
