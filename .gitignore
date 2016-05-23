@@ -34,3 +34,6 @@ src/GENERATOR_SIG-smlsharp.sml
 src/RandGen-smlsharp.sml
 tests/from-to-smlsharp.sml
 
+/tests/from-to-smlsharp
+/tests/from-to-str
+/tests/reverse
