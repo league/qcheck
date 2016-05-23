@@ -1,0 +1,21 @@
+_require "basis.smi"
+_require "Property.smi"
+_require "Settings.smi"
+
+structure CMStyle =
+struct
+  val name : string
+  val << : 'a * ('a -> 'b) -> 'b
+  val s : TextIO.vector -> TextIO.outstream -> TextIO.outstream
+  val i : int -> TextIO.outstream -> TextIO.outstream
+  val pad : int -> int -> TextIO.outstream -> TextIO.outstream
+  val return : 'a -> 'b -> 'a
+  val new : TextIO.vector
+            -> {finish:'a -> bool,
+                status:TextIO.vector option * bool option * 'b -> unit}
+  val style : {ctor:TextIO.vector
+                    -> {finish:'a -> bool,
+                        status:TextIO.vector option * bool option * 'b -> unit},
+               name:string}
+end
+

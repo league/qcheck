@@ -1,0 +1,24 @@
+_require "basis.smi"
+_require "BAG_SIG.sml"
+
+functor BagFromMap(M: sig
+                        type key
+                        type 'a map
+                        val empty : 'a map
+                        val insert : 'a map * key * 'a -> 'a map
+                        val find : 'a map * key -> 'a option
+                        val foldli : (key * 'a * 'b -> 'b)
+                                     -> 'b -> 'a map -> 'b
+                      end) =
+struct
+	type item = M.key
+	type bag (= boxed)
+	val empty : bag
+	val singleton : item -> bag
+	val count : bag * item -> int
+	val add : bag * item -> bag
+	val member : bag * item -> bool
+	val foldli : (item * int * 'a -> 'a) -> 'a -> bag -> 'a
+end
+
+

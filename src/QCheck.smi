@@ -1,0 +1,93 @@
+_require "basis.smi"
+_require "GEN_TYPES.sml"
+_require "PREGEN_SIG.sml"
+_require "PRETEXT_GENERATOR.sml"
+_require "TEXT_GENERATOR.sml"
+_require "DATE_TIME_GENERATOR.sml"
+_require "INT_GENERATOR.sml"
+_require "REAL_GENERATOR.sml"
+_require "WORD_GENERATOR.sml"
+_require "GENERATOR_SIG-smlsharp.sml"
+_require "FILES_SIG.sml"
+_require "SETTINGS_SIG.sml"
+_require "PROPERTY_SIG.sml"
+_require "Property.smi"
+_require "QCHECK_SIG.sml"
+_require "StringBag.smi"
+_require "QCheckVersion.smi"
+_require "RandGen-smlsharp.smi"
+_require "PerlStyle.smi"
+_require "Files.smi"
+_require "Settings.smi"
+
+structure QCheck =
+struct
+  (* QCheckVersion *)
+  val version : int * int
+  val context : string
+
+  structure Gen = RandGen
+  structure Files = Files
+  structure Settings =
+  struct
+    type 'a control = 'a ref
+    val get : 'a ref -> 'a
+    val set : 'a ref * 'a -> unit
+    val column_width : int ref
+    val examples : int option ref
+    val gen_max : int ref
+    val gen_target : int option ref
+    val outstream : TextIO.outstream ref
+    val show_stats : bool ref
+    val sort_examples : bool ref
+    val style : {ctor:
+                   string
+                     -> {finish: {count: int, tags: StringBag.bag} -> bool,
+                         status:
+                           string option
+                           * bool option
+                           * {count: int, tags: StringBag.bag}
+                             -> unit},
+                 name: string} ref
+  end
+
+  (* include PROPERTY_SIG *)
+  type 'a pred = 'a -> bool
+  type 'a prop = 'a Property.prop
+  val pred : 'a pred -> 'a prop
+  val pred2 : ('a * 'b) pred -> 'b -> 'a  prop
+
+  val implies : 'a pred * 'a prop -> 'a prop
+  val ==> : 'a pred * 'a pred -> 'a prop
+
+  val trivial : 'a pred -> 'a prop -> 'a prop
+  val classify : 'a pred -> string -> 'a prop -> 'a prop
+  val classify' : ('a -> string option) -> 'a prop ->
+                'a prop
+
+  type result = bool option
+  type stats = { tags : StringBag.bag,
+                 count : int }
+
+  val test : 'a prop -> 'a * stats -> result * stats
+  val stats : stats
+  val success : result pred
+  val failure : result pred
+  (* -- PROPERTY_SIG *)
+
+  type ('a,'b) reader = 'b -> ('a * 'b) option
+  type 'a rep = ('a -> string) option
+  val check : ('a,'b) reader * 'a rep ->
+              string * 'a prop ->
+              'b -> unit
+  val checkGen : 'a Gen.gen * 'a rep ->
+                 string * 'a prop -> unit
+  val checkOne : 'a rep -> string * 'a prop -> 'a -> unit
+  val checkGenShrink : ('a -> 'a list) -> 'a Gen.gen * 'a rep ->
+                 string * 'a prop -> unit
+  val cpsCheck : ('a -> 'a list) -> Property.stats -> ('a, 's) reader * 'a rep ->
+                 'a prop ->
+                 (string option * Property.result * Property.stats -> unit) ->
+                 ('a list -> Property.stats -> 'b) -> 's -> 'b
+end
+

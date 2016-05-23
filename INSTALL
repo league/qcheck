@@ -13,6 +13,9 @@ systems:
      fenrir.uchicago.edu)
 
    * Poly/ML 5.1 Testing    RTS version: I386-5.1
+
+   * SML# version 3.0.1 for x86_64-linux
+
    Inquiries and recommendations on improving compatibility are welcome.
 The following sections provide simple installation instructions for each
 system.  A different `Makefile' is supplied for each system, but in all
@@ -100,4 +103,16 @@ directory, like this:
 QCheck from Poly/ML.  Running
      make -f Makefile.poly test
    will execute the unit tests for Poly/ML.
+
+2.5 SML#
+===========
+
+QCheck will also work with SML#.
+SML# requires separate compilation like below:
+
+     make -f Makefile.smlsharp
+
+To use QCheck as a library from SML#, add '_require "/path/to/qcheck.smi"'
+ to your .smi files.
+
 

@@ -1,0 +1,52 @@
+_require "basis.smi"
+_require "Settings.smi"
+_require "Property.smi"
+_require "StringBag.smi"
+
+structure PerlStyle =
+struct
+    type cs = StringCvt.cs
+    datatype radix = BIN | DEC | HEX | OCT
+    type ('a, 'b) reader = 'b -> ('a * 'b) option
+    datatype realfmt =
+        EXACT
+      | FIX of int option
+      | GEN of int option
+      | SCI of int option
+    val << : 'a * ('a -> 'b) -> 'b
+    val dropl : (char -> bool) -> ('a -> (char * 'a) option) -> 'a -> 'a
+    val ends : string list -> string
+    val flush : TextIO.outstream -> TextIO.outstream
+    val int : int -> string
+    val keep : 'a -> 'a list -> 'a list
+    val new : string -> {finish: {count: int, tags: StringBag.bag} -> bool,
+                         status:
+                           string option
+                           * bool option
+                           * {count: int, tags: StringBag.bag}
+                             -> unit}
+    val padLeft : char -> int -> string -> string
+    val padRight : char -> int -> string -> string
+    val put : string -> TextIO.outstream -> TextIO.outstream
+    val return : 'a -> 'b -> 'a
+    val scanString : ((StringCvt.cs -> (char * StringCvt.cs) option)
+                        -> StringCvt.cs -> ('a * StringCvt.cs) option)
+                       -> string -> 'a option
+    val skipWS : ('a -> (char * 'a) option) -> 'a -> 'a
+
+    val splitl : (char -> bool)
+                   -> ('a -> (char * 'a) option) -> 'a -> string * 'a
+    val style : {ctor:
+                   string
+                     -> {finish: {count: int, tags: StringBag.bag} -> bool,
+                         status:
+                           string option
+                           * bool option
+                           * {count: int, tags: StringBag.bag}
+                             -> unit},
+                 name: string}
+    val takel : (char -> bool)
+                    -> ('a -> (char * 'a) option) -> 'a -> string
+end
+
+
