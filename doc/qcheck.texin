@@ -15,13 +15,7 @@ QuickCheck library for Haskell (ICFP 2000) by Koen Claessen and John
 Hughes, with many thanks.  QCheck/SML (including this manual) is free
 software.@xref{License}.
 
-@itemize
-@item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}
-@item Bundled releases: @url{http://comsci.liu.edu/~league/dist/qcheck/}
-@item RSS feed: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=rss}
-@item Browse repo.: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary}
-@item Checkout: @code{darcs get http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck}
-@end itemize
+@url{https://github.com/league/qcheck}
 @end macro
 
 @titlepage
@@ -340,6 +334,17 @@ use QCheck from Poly/ML.  Running
 make -f Makefile.poly test
 @end example
 will execute the unit tests for Poly/ML.
+
+@section SML#
+@cindex SML#
+
+QCheck will also work with SML#.
+SML# requires separate compilation like below:
+@example
+make -f Makefile.smlsharp
+@end example
+To use QCheck as a library from SML#, add @code{_require
+"/path/to/qcheck.smi"} to your .smi files.
 
 @node Specifying test cases, Generating test cases, Installation, Top
 @chapter Specifying test cases

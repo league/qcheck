@@ -2,7 +2,7 @@ define each-ml
   for m in nj moscow mlton poly smlsharp; do $(MAKE) -f Makefile.$$m $@; done
 endef
 
-default: 
+default:
 
 all: docs
 	$(each-ml)
@@ -39,8 +39,8 @@ INSTALL: doc/qcheck.info
 README: doc/qcheck.info
 	$(GETNODE) '(get-node "./$<" "Overview" "../$@")'
 
-%.pdf: %.texi
-	$(TEXI2DVI) -p -o $@ $<
+%.pdf: %.texi $(DOCGENS)
+	$(TEXI2DVI) --batch --pdf -o $@ $<
 
 doc/html:
 	mkdir $@
