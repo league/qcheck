@@ -18,7 +18,8 @@ functor BagFromMap
                  val find : 'a map * key -> 'a option
                  val foldli : (key * 'a * 'b -> 'b) -> 'b -> 'a map -> 'b
              end)
-        :> BAG_SIG where type item = M.key =
+        :> BAG_SIG where type item = M.key
+        =
 struct
   type item = M.key
   type bag = int M.map

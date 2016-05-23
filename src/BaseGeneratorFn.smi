@@ -1,0 +1,67 @@
+_require "basis.smi"
+_require "APPLICATIVE_RNG.sml"
+_require "GEN_TYPES.sml"
+_require "PREGEN_SIG.sml"
+_require "Settings.smi"
+
+functor BaseGeneratorFn(R :
+sig
+  type rand
+  val new : unit -> rand
+  val range : int * int -> rand -> int * rand
+  val split : rand -> rand * rand
+end) =
+struct
+  (* GEN_TYPES *)
+  type rand = R.rand
+  type 'a gen = rand -> 'a * rand
+  type ('a, 'b) co = 'a -> 'b gen -> 'b gen
+
+  (* PREGEN_SIG *)
+  val new : unit -> rand
+  val range : int * int -> rand -> int * rand
+  type ('a,'b) reader = 'b -> ('a * 'b) option
+  val lift : 'a -> 'a gen
+  val select : 'a vector -> 'a gen
+  val choose : 'a gen vector -> 'a gen
+  val choose' : (int * 'a gen) vector -> 'a gen
+  val selectL : 'a list -> 'a gen
+  val chooseL : 'a gen list -> 'a gen
+  val chooseL' : (int * 'a gen) list -> 'a gen
+  val filter : ('a -> bool) -> 'a gen -> 'a gen
+  val zip : ('a gen * 'b gen) -> ('a * 'b) gen
+  val zip3 : ('a gen * 'b gen * 'c gen) ->
+             ('a * 'b * 'c) gen
+  val zip4 : ('a gen * 'b gen * 'c gen * 'd gen) ->
+             ('a * 'b * 'c * 'd) gen
+  val map : ('a -> 'b) -> 'a gen -> 'b gen
+  val map2 : ('a * 'b -> 'c) -> ('a gen * 'b gen) ->
+             'c gen
+  val map3 : ('a * 'b * 'c -> 'd) ->
+             ('a gen * 'b gen * 'c gen) -> 'd gen
+  val map4 : ('a * 'b * 'c * 'd -> 'e) ->
+             ('a gen * 'b gen * 'c gen * 'd gen) ->
+             'e gen
+  
+  val flip : bool gen
+  val flip' : int * int -> bool gen
+  
+  val list : bool gen -> 'a gen -> 'a list gen
+  val option : bool gen -> 'a gen -> 'a option gen
+  val vector : (int * (int -> 'a) -> 'b) ->
+               int gen * 'a gen -> 'b gen
+  
+  val variant : (int,'b) co
+  val variant' : (int * int,'b) co
+  val arrow : ('a, 'b) co * 'b gen -> ('a -> 'b) gen
+  val cobool : (bool, 'b) co
+  val colist : ('a, 'b) co -> ('a list, 'b) co
+  val coopt : ('a, 'b) co -> ('a option, 'b) co
+  
+  type stream = rand ref * int
+  val start : rand -> stream
+  val limit' : int -> 'a gen -> ('a,stream) reader
+  val limit : 'a gen -> ('a,stream) reader
+
+end
+

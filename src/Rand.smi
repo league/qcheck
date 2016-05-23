@@ -1,0 +1,13 @@
+_require "basis.smi"
+
+structure Rand =
+struct
+  type rand = real
+  val a : real
+  val m : real
+  val new : unit -> real
+  val nextrand : real -> real
+  val range : int * int -> real -> int * real
+  val split : real -> real * real
+end
+

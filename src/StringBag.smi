@@ -1,0 +1,15 @@
+_require "basis.smi"
+_require "BagFromMap.smi"
+
+structure StringBag =
+struct
+  type item = string
+  type bag (= boxed)
+  val empty : bag
+  val singleton : item -> bag
+  val count : bag * item -> int
+  val add : bag * item -> bag
+  val member : bag * item -> bool
+  val foldli : (item * int * 'a -> 'a) -> 'a -> bag -> 'a
+end
+

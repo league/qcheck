@@ -1,0 +1,28 @@
+_require "basis.smi"
+_require "PROPERTY_SIG.sml"
+_require "StringBag.smi"
+
+
+structure Property =
+struct
+	type result = bool option
+	type stats = { tags : StringBag.bag, count : int }
+
+	type 'a pred = 'a -> bool
+	type 'a prop (= boxed)
+	val pred : 'a pred -> 'a prop
+	val pred2 : ('a * 'b) pred -> 'b -> 'a prop
+
+	val implies : 'a pred * 'a prop -> 'a prop
+	val ==> : 'a pred * 'a pred -> 'a prop
+
+	val trivial : 'a pred -> 'a prop -> 'a prop
+	val classify : 'a pred -> string -> 'a prop -> 'a prop
+	val classify' : ('a -> string option) -> 'a prop -> 'a prop 
+
+	val test : 'a prop -> 'a * stats -> result * stats
+	val stats : stats
+	val success : result pred
+	val failure : result pred
+end
+
