@@ -1,5 +1,7 @@
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y mlton
+  - sudo apt-get install -y mlton polyml smlnj
 script:
   - make -f Makefile.mlton test
+  - make -f Makefile.poly test
+  - make -f Makefile.nj test
