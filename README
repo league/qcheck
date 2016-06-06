@@ -205,7 +205,7 @@ It takes 3 (curried) parameters:
      They could be randomly generated, read from a data structure,
      extracted from the file system, etc.
 
-   We provide several specializations of `check` that are useful in
+We provide several specializations of `check` that are useful in
 particular circumstances.  First, `checkGen` is for checking randomly
 generated test cases.  The random number stream is implicit, and the
 reader is always a generator from the `Gen` module.
