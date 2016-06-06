@@ -44,7 +44,7 @@ fun ('a, 'b) cpsCheck (shrink:'a -> 'a list) (s0:Property.stats) (next : ('a, 's
       end
 
     fun tryShrink (obj: 'a) stats =
-      let fun try [] = (print "\n"; lastTry obj stats)
+      let fun try [] = (print "\r"; lastTry obj stats)
             | try (small::smalls) =
                 let val (result, _) = Property.test prop (small, stats)
                     val _ = print "."
