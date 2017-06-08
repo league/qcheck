@@ -66,7 +66,6 @@ master.clean: master.mostlyclean
 	$(RM) $(DOCGENS) $(EXTRAS)
 master.realclean: master.clean
 	$(RM) $(VERSION_SRC)
-	$(RM) $(DOCS) doc/qcheck.texi doc/qcheck-ver.texi
-	$(RM) -r doc/html
+	$(RM) doc/qcheck.texi doc/qcheck-ver.texi
 
 include Makefile.version
