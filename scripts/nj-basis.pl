@@ -3,6 +3,20 @@ use strict;
 
 my $sml = $ARGV[0] || 'sml';
 
+# We're relying on CM.make returning a boolean to see whether certain
+# structures exist in the basis library. Previously I relied on the
+# `use` function throwing an exception, but something about that
+# changed in smlnj 110.80.
+
+open(ML, '>detect.cm') or die 'cannot write detect.cm';
+print ML "Group is\n\$/basis.cm\ndetect.sml\n";
+close(ML);
+
+open(ML, '>detect2.sml') or die 'cannot write detect2.sml';
+print ML "open OS.Process;\n";
+print ML "exit(if CM.make \"detect.cm\" then success else failure);\n";
+close(ML);
+
 check_structure('FixedInt');
 check_structure('Int');
 check_structure('Int4');
@@ -38,20 +52,25 @@ check_structure('Word64');
 check_structure('WordInf');
 
 check_structure('WideText');
-unlink('test.sml');
+
+unlink('detect.sml');
+unlink('detect.cm');
+unlink('detect2.sml');
+
 exit;
 
-sub check_structure 
+sub check_structure
 {
     my($s) = @_;
-    open(ML, '>test.sml') or die 'cannot write test.sml';
-    print ML "TextIO.closeOut TextIO.stdErr;\n";
+    system("rm -rf .cm");
+    # ^^^ This sucks, but I swear if I don't clear out CM's cache
+    # I get different results each time...
+    open(ML, '>detect.sml') or die 'cannot write detect.sml';
     print ML "structure S = $s\n";
     close(ML);
-    my $r = system("$sml test.sml </dev/null >/dev/null");
+    my $r = system("$sml detect2.sml </dev/null >/dev/null");
     if( !$r )
     {
         print "$s\n";
     }
 }
-
