@@ -125,7 +125,7 @@ fun arrow (cogen, gen) r =
             let val (y,_) = cogen x gen r1
              in y
             end
-     in (g, r2)
+     in (g, r)
     end
 
 fun cobool false = variant' (2,0)
