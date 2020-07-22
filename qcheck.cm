@@ -1,4 +1,5 @@
 Library
+  signature QCHECK_SIG (* Needed for 150 testing structure *)
   structure QCheck
   functor GenInt
   structure PerlStyle
