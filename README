@@ -1,7 +1,12 @@
 QCheck
 ======
 
-[![Build Status](https://travis-ci.org/league/qcheck.svg?branch=master)](https://travis-ci.org/league/qcheck)
+**This repository is archived on GitHub,** but it may live on at
+
+  - https://git.sr.ht/~league/qcheck-sml
+  - https://codeberg.org/league/qcheck-sml
+
+----
 
 QCheck is a library for automatic unit testing of Standard ML modules.
 You provide specifications (in the form of ML code) of the properties
